@@ -9,8 +9,8 @@ ENV \
 
 
 # install node.js modules
-#RUN npm install -g \
-#  express
+RUN npm install -g \
+  nodemon
 
 
 # add own labels

@@ -1,0 +1,18 @@
+{
+    "deployment": "development",
+
+    "logger": {
+        "enabled": true,
+        "level": "info"
+    },
+
+    "auth": {
+        "secret": "MasterBlasterIsTheMan!", 
+        "salt": "Aujourd'hui"
+    },
+
+    "server": {
+        "host": "localhost",
+        "port": 3000
+    }
+}

@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "config": "^3.3.3",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.8",
+    "morgan": "^1.10.0",
+    "validator": "^13.5.2"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "stop": "pkill --signal SIGTERM financial-analysis"
+  },
+  "name": "finance-analysis",
+  "description": "",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morrungulo/finance-analysis.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morrungulo/finance-analysis/issues"
+  },
+  "homepage": "https://github.com/morrungulo/finance-analysis#readme"
+}
