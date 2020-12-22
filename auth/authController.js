@@ -47,7 +47,7 @@ const handleErrors = (err) => {
 // controller actions
 module.exports.register_get = (req, res) => {
     res.locals.user = null; //todo
-    res.render('register_login', { title: 'Register', buttonTitle: 'Sign Up', postPage: 'register' });
+    res.render('register-login', { title: 'Register', buttonTitle: 'Sign Up', postPage: 'register' });
 }
 
 module.exports.register_post = async (req, res) => {
@@ -67,7 +67,7 @@ module.exports.register_post = async (req, res) => {
 
 module.exports.login_get = (req, res) => {
     res.locals.user = null; //todo
-    res.render('register_login', { title: 'Login', buttonTitle: 'Login', postPage: 'login' });
+    res.render('register-login', { title: 'Login', buttonTitle: 'Login', postPage: 'login' });
 }
 
 module.exports.login_post = async (req, res) => {
