@@ -7,11 +7,15 @@
     },
 
     "auth": {
-        "secret": "MasterBlasterIsTheMan!", 
+        "secret": "MasterBlasterIsTheMan!"
     },
 
     "server": {
         "host": "localhost",
         "port": 3000
+    },
+
+    "alphavantage" : {
+        "apikey": "WM1YB28P0XDGDZE9"
     }
 }

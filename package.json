@@ -11,7 +11,7 @@
     "validator": "^13.5.2"
   },
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node app.js",
     "stop": "pkill --signal SIGTERM financial-analysis"
   },
   "name": "finance-analysis",

@@ -72,7 +72,6 @@ module.exports.login_get = (req, res) => {
 
 module.exports.login_post = async (req, res) => {
     const { email, password } = req.body;
-    console.log("aml", "login", email, password);
 
     try {
         const user = await User.login(email, password);
