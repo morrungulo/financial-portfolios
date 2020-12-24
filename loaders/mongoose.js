@@ -2,12 +2,17 @@ const mongoose = require("mongoose");
 
 module.exports = {
     initialize: (callback) => {
-
-        // database connection
+        // mongodb atlas
         // const dbURI = 'mongodb+srv://morrungulo:EvnrCV76.MB@cluster0.yasie.mongodb.net/financial-portfolios';
-        const dbURI = 'mongodb://mongodb:27017/test';
-        // const dbURI = 'mongodb://127.0.0.1:27017/test';
-        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+        
+        // mongodb docker-compose
+        // const dbURI = 'mongodb://mongodb:27017/financial-portfolios';
+        
+        // mongodb standalone docker (docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0)
+        const dbURI = 'mongodb://172.17.0.5:27017/test';
+        
+        // database connection
+        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, socketTimeoutMS:15000 })
             .then((result) => callback())
             .catch((err) => console.log(err));
     }

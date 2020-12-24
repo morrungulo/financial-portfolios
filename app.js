@@ -1,6 +1,5 @@
 const express = require('express');
 const config = require('config');
-
 const loaders = require('./loaders');
 
 process.title = "financial-portfolios";
@@ -12,12 +11,12 @@ async function startServer() {
         console.log("Finished loading!");
     });
 
-    var server = app.listen(config.get("server.port"), err => {
+    var server = app.listen(config.get('server.port'), err => {
         if (err) {
             console.log(err);
             return;
         }
-        console.log('Your server is ready!');
+        console.log('Your server is ready on port ' + config.get('server.port') + '!');
     });
 
     process.on('SIGTERM', () => {

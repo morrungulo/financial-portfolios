@@ -1,8 +1,13 @@
-const User = require("../models/User");
-const config = require("config");
+const config = require('config');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-// handle errors
+
+/**
+ * Handle errors on login / register.
+ * 
+ * @param {*} err 
+ */
 const handleErrors = (err) => {
     console.log(err.message, err.code);
     let errors = { email: '', password: '' };
@@ -25,10 +30,9 @@ const handleErrors = (err) => {
 
     // validation errors
     if (err.message.includes('user validation failed')) {
-        // console.log(err);
+        console.log(err);
         Object.values(err.errors).forEach(({ properties }) => {
-            // console.log(val);
-            // console.log(properties);
+            console.log(properties);
             errors[properties.path] = properties.message;
         });
     }
@@ -36,27 +40,48 @@ const handleErrors = (err) => {
     return errors;
 }
 
-// // create json web token
-// const maxAge = 3 * 24 * 60 * 60;
-// const createToken = (id) => {
-//   return jwt.sign({ id }, 'net ninja secret', {
-//     expiresIn: maxAge
-//   });
-// };
 
-// controller actions
+/**
+ * 3 days in seconds
+ */
+const maxAge = 3 * 24 * 60 * 60;
+
+
+/**
+ * Create a jwt token.
+ * 
+ * @param {*} id the user id
+ */
+const createToken = (id) => {
+    return jwt.sign({ id }, config.get('auth.secret'), {
+        expiresIn: maxAge
+    });
+};
+
+
+/**
+ * GET register.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.register_get = (req, res) => {
-    res.locals.user = null; //todo
     res.render('register-login', { title: 'Register', buttonTitle: 'Sign Up', postPage: 'register' });
 }
 
+
+/**
+ * POST register.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.register_post = async (req, res) => {
     const { email, password } = req.body;
-    
     try {
         const user = await User.create({ email, password });
-        // const token = createToken(user._id);
-        // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        const token = createToken(user._id);
+        res.cookie('jwt_fp', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({ user: user._id });
     }
     catch (err) {
@@ -65,18 +90,30 @@ module.exports.register_post = async (req, res) => {
     }
 }
 
+
+/**
+ * GET login.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.login_get = (req, res) => {
-    res.locals.user = null; //todo
     res.render('register-login', { title: 'Login', buttonTitle: 'Login', postPage: 'login' });
 }
 
+
+/**
+ * POST login.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.login_post = async (req, res) => {
     const { email, password } = req.body;
-
     try {
         const user = await User.login(email, password);
-        // const token = createToken(user._id);
-        // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        const token = createToken(user._id);
+        res.cookie('jwt_fp', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(200).json({ user: user._id });
     }
     catch (err) {
@@ -85,7 +122,14 @@ module.exports.login_post = async (req, res) => {
     }
 }
 
-// module.exports.logout_get = (req, res) => {
-//     res.cookie('jwt', '', { maxAge: 1 });
-//     res.redirect('/');
-// }
+
+/**
+ * GET logout.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+module.exports.logout_get = (req, res) => {
+    res.cookie('jwt_fp', '', { maxAge: 1 });
+    res.redirect('/');
+}
