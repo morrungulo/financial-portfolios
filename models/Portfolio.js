@@ -1,29 +1,47 @@
 const mongoose = require('mongoose');
+const assetSchema = require('./Asset');
 
 // the schema
 const portfolioSchema = new mongoose.Schema({
-    name: {
+    portfolio: {
         type: String,
+        trim: true,
         required: [true, 'Please enter a name']
     },
-    user_id: {
+    user: {
         type: String,
         required: true
     },
-    unrealized_gains: {
-        
+    assets: [assetSchema],
+    unrealized_value: {
+        type: Number,
+        min: 0,
+        default: 0
     },
-    realized_gains: {
-
+    realized_value: {
+        type: Number,
+        min: 0,
+        default: 0
     },
-    annualized_gains: {
-
+    annualized_value: {
+        type: Number,
+        min: 0,
+        default: 0
     },
-    daily_changes: {
-
+    unrealized_value_percentage: {
+        type: Number,
+        min: 0,
+        default: 0
     },
-    total_changes: {
-
+    daily_value: {
+        type: Number,
+        min: 0,
+        default: 0
+    },
+    daily_value_percentage: {
+        type: Number,
+        min: 0,
+        default: 0
     }
 });
 

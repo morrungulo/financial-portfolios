@@ -1,7 +1,6 @@
 /* google fonts */
 
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
-
 * {
     /* border: 1px solid black */
     margin: 0;
@@ -15,19 +14,7 @@ body {
     background: #fafafa;
 }
 
-h1,
-h2,
-h3,
-h4,
-ul,
-li,
-a,
-p,
-input,
-label,
-button,
-div,
-footer {
+h1, h2, h3, h4, ul, li, a, p, input, label, button, div, header, footer {
     font-family: 'Quicksand', sans-serif;
     color: #444;
 }
@@ -50,25 +37,24 @@ header {
     align-items: flex-end;
     margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
-}        
+}
 
 .no-border {
-
     border-bottom: none;
-}    
+}
 
 .mini-nav ul {
     display: flex;
     align-items: center;
-}    
+}
 
-.mini-nav ul > li a {
+.mini-nav ul>li a {
     margin-left: 0px;
-}    
+}
 
-.mini-nav ul > li ~ li {
+.mini-nav ul>li~li {
     margin-left: 20px;
-}    
+}
 
 .mini-nav li a {
     text-transform: uppercase;
@@ -77,15 +63,55 @@ header {
     display: block;
     padding: 8px 16px;
     letter-spacing: 2px;
-}    
+}
 
 .btn {
     border-radius: 32px;
     background: #FEE996;
 }
 
+.show-header {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.show-header .show-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.show-header img {
+    width: 400px;
+    height: 400px;
+    display: block;
+    margin: auto;
+}
+
+.show-header section {
+    margin-bottom: 60px;
+}
+
+.show-header h2 {
+    font-size: 2.3em;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.show-header h3 {
+    font-size: 1.7em;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.show-header h4 {
+    font-size: 1.2em;
+    color: #777;
+    margin-bottom: 15px;
+}
+
 .text-content {
-    margin-bottom: 120px;
+    margin-bottom: 70px;
 }
 
 .text-content-title {
@@ -102,9 +128,6 @@ header {
     background-color: #ddd;
     font-size: 0.8em;
 }
-
-
-
 
 form {
     width: 360px;
@@ -153,6 +176,32 @@ form button {
     margin: 10px 2px;
     font-size: 0.8em;
     font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin-top: 120px;
+    color: #aaa;
+}
+
+.delete {
+    border-radius: 50%;
+    padding: 8px;
+}
+
+.delete:hover {
+    cursor: pointer;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.portfolios-list {
+
+}
+
+.assets-list {
+
 }
 
 
@@ -213,12 +262,6 @@ header .btn {
     margin: -30px auto 20px;
 }
 */
-
-footer {
-    text-align: center;
-    margin-top: 120px;
-    color: #aaa;
-}
 
 /*
 .description p {

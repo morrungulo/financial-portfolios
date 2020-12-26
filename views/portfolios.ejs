@@ -1,0 +1,60 @@
+<%- include("./partials/header"); -%>
+
+<div class="mini-nav">
+    <ul>
+        <li><a href="/portfolios">Overview</a></li>
+        <li><a href="/portfolios/create" class="btn">Add Portfolio</a></li>
+    </ul>
+</div>
+<div class="portfolios-list">
+    <% if (portfolios === undefined) { %>
+    
+        <div class="error">An error occurred!</div>
+
+    <% } else if (portfolios.length == 0) { %>
+
+        <div class="error">There are no portfolios!</div>
+
+    <% } else { %>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Value / Cost</th>
+                <th>Daily</th>
+            </tr>
+            <% portfolios.forEach((portfolio) => { %>
+                <tr>
+                    <td rowspan="2"><a href="/portfolios/<%= portfolio._id %>"><%- portfolio.portfolio %></a></td>          
+                    <td><%- portfolio.unrealized_value %></td>
+                    <td><%- portfolio.daily_value %></td>                    
+                    <td rowspan="2">DEL</a></td>          
+                </tr>
+                <tr>
+                    <td><%- portfolio.unrealized_value_percentage %>%</td>
+                    <td><%- portfolio.daily_value_percentage %>%</td>
+                </tr>
+            <% }); %>
+        </table>
+    <% } %>
+</div>
+
+<%- include("./partials/footer"); -%>
+
+<!-- <td rowspan="2">
+    <a class="delete" data-doc="<%#= portfolio._id %>">
+        <img src="/img/trashcan.svg" alt="delete icon">
+    </a>
+</td>
+<script>
+    const trashcan = document.querySelector('a.delete');
+
+    trashcan.addEventListener('click', (e) => {
+        const endpoint = `/blogs/${trashcan.dataset.doc}`;
+        fetch(endpoint, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+    });
+</script> -->

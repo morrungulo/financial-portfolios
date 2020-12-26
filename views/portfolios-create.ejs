@@ -1,0 +1,45 @@
+<%- include("./partials/header"); -%>
+
+<form>
+    <h2>Add Portfolio</h2>
+    <label for="portfolio">Portfolio name</label>
+    <input type="text" name="portfolio" required autofocus />
+    <div class="portfolio error"></div>
+    <button>Add</button>
+</form>
+
+<%- include("./partials/footer"); -%>
+
+<script type="text/javascript">
+    const form = document.querySelector('form');
+    const portfolioError = document.querySelector('.portfolio.error');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // reset errors
+        portfolioError.textContent = '';
+
+        // get values
+        const portfolio = form.portfolio.value;
+
+        try {
+            const res = await fetch('/portfolios/create', {
+                method: 'POST',
+                body: JSON.stringify({ portfolio }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                portfolioError.textContent = data.errors.portfolio;
+            }
+            if (data.portfolio) {
+                location.assign('/portfolios');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

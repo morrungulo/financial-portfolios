@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const config = require('config');
+const mongoose = require('mongoose');
 
 module.exports = {
     initialize: (callback) => {
@@ -6,7 +7,7 @@ module.exports = {
         // const dbURI = 'mongodb+srv://morrungulo:EvnrCV76.MB@cluster0.yasie.mongodb.net/financial-portfolios';
         
         // mongodb docker-compose
-        // const dbURI = 'mongodb://mongodb:27017/financial-portfolios';
+        // const dbURI = 'mongodb://mongodb:27017/' + config.get('mongodb.dbname');
         
         // mongodb standalone docker (docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0)
         const dbURI = 'mongodb://172.17.0.5:27017/test';

@@ -3,7 +3,7 @@
 <form>
     <h2><%- title %></h2>
     <label for="email">Email</label>
-    <input type="text" name="email" required />
+    <input type="text" name="email" required autofocus />
     <div class="email error"></div>
     <label for="password">Password</label>
     <input type="password" name="password" required />
@@ -42,7 +42,7 @@
                 passwordError.textContent = data.errors.password;
             }
             if (data.user) {
-                location.assign('/');
+                location.assign('/portfolios');
             }
         }
         catch (err) {
