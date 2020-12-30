@@ -1,16 +1,40 @@
-const config = require("config");
-const Portfolio = require("../models/Portfolio");
+const config = require('config');
+const chalk = require('chalk');
+const Portfolio = require('../models/Portfolio');
 
+
+/**
+ * Handle errors on assets.
+ * 
+ * @param {*} err 
+ */
+const handleAssetErrors = (err) => {
+    console.log(err.message, err.code);
+    let errors = { ticker: '', crypto: '' };
+
+    // validation errors
+    if (err.message.includes('portfolio validation failed')) {
+        Object.values(err.errors).forEach(({ properties }) => {
+            errors[properties.path] = properties.message;
+        });
+    }
+
+    return errors;    
+}
+
+
+/**
+ * Handle errors on portfolios.
+ * 
+ * @param {*} err 
+ */
 const handleErrors = (err) => {
-    console.log("dbg 1a:", err.message);
-    console.log("dbg 1b:", err.code);
+    console.log(err.message, err.code);
     let errors = { portfolio: '' };
 
     // validation errors
     if (err.message.includes('portfolio validation failed')) {
-        console.log("dbg 1c", err);
         Object.values(err.errors).forEach(({ properties }) => {
-            console.log("dbg 1d:", properties);
             errors[properties.path] = properties.message;
         });
     }
@@ -18,6 +42,13 @@ const handleErrors = (err) => {
     return errors;
 }
 
+
+/**
+ * GET portfolios.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_get = async (req, res) => {
     const user = res.locals.user._id;
     try {
@@ -32,10 +63,23 @@ module.exports.portfolios_get = async (req, res) => {
     res.render('portfolios', {title: "Portfolios"});
 }
 
+
+/**
+ * GET portfolios create
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_create_get = (req, res) => {
     res.render('portfolios-create', { title: 'Create Portfolio' });
 }
 
+
+/**
+ * POST portfolios create
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_create_post = async (req, res) => {
     const { portfolio } = req.body;
     const user = res.locals.user._id;
@@ -49,6 +93,13 @@ module.exports.portfolios_create_post = async (req, res) => {
     }
 }
 
+
+/**
+ * GET portfolios id
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_id_get = async (req, res) => {
     const portfolio_id = req.params.pid;
     let title = "";
@@ -66,14 +117,83 @@ module.exports.portfolios_id_get = async (req, res) => {
 }
 
 
+/**
+ * GET portfolios id create
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_id_create_get = (req, res) => {
-    res.send('NOT IMPLEMENTED: portfolios_id_create_get');
+    res.locals.portfolio_id = req.params.pid;
+    res.render('asset-create', { title: 'Create Asset' });
 }
 
-module.exports.portfolios_id_create_post = (req, res) => {
-    res.send('NOT IMPLEMENTED: portfolios_id_create_post');
+
+/**
+ * POST portfolios id create
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+module.exports.portfolios_id_create_post = async (req, res) => {
+    const { kind, ticker, crypto } = req.body;
+    const portfolio_id = req.params.pid;
+
+    // todo - must check stock or crypto exists
+    const name = (kind == 'Stock') ? ticker : (kind == 'Crypto') ? crypto : '';
+    console.log(chalk.yellow(name));
+
+    try {
+        let portfolio = await Portfolio.findById(portfolio_id);
+        console.log(chalk.yellow(portfolio));
+        
+        let asset = await portfolio.assets.create({ kind, name });
+        console.log(chalk.yellow(asset));
+        
+        await portfolio.assets.push(asset);
+
+        // save portfolio - needs improvement
+        portfolio.save(async (err) => {
+            if (err) {
+                const errors = handleAssetErrors(err);
+                res.status(400).json({ errors });
+            } else {
+                res.status(201).json({ asset });
+            }
+        });
+    }
+    catch (err) {
+        const errors = handleAssetErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
+
+/**
+ * POST portfolios id remove
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+module.exports.portfolios_id_remove_post = async (req, res) => {
+    const portfolio_id = req.params.pid;
+    try {
+        let docs = await Portfolio.findByIdAndDelete (portfolio_id);
+        console.log(docs);
+        res.status(201).json({ docs });
+    }
+    catch (err) {
+        const errors = handleAssetErrors(err);
+        res.status(400).json({ errors });
+    }
+}
+
+
+/**
+ * GET portfolios id asset id
+ * @param {*} req 
+ * @param {*} res 
+ */
 module.exports.portfolios_id_asset_id_get = (req, res) => {
     res.send('NOT IMPLEMENTED: portfolios_id_asset_id_get');
 }

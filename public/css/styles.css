@@ -28,7 +28,7 @@ a {
 }
 
 header {
-    margin-bottom: 120px;
+    margin-bottom: 90px;
 }
 
 .mini-nav {
@@ -70,9 +70,18 @@ header {
     background: #FEE996;
 }
 
+.larger-font {
+    font-size: 110%;
+}
+
+.smaller-font {
+    font-size: 75%;
+}
+
 .show-header {
     display: flex;
     margin-bottom: 20px;
+    padding-top: 40px;
 }
 
 .show-header .show-left {
@@ -139,12 +148,10 @@ form {
 }
 
 form h2 {
-    /* font-size: 2.4em; */
-    /* font-weight: 900; */
     margin-bottom: 40px;
 }
 
-form input {
+form input, form select {
     padding: 10px 12px;
     border-radius: 4px;
     border: 1px solid #ddd;
@@ -194,14 +201,89 @@ footer {
     box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
 }
 
+.total-overview {
+    margin-bottom: 70px;
+}
 
+.total-overview-header {
+    margin-bottom: 10px;
+}
+
+.total-overview-row {
+    margin-bottom: 10px;
+}
+
+/* make all tables borderless */
+table, th, td {
+    border: none;
+}
+
+/* right-align monetary amounts */
+td[pos-neg-number-formatting] {
+    color: green;
+    text-align: right;
+}
+
+/* make the cells output their value */
+td[pos-neg-number-formatting]:before {
+    content: attr(pos-neg-number-formatting);
+}
+
+/* make debit amounts show up in red */
+td[pos-neg-number-formatting^="-"]:before {
+    color: red;
+}
 
 .portfolios-list {
+    width: 85%;
+    margin: 0 auto
+}
 
+.portfolios-list table {
+    width: 100%;
+}
+
+.portfolios-list th {
+    text-align: right;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-bottom: 10px;
+}
+
+.portfolios-list th:first-child {
+    text-align: left;
+}
+
+.portfolios-list td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .assets-list {
+    width: 85%;
+    margin: 0 auto
+}
 
+.assets-list table {
+    width: 100%;
+}
+
+.assets-list th {
+    height: 80px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.assets-list th:first-child, .assets-list th:nth-child(2) {
+    text-align: left;
+}
+
+.assets-list td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 

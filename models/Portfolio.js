@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const assetSchema = require('./Asset');
 
+function twoDecimalPoints(num) {
+    return num.toFixed(2);
+}
+
 // the schema
 const portfolioSchema = new mongoose.Schema({
     portfolio: {
@@ -15,34 +19,56 @@ const portfolioSchema = new mongoose.Schema({
     assets: [assetSchema],
     unrealized_value: {
         type: Number,
-        min: 0,
-        default: 0
-    },
-    realized_value: {
-        type: Number,
-        min: 0,
-        default: 0
-    },
-    annualized_value: {
-        type: Number,
-        min: 0,
+        get: twoDecimalPoints,
         default: 0
     },
     unrealized_value_percentage: {
         type: Number,
-        min: 0,
+        get: twoDecimalPoints,
         default: 0
     },
+
+    realized_value: {
+        type: Number,
+        get: twoDecimalPoints,
+        default: 0
+    },
+    cost_basis: {
+        type: Number,
+        get: twoDecimalPoints,
+        default: 0
+    },
+
+    // unrealized_value - cost-basis
+    total_value: {
+        type: Number,
+        get: twoDecimalPoints,
+        default: 0
+    },
+
+    // (unrealized_value / cost_basis - 1) * 100
+    total_value_percentage: {
+        type: Number,
+        get: twoDecimalPoints,
+        default: 0
+    },
+    
+    annualized_value: {
+        type: Number,
+        get: twoDecimalPoints,
+        default: 0
+    },
+    
     daily_value: {
         type: Number,
-        min: 0,
+        get: twoDecimalPoints,
         default: 0
     },
     daily_value_percentage: {
         type: Number,
-        min: 0,
+        get: twoDecimalPoints,
         default: 0
-    }
+    },
 });
 
 const Portfolio = mongoose.model('portfolio', portfolioSchema);

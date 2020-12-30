@@ -1,54 +1,66 @@
 <%- include("./partials/header"); -%>
 
+<div class="total-overview">
+    <div class="total-overview-header">
+        <h1><%- portfolio.portfolio %></h1>
+    </div>
+    <div class="total-overview-row">
+        <h3>
+           <span class="larger-font"><%- portfolio.unrealized_value %></span>
+           <span class="smaller-font">(<%- portfolio.realized_value %>)</span>
+        </h3>
+    </div>
+</div>
+
 <div class="mini-nav">
     <ul>
         <li><a href="/portfolios">Back to Overview</a></li>
-        <li><a href="/portfolios/<%= portfolio._id %>"><%- portfolio.portfolio %></a></li>
         <li><a href="/portfolios/<%= portfolio._id %>/create" class="btn">Add Asset</a></li>
     </ul>
 </div>
+
 <div class="assets-list">
     <% if (assets === undefined) { %>
-    
         <div class="error">An error occurred!</div>
-
     <% } else if (assets.length == 0) { %>
-
         <div class="error">There are no assets!</div>
-
     <% } else { %>
         <table>
-            <tr>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Last Price</th>
-                <th>Change</th>
-                <th>Value / Cost</th>
-                <th>Daily</th>
-            </tr>
-            <% assets.forEach((asset) => { %>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Last Price</th>
+                    <th>Change</th>
+                    <th>Value / Cost</th>
+                    <th>Daily</th>
+                </tr>
+            </thead>
+            <tbody>
+        <% assets.forEach((asset) => { %>
                 <tr>
                     <td rowspan="2"><%- asset.kind %></td>
-                    <td><a href="/portfolios/<%= portfolio._id %>/<%= asset.ticker %>"><%- asset.ticker %></a></td>
-                    <td><%- asset.exchangeIntraday.Open %></td>
-                    <td><%- asset.change_value %></td>
-                    <td><%- asset.unrealized_value %></td>
-                    <td><%- asset.daily_value %></td>
-                    <td rowspan="2">DEL</td>
+                    <td><a href="/portfolios/<%= portfolio._id %>/<%= asset._id %>"><%- asset.name %></a></td>
+                    <td pos-neg-number-formatting=<%#- asset.exchangeIntraday.Open %> >todo</td>
+                    <td pos-neg-number-formatting=<%- asset.change_value %> ></td>
+                    <td pos-neg-number-formatting=<%- asset.unrealized_value %> ></td>
+                    <td pos-neg-number-formatting=<%- asset.daily_value %> ></td>
                 </tr>
                 <tr>
-                    <td><a href="/portfolios/<%= portfolio._id %>/<%=asset._id %>"><%- asset.exchangeOverview.Name %></a></td>          
-                    <td><%- asset.exchangeIntraday.LastRefreshed %></td>
-                    <td><%- asset.change_value_percentage %>%</td>                    
-                    <td><%- asset.unrealized_value_percentage %>%</td>                    
-                    <td><%- asset.daily_value_percentage %>%</td>                    
+                    <td><a href="/portfolios/<%= portfolio._id %>/<%=asset._id %>"><%#- asset.exchangeOverview.Name %>todo</a></td>          
+                    <td pos-neg-number-formatting=<%#- asset.exchangeIntraday.LastRefreshed %> >todo</td>
+                    <td pos-neg-number-formatting=<%- asset.change_value_percentage %> >%</td>
+                    <td pos-neg-number-formatting=<%- asset.unrealized_value_percentage %> >%</td>
+                    <td pos-neg-number-formatting=<%- asset.daily_value_percentage %> >%</td>
                 </tr>
-            <% }); %>
+        <% }); %>
+            </tbody>
         </table>
-    <% } %>
-</div>
-
+        <% } %>
+    </div>
+    
 <%- include("./partials/footer"); -%>
+
 
 <!-- <td rowspan="2">
     <a class="delete" data-doc="<%= portfolio._id %>">

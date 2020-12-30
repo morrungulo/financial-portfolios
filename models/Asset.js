@@ -44,10 +44,9 @@ const assetSchema = new mongoose.Schema({
         required: true,
         enum: ['Stock', 'Crypto', 'Cash']
     },
-    ticker: {
+    name: {
         type: String,
         trim: true,
-        required: true,
         uppercase: true
     },
     transactions: [transactionSchema],
@@ -65,6 +64,11 @@ const assetSchema = new mongoose.Schema({
         type: Number,
         min: 0,
         default: 0,
+    },
+    unrealized_value_percentage: {
+        type: Number,
+        min: 0,
+        default: 0
     },
     realized_value: {
         type: Number,
@@ -86,11 +90,6 @@ const assetSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    unrealized_value_percentage: {
-        type: Number,
-        min: 0,
-        default: 0
-    },
     daily_value_percentage: {
         type: Number,
         min: 0,
@@ -98,8 +97,16 @@ const assetSchema = new mongoose.Schema({
     },
 
     // calculated
-    change_value: Number,
-    change_value_percentage: Number,
+    change_value: {
+        type: Number,
+        min: 0,
+        default: 0
+    },
+    change_value_percentage: {
+        type: Number,
+        min: 0,
+        default: 0
+    },
 
     // exchange data
     exchangeOverview: exchangeOverviewSchema,
