@@ -1,36 +1,26 @@
 const { Router } = require('express');
 const authMiddleware = require('../auth/authMiddleware');
-const portfoliosController = require('./portfoliosController');
+const portfoliosController = require('./portfoliosControllers');
 
 const router = Router();
 
-
-/** to be removed */
-const mongoose = require('mongoose');
-const Portfolio = require('../models/Portfolio');
-routes_remove_get = async (req, res) => {
-    const user = res.locals.user._id;
-    try {
-        await Portfolio.deleteMany({ user });
-    }
-    catch (err) {
-        //todo
-        console.log("oops");
-    }
-    res.redirect('/portfolios');
-}
-router.get('/remove', authMiddleware.requireAuth, routes_remove_get);
-/** to be removed */
-
-
-
-router.get('/', authMiddleware.requireAuth, authMiddleware.checkUser, portfoliosController.portfolios_get);
+// portfolios
 router.get('/create', authMiddleware.requireAuth, portfoliosController.portfolios_create_get);
 router.post('/create', authMiddleware.requireAuth, authMiddleware.checkUser, portfoliosController.portfolios_create_post);
-router.get('/:pid', authMiddleware.requireAuth, portfoliosController.portfolios_id_get);
-router.get('/:pid/create', authMiddleware.requireAuth, portfoliosController.portfolios_id_create_get);
-router.post('/:pid/create', authMiddleware.requireAuth, portfoliosController.portfolios_id_create_post);
-router.post('/:pid/remove', authMiddleware.requireAuth, portfoliosController.portfolios_id_remove_post);
-router.get('/:pid/:aid', authMiddleware.requireAuth, portfoliosController.portfolios_id_asset_id_get);
+router.post('/remove', authMiddleware.requireAuth, portfoliosController.portfolios_remove_post);
+router.get('/:pid', authMiddleware.requireAuth, portfoliosController.portfolios_detail);
+
+// assets
+router.get('/:pid/assets/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_get);
+router.post('/:pid/assets/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_post);
+router.post('/:pid/assets/remove', authMiddleware.requireAuth, portfoliosController.portfolios_assets_remove_post);
+router.post('/:pid/assets/:aid', authMiddleware.requireAuth, portfoliosController.portfolios_assets_detail);
+
+// transactions
+router.get('/:pid/assets/:aid/transactions/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_create_get);
+router.post('/:pid/assets/:aid/transactions/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_create_post);
+router.post('/:pid/assets/:aid/transactions/remove', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_remove_post);
+router.get('/:pid/assets/:aid/transactions/:tid', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_detail);
+router.put('/:pid/assets/:aid/transactions/:tid', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_update);
 
 module.exports = router;

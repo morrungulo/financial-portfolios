@@ -1,0 +1,27 @@
+<%- include("./partials/header"); -%>
+
+<div class="total-overview">
+    <div class="total-overview-header">
+        <h1><%- portfolio.name %> <span class="smaller-font">(<%- portfolio.currency %>)</span></h1>
+    </div>
+    <div class="total-overview-row">
+        <h3>
+           <span class="larger-font"><%- portfolio.unrealized_value %></span>
+           <span class="smaller-font">(<%- portfolio.realized_value %>)</span>
+        </h3>
+    </div>
+</div>
+
+<div class="mini-nav">
+    <ul>
+        <li><a href="/show">Return</a></li>
+        <li><a href="/portfolios/<%= portfolio._id %>/asset/create" class="btn">Add Asset</a></li>
+        <li><a href="/portfolios/<%= portfolio._id %>">Refresh</a></li>
+    </ul>
+</div>
+
+<div class="assets-list">
+    <p>TODO</p>
+</div>
+
+<%- include("./partials/footer"); -%>

@@ -2,7 +2,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 * {
-    /* border: 1px solid black */
+    /* border: 1px solid black; */
     margin: 0;
     padding: 0;
 }
@@ -14,7 +14,7 @@ body {
     background: #fafafa;
 }
 
-h1, h2, h3, h4, ul, li, a, p, input, label, button, div, header, footer {
+h1, h2, h3, h4, ul, li, a, p, input, label, button, select, div, header, footer {
     font-family: 'Quicksand', sans-serif;
     color: #444;
 }
@@ -68,6 +68,10 @@ header {
 .btn {
     border-radius: 32px;
     background: #FEE996;
+}
+
+.btn:hover {
+    background: #f4e060;
 }
 
 .larger-font {
@@ -178,6 +182,10 @@ form button {
     letter-spacing: 2px;
 }
 
+form button:hover {
+    background: #f4e060;
+}
+
 .error {
     color: #ff0099;
     margin: 10px 2px;
@@ -221,7 +229,6 @@ table, th, td {
 /* right-align monetary amounts */
 td[pos-neg-number-formatting] {
     color: green;
-    text-align: right;
 }
 
 /* make the cells output their value */
@@ -236,7 +243,8 @@ td[pos-neg-number-formatting^="-"]:before {
 
 .portfolios-list {
     width: 85%;
-    margin: 0 auto
+    margin: 0 auto;
+    margin-bottom: 70px;
 }
 
 .portfolios-list table {
@@ -244,20 +252,41 @@ td[pos-neg-number-formatting^="-"]:before {
 }
 
 .portfolios-list th {
-    text-align: right;
     font-weight: bold;
     font-size: 1.2em;
     padding-bottom: 10px;
 }
 
-.portfolios-list th:first-child {
+.portfolios-list th, .portfolios-list td {
+    text-align: right;
+}
+
+.portfolios-list th:first-child, .portfolios-list td:first-child {
     text-align: left;
 }
 
-.portfolios-list td img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+.watchlists-list {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 70px;
+}
+
+.watchlists-list table {
+    width: 100%;
+}
+
+.watchlists-list th {
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-bottom: 10px;
+}
+
+.watchlists-list th, .watchlists-list td {
+    text-align: center;
+}
+
+.watchlists-list th:first-child, .watchlists-list td:first-child {
+    text-align: left;
 }
 
 .assets-list {

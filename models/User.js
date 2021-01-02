@@ -18,14 +18,21 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// fire a function before doc saved to db
+/**
+ * Fire a function before doc is saved to db.
+ */
 userSchema.pre('save', async function(next) {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
-// static method to login user
+/**
+ * Static method to login user.
+ * 
+ * @param {*} email 
+ * @param {*} password 
+ */
 userSchema.statics.login = async function(email, password) {
     const user = await this.findOne({ email });
     if (user) {

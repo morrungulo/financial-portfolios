@@ -6,7 +6,7 @@
 
 Display the *user* portfolio(s) and watchlist(s)
 
-* show (GET)
+* ~~show (GET)~~
 
 ## Portfolios
 
@@ -16,26 +16,26 @@ Display the portfolios, assets per portfolio and the transactions per asset.
 
 A portolio contains a list of assets.
 
-* portfolio/create (GET and POST)
-* portfolio/remove (POST)
-* portfolio/:pid (GET)
+* ~~portfolios/create (GET and POST)~~
+* portfolios/remove (POST)
+* *portfolios/:pid (GET)*
 
 ### Asset
 
 An asset can be a *stock*, *crypto* or *cash* and contains a list of transactions.
 
-* portfolio/:pid/asset/create (GET and POST)
-* portfolio/:pid/asset/remove (POST)
-* portfolio/:pid/asset/:aid (GET)
+* *portfolios/:pid/asset/create (GET and POST)*
+* portfolios/:pid/asset/remove (POST)
+* portfolios/:pid/asset/:aid (GET)
 
 ### Transaction
 
 A Transaction can be of type *buy*, *sell*, *dividend* and *split*.
 
-* portfolio/:pid/asset/:aid/transaction/create (GET and POST)
-* portfolio/:pid/asset/:aid/transaction/remove (POST)
-* portfolio/:pid/asset/:aid/transaction/:tid (GET)
-* portfolio/:pid/asset/:aid/transaction/:tid/update (GET and POST)
+* portfolios/:pid/asset/:aid/transaction/create (GET and POST)
+* portfolios/:pid/asset/:aid/transaction/remove (POST)
+* portfolios/:pid/asset/:aid/transaction/:tid (GET)
+* portfolios/:pid/asset/:aid/transaction/:tid/update (GET and POST)
 
 ## Watchlists
 
@@ -45,17 +45,17 @@ Display the watchlist and its exchange data.
 
 A watchlist contains a list of exchange data entries.
 
-* watchlist/create (GET and POST)
-* watchlist/remove (POST)
-* watchlist/:wid (GET)
+* watchlists/create (GET and POST)
+* watchlists/remove (POST)
+* watchlists/:wid (GET)
 
 ### Exchange data entry
 
 An Exchange data entry can be a *stock*, *crypto* or *cash*.
 
-* watchlist/:wid/data/create (GET and POST)
-* watchlist/:wid/data/remove (POST)
-* watchlist/:wid/data/:did (GET)
+* watchlists/:wid/entry/create (GET and POST)
+* watchlists/:wid/entry/remove (POST)
+* watchlists/:wid/entry/:eid (GET)
 
 # Exchange Data
 
@@ -72,4 +72,8 @@ A data entry is added whenever this stock is referenced in either a watchlist da
 Data is refreshed every minute only, and must be triggered via a show (portfolios only), portfolio GET, asset GET, watchlist GET and data GET.
 
 For now, data is never deleted.
+
+# Currency Exchange Rate
+
+This must also be supported.
 

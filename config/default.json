@@ -21,5 +21,28 @@
 
     "alphavantage" : {
         "apikey": "WM1YB28P0XDGDZE9"
-    }
+    },
+
+    "currencies": [
+        {
+            "long": "US Dollars",
+            "short": "USD",
+            "symbol": "$"
+        },
+        {
+            "long": "Euros",
+            "short": "EUR",
+            "symbol": "€"
+        },
+        {
+            "long": "Japanese Yen",
+            "short": "JPY",
+            "symbol": "¥"
+        },
+        {
+            "long": "Chinese Yuan",
+            "short": "CNY",
+            "symbol": "元"
+        }
+    ]
 }

@@ -1,9 +1,11 @@
-const express = require("express");
-const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
-const authMiddleware = require("../auth/authMiddleware");
-const authRoutes = require("../auth/authRoutes");
-const portfoliosRoutes = require("../portfolios/portfoliosRoutes");
+const express = require('express');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const authMiddleware = require('../auth/authMiddleware');
+const authRoutes = require('../auth/authRoutes');
+const showRoutes = require('../show/showRoutes');
+const portfoliosRoutes = require('../portfolios/portfoliosRoutes');
+const watchlistsRoutes = require('../watchlists/watchlistsRoutes');
 
 module.exports = {
     initialize: ({ expressApp }, callback) => {
@@ -37,7 +39,9 @@ module.exports = {
 
         // register routes
         expressApp.use('/auth', authRoutes);
+        expressApp.use('/show', showRoutes);
         expressApp.use('/portfolios', portfoliosRoutes);
+        expressApp.use('/watchlists', watchlistsRoutes);
 
         // last page to be registered, the 404 page
         expressApp.use((req, res) => res.status(404).render('404', { title: 'Page Not Found', page: req.url }));

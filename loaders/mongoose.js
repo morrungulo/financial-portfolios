@@ -14,7 +14,7 @@ module.exports = {
         
         // database connection
         mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, socketTimeoutMS:15000 })
-            .then((result) => callback())
+            .then((res) => callback())
             .catch((err) => console.log(err));
     }
 }

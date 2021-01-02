@@ -1,21 +1,17 @@
 const mongoose = require('mongoose');
 
 // the schema
-const transactionSchema = new mongoose.Schema({
+const transactionCashSchema = new mongoose.Schema({
     kind: {
         type: String,
         required: true,
         lowercase: true,
-        enum: ['buy', 'sell', 'dividend', 'split']
+        enum: ['deposit', 'withdraw', 'interest']
     },
     date: {
         type: Date
     },
     quantity: {
-        type: Number,
-        min: 0
-    },
-    price: {
         type: Number,
         min: 0
     },
@@ -30,4 +26,4 @@ const transactionSchema = new mongoose.Schema({
 
 // there is no model
 
-module.exports = transactionSchema;
+module.exports = transactionCashSchema;

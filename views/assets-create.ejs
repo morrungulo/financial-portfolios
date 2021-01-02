@@ -20,6 +20,15 @@
         <input type="text" id="crypto" placeholder="Crypto symbol"/>
         <div class="crypto error"></div>
     </div>
+    <div id="asset-cash-div">
+        <label for="currency">Currency</label>
+        <select id="currency">
+            <% currencies.forEach((currency) => { %>
+                <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
+            <% }); %>
+        </select>
+        <div class="currency error"></div>
+    </div>
     <button>Add</button>
 </form>
 
@@ -45,6 +54,14 @@ $("#kind").change(function () {
         $('#crypto').removeAttr('required');
         $('#crypto').val('');
     }
+    if ($(this).val() == "Cash") {
+        $('#asset-cash-div').show();
+        $('#currency').attr('required', '');
+    } else {
+        $('#asset-cash-div').hide();
+        $('#currency').removeAttr('required');
+        $('#currency').val('');
+    }
 });
 $("#kind").trigger("change");
 
@@ -55,6 +72,7 @@ $("#kind").trigger("change");
     const form = document.querySelector('form');
     const tickerError = document.querySelector('.ticker.error');
     const cryptoError = document.querySelector('.crypto.error');
+    const currencyError = document.querySelector('.currency.error');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -62,16 +80,18 @@ $("#kind").trigger("change");
         // reset errors
         tickerError.textContent = '';
         cryptoError.textContent = '';
+        currencyError.textContent = '';
 
         // get values
         const kind = form.kind.value;
         const ticker = form.ticker.value;
         const crypto = form.crypto.value;
+        const currency = form.currency.value;
 
         try {
-            const res = await fetch('/portfolios/<%- portfolio_id %>/create', {
+            const res = await fetch('/portfolios/<%- portfolio_id %>/assets/create', {
                 method: 'POST',
-                body: JSON.stringify({ kind, ticker, crypto }),
+                body: JSON.stringify({ kind, ticker, crypto, currency }),
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await res.json();
@@ -79,6 +99,7 @@ $("#kind").trigger("change");
             if (data.errors) {
                 tickerError.textContent = data.errors.ticker;
                 cryptoError.textContent = data.errors.crypto;
+                currencyError.textContent = data.errors.currency;
             }
             if (data.asset) {
                 // todo- should send user to asset created

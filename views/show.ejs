@@ -17,9 +17,8 @@
 
 <div class="mini-nav">
     <ul>
-        <li><a href="/portfolios">Overview</a></li>
         <li><a href="/portfolios/create" class="btn">Add Portfolio</a></li>
-        <li><a href="/portfolios/remove" class="btn">Remove All Portfolios</a></li>
+        <li><a href="/show">Refresh</a></li>
     </ul>
 </div>
 
@@ -37,37 +36,22 @@
                     <th>Cost Basis</th>
                     <th>Daily</th>
                     <th>Total</th>
-                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
         <% portfolios.forEach((portfolio) => { %>
                 <tr>
-                    <td rowspan="2"><a href="/portfolios/<%= portfolio._id %>"><%- portfolio.portfolio %></a></td>          
+                    <td><a href="/portfolios/<%= portfolio._id %>"><%- portfolio.name %></a></td>          
                     <td pos-neg-number-formatting=<%- portfolio.unrealized_value %> />
                     <td pos-neg-number-formatting=<%- portfolio.cost_basis %> />
                     <td pos-neg-number-formatting=<%- portfolio.daily_value %> />                    
                     <td pos-neg-number-formatting=<%- portfolio.total_value %> />                    
-                    <!-- <td rowspan="2" class="delete">
-                        <img src="/img/trashcan.svg" alt="delete icon"/>
-                    </td> -->
-                    <td rowspan="2">
-                        <!-- <form method="POST" action="/portfolios/<%= portfolio._id %>/delete"> -->
-                        <!-- <form> -->
-                            <div id="delete-div-<%-portfolio._id %>">
-                                <button class="btn-delete" data-id="<%-portfolio._id %>">Delete</button>
-                            </div>
-                            <div id="confirm-div-<%-portfolio._id %>" class="hidden">
-                                <button class="btn-cancel" data-id="<%-portfolio._id %>">Cancel</button>
-                                <button class="btn-confirm" data-id="<%-portfolio._id %>">Confirm</button>
-                            </div>
-                        <!-- </form> -->
-                    </td>
                 </tr>
                 <tr>
-                    <td pos-neg-number-formatting=<%- portfolio.unrealized_value_percentage %> >%</td>
                     <td>&nbsp;</td>
                     <td pos-neg-number-formatting=<%- portfolio.daily_value_percentage %> >%</td>
+                    <td>&nbsp;</td>
+                    <td pos-neg-number-formatting=<%- portfolio.unrealized_value_percentage %> >%</td>
                     <td pos-neg-number-formatting=<%- portfolio.total_value_percentage %> >%</td>                    
                 </tr>
         <% }); %>
@@ -76,28 +60,40 @@
     <% } %>
 </div>
 
+<div class="mini-nav">
+    <ul>
+        <li><a href="/watchlists/create" class="btn">Add Watchlist</a></li>
+    </ul>
+</div>
+
+<div class="watchlists-list">
+    <% if (watchlists === undefined) { %>
+        <div class="error">An error occurred!</div>
+    <% } else if (watchlists.length == 0) { %>
+        <div class="error">There are no watchlists!</div>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Stocks</th>
+                    <th>Cryptos</th>
+                    <th>Cash</th>
+                </tr>
+            </thead>
+            <tbody>
+        <% watchlists.forEach((watchlist) => { %>
+                <tr>
+                    <td><a href="/watchlists/<%= watchlist._id %>"><%- watchlist.name %></a></td>
+                    <td><%- watchlist.stock_entries.length %></td>      
+                    <td><%- watchlist.crypto_entries.length %></td>      
+                    <td><%- watchlist.cash_entries.length %></td>      
+                </tr>
+        <% }); %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+
 <%- include("./partials/footer"); -%>
-
-
-<script>
-//<![CDATA[
-
-$("button.btn-delete").click(function () {
-    var id = this.dataset.id;
-    $('#delete-div-' + id).addClass("hidden");
-    $('#confirm-div-' + id).removeClass("hidden");
-});
-
-$("button.btn-cancel").click(function () {
-    var id = this.dataset.id;
-    $('#delete-div-' + id).removeClass("hidden");
-    $('#confirm-div-' + id).addClass("hidden");
-});
-
-$("button.btn-confirm").click(function () {
-    var id = this.dataset.id;
-    $.post("/portfolios/" + id + "/remove");
-});
-
-//]]>
-</script>

@@ -1,22 +1,44 @@
 const mongoose = require('mongoose');
-const assetSchema = require('./Asset');
-
-function twoDecimalPoints(num) {
-    return num.toFixed(2);
-}
+const assetCashSchema = require('./cash/Asset');
+const assetCryptoSchema = require('./crypto/Asset');
+const assetStockSchema = require('./stock/Asset');
+const { twoDecimalPoints } = require('./utils.js');
 
 // the schema
 const portfolioSchema = new mongoose.Schema({
-    portfolio: {
+
+    // portfolio name
+    name: {
         type: String,
         trim: true,
-        required: [true, 'Please enter a name']
+        required: [true, 'Please enter a portfolio name']
     },
-    user: {
-        type: String,
+
+    // who owns it
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
-    assets: [assetSchema],
+
+    // the currency of this portfolio - all values of different currencies shall be converted to this one
+    currency: {
+        type: String,
+        trim: true,
+        uppercase: true,
+        required: [true, 'Please enter a portfolio currency']
+    },
+
+    // the list of cash assets
+    cash_assets: [assetCashSchema],
+
+    // the list of crypto assets
+    crypto_assets: [assetCryptoSchema],
+
+    // the list of stock assets
+    stock_assets: [assetStockSchema],
+
+    // calculated value
     unrealized_value: {
         type: Number,
         get: twoDecimalPoints,
@@ -28,11 +50,14 @@ const portfolioSchema = new mongoose.Schema({
         default: 0
     },
 
+    // sum(asset.dividend + asset.realized)
     realized_value: {
         type: Number,
         get: twoDecimalPoints,
         default: 0
     },
+
+    // sum(asset.cost)
     cost_basis: {
         type: Number,
         get: twoDecimalPoints,
@@ -46,7 +71,7 @@ const portfolioSchema = new mongoose.Schema({
         default: 0
     },
 
-    // (unrealized_value / cost_basis - 1) * 100
+    // ((unrealized_value / cost_basis) - 1) * 100
     total_value_percentage: {
         type: Number,
         get: twoDecimalPoints,
