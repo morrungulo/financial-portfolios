@@ -1,8 +1,18 @@
+const { default: chalk } = require('chalk');
 const Asset = require('../models/stock/Asset');
 const ExchangeStock = require('../models/stock/Exchange');
 const stockProvider = require('./providers/alphavantageService');
 
-class StockAssetService {
+class StockService {
+
+    /**
+     * Return true if 'ticker' is valid.
+     * @param {String} ticker
+     * @returns {Boolean}
+     */
+    async isTickerValid(ticker) {
+        return await stockProvider.isTickerValid(ticker);
+    }
 
     /**
      * Return true if 'ticker' is in db.
@@ -41,7 +51,7 @@ class StockAssetService {
      */
     async getAndRefreshStock(ticker) {
         if (! await this.hasStock(ticker)) {
-            throw (`Ticker '${ticker}' is not available`);
+            throw Error(`Ticker '${ticker}' is not available`);
         }
 
         // get it
@@ -60,12 +70,30 @@ class StockAssetService {
             }
         }
 
+        // check if exchangeQuote needs to be refreshed
+        if (this.#needsUpdate(exData.exchangeQuote.updatedAt, exData.exchangeQuoteRefreshRate)) {
+            console.log('exchangeQuote needs refreshing');
+            try {
+                const data = await stockProvider.fetchExchangeQuote(ticker);
+                exData.exchangeQuote = data;
+                needsSave = true;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        /*
+        
+        Skip these for now!
+
+
         // check if exchangeIntraday needs to be refreshed
         if (this.#needsUpdate(exData.exchangeIntraday.updatedAt, exData.exchangeIntradayRefreshRate)) {
             console.log('exchangeIntraday needs refreshing');
             try {
                 const data = await stockProvider.fetchExchangeIntraday(ticker);
-                exData.exchangeIntraday = data;
+                exData.exchangeIntraday = [];
+                exData.exchangeIntraday.push(data);
                 needsSave = true;
             } catch (err) {
                 console.error(err);
@@ -76,7 +104,7 @@ class StockAssetService {
         if (this.#needsUpdate(exData.exchangeDaily.updatedAt, exData.exchangeDailyRefreshRate)) {
             console.log('exchangeDaily needs refreshing');
             try {
-                const data = await stockProvider.fetchExchangeIntraday(ticker);
+                const data = await stockProvider.fetchExchangeDaily(ticker);
                 exData.exchangeDaily = [];
                 exData.exchangeDaily.push(data);
                 needsSave = true;
@@ -84,6 +112,7 @@ class StockAssetService {
                 console.error(err);
             }
         }
+        */
 
         // save before exiting
         if (needsSave) {
@@ -103,8 +132,20 @@ class StockAssetService {
             return this.getStock(ticker);
         } else {
             try {
-                const { exchangeOverview, exchangeIntraday, exchangeDaily } = await stockProvider.fetchAll(ticker);
-                let exStock = new ExchangeStock({ name: ticker, exchangeOverview, exchangeIntraday, exchangeDaily });
+                // for now
+                const [exchangeOverviewInst, exchangeQuoteInst] = await stockProvider.fetchAll(ticker);
+                const exchangeIntradayInst = [], exchangeDailyInst = [];
+                // const { exchangeOverview, exchangeQuote, exchangeIntraday, exchangeDaily } = await stockProvider.fetchAll(ticker);
+                console.trace(chalk.red(exchangeOverviewInst));
+                console.trace(chalk.red(exchangeQuoteInst));
+                let exStock = new ExchangeStock({
+                    name: ticker,
+                    exchangeOverview: exchangeOverviewInst,
+                    exchangeQuote: exchangeQuoteInst,
+                    exchangeIntraday: exchangeIntradayInst,
+                    exchangeDaily: exchangeDailyInst
+                });
+                console.trace(chalk.red(exStock));
                 return exStock.save();
             } catch (err) {
                 console.error(err);
@@ -114,4 +155,4 @@ class StockAssetService {
     }
 }
 
-module.exports = StockAssetService
+module.exports = StockService

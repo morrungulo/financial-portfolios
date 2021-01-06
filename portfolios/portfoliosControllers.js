@@ -1,7 +1,7 @@
 const config = require('config');
 const Portfolio = require('../models/Portfolio');
 
-const { stockAssetService } = require('../services/stockAssetService');
+const { stockAssetService } = require('../services/StockService');
 
 
 const handleErrors = (err) => {
@@ -53,7 +53,8 @@ module.exports.portfolios_detail = async (req, res) => {
 }
 
 module.exports.portfolios_assets_create_get = (req, res) => {
-    res.render('assets-create', { title: 'Add Asset', currencies: config.get('currencies') });
+    const pid = req.params.pid;
+    res.render('assets-create', { title: 'Add Asset', currencies: config.get('currencies'), portfolio_id: pid });
 }
 
 module.exports.portfolios_assets_create_post = async (req, res) => {
@@ -102,24 +103,24 @@ module.exports.portfolios_assets_remove_post = async (req, res) => {
     res.send("Not implemented - portfolios_asset_remove_post!");
 }
 
-module.exports.portfolios_assets_transaction_create_get = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_transaction_create_get!");
+module.exports.portfolios_assets_transactions_create_get = async (req, res) => {
+    res.send("Not implemented - portfolios_assets_transactions_create_get!");
 }
 
-module.exports.portfolios_assets_transaction_create_post = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_transaction_create_post!");
+module.exports.portfolios_assets_transactions_create_post = async (req, res) => {
+    res.send("Not implemented - portfolios_assets_transactions_create_post!");
 }
 
-module.exports.portfolios_assets_transaction_remove_post = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_transaction_remove_post!");
+module.exports.portfolios_assets_transactions_remove_post = async (req, res) => {
+    res.send("Not implemented - portfolios_assets_transactions_remove_post!");
 }
 
-module.exports.portfolios_assets_transaction_detail = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_transaction_detail!");
+module.exports.portfolios_assets_transactions_detail = async (req, res) => {
+    res.send("Not implemented - portfolios_assets_transactions_detail!");
 }
 
-module.exports.portfolios_assets_transaction_update = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_transaction_update!");
+module.exports.portfolios_assets_transactions_update = async (req, res) => {
+    res.send("Not implemented - portfolios_assets_transactions_update!");
 }
 
 /*

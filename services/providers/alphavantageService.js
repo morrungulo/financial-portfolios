@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const config = require('config');
 const alpha = require('alphavantage')({ key: config.get('alphavantage.apikey') });
 
@@ -6,7 +7,7 @@ const alpha = require('alphavantage')({ key: config.get('alphavantage.apikey') }
  * @param {json} alpha 
  * @returns mongodb schema data
  */
-const buildExchangeOverviewFromAlpha = (alpha) => {
+const buildFromAlphaOverview = (alpha) => {
     return {
         Name: alpha.Name,
         Description: alpha.Description,
@@ -14,13 +15,23 @@ const buildExchangeOverviewFromAlpha = (alpha) => {
         Currency: alpha.Currency,
         Sector: alpha.Sector,
         Industry: alpha.Industry,
-        PEratio: alpha.PEratio,
+        PERatio: alpha.PERatio,
+        PEGRatio: alpha.PEGRatio,
+        ForwardPE: alpha.ForwardPE,
+        ProfitMargin: alpha.ProfitMargin,
         Dividend: alpha.DividendPerShare,
         DividendDate: alpha.DividendDate,
         ExDividendDate: alpha.ExDividendDate,
         EPS: alpha['EPS'],
         Week52High: alpha['52WeekHigh'],
         Week52Low: alpha['52WeekLow'],
+        TargetPrice: alpha.AnalystTargetPrice,
+        SharesOutstanding: alpha.SharesOutstanding,
+        BookValue: alpha.BookValue,
+        PriceToSalesRatioTTM: alpha.PriceToSalesRatioTTM,
+        PriceToBookRatio: alpha.PriceToBookRatio,
+        MarketCapitalization: alpha.MarketCapitalization,
+        EBITDA: alpha['EBITDA'],
     };
 }
 
@@ -29,21 +40,19 @@ const buildExchangeOverviewFromAlpha = (alpha) => {
  * @param {json} alpha 
  * @returns mongodb schema data
  */
-const buildExchangeIntradayFromAlpha = (alpha) => {
-    for (var k1 in alpha) {
-        if (k1.startsWith('Time Series')) {
-            for (var k2 in alpha[k1]) {
-                const intraday = alpha[k1][k2];
-                return {
-                    LastRefreshed: k2,
-                    Open: intraday['1. open'],
-                    High: intraday['2. high'],
-                    Low: intraday['3. low'],
-                    Close: intraday['4. close'],
-                }
-            }
-        }
-    }
+const buildFromAlphaQuote = (alpha) => {
+    const quote = alpha['Global Quote'];
+    return {
+        Open: quote['02. open'],
+        High: quote['03. high'],
+        Low: quote['04. low'],
+        Price: quote['05. price'],
+        Volume: quote['06. volume'],
+        LastTradingDay: quote['07. latest trading day'],
+        PreviousClose: quote['08. previous close'],
+        Change: quote['09. change'],
+        ChangePercent: quote['10. change percent'],
+    };
 }
 
 /**
@@ -51,7 +60,7 @@ const buildExchangeIntradayFromAlpha = (alpha) => {
  * @param {json} alpha 
  * @returns mongodb schema data
  */
-const buildExchangeDailyFromAlpha = (alpha) => {
+const buildFromAlphaTimeSeries = (alpha) => {
     let exData = [];
     for (var k1 in alpha) {
         if (k1.startsWith('Time Series')) {
@@ -73,30 +82,62 @@ const buildExchangeDailyFromAlpha = (alpha) => {
 
 async function fetchExchangeOverview(ticker) {
     const data = await alpha.fundamental.company_overview(ticker);
-    return buildExchangeOverviewFromAlpha(data);
+    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const result = buildFromAlphaOverview(data);
+    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    return result;
 }
 
 async function fetchExchangeIntraday(ticker) {
     const data = await alpha.data.intraday(ticker);
-    return buildExchangeIntradayFromAlpha(data);
+    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const result = buildFromAlphaTimeSeries(data);
+    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    return result;
+}
+
+async function fetchExchangeQuote(ticker) {
+    const data = await alpha.data.quote(ticker);
+    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const result = buildFromAlphaQuote(data);
+    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    return result;
 }
 
 async function fetchExchangeDaily(ticker) {
     const data = await alpha.data.daily_adjusted(ticker);
-    return buildExchangeDailyFromAlpha(data);
+    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const result = buildFromAlphaTimeSeries(data);
+    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    return result;
 }
 
 async function fetchAll(ticker) {
-    return Promise.all([
+    const result = await Promise.all([
         fetchExchangeOverview(ticker),
-        fetchExchangeIntraday(ticker),
-        fetchExchangeDaily(ticker)
+        fetchExchangeQuote(ticker),
+        // fetchExchangeIntraday(ticker),
+        // fetchExchangeDaily(ticker)
     ]);    
+    console.trace(chalk.red(JSON.stringify(result, null, "  ")));
+    return result;
+}
+
+async function isTickerValid(ticker) {
+    try {
+        const data = await alpha.data.quote(ticker);
+        return (Object.keys(data['Global Quote']).length > 0);
+    } catch (err) {
+        console.error(`Could not guarantee validity of '${ticker}`);
+        return false;
+    }
 }
 
 module.exports = {
     fetchAll,
     fetchExchangeOverview,
+    fetchExchangeQuote,
     fetchExchangeIntraday,
-    fetchExchangeDaily
+    fetchExchangeDaily,
+    isTickerValid,
 }

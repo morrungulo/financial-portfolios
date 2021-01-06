@@ -14,7 +14,7 @@ router.get('/:pid', authMiddleware.requireAuth, portfoliosController.portfolios_
 router.get('/:pid/assets/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_get);
 router.post('/:pid/assets/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_post);
 router.post('/:pid/assets/remove', authMiddleware.requireAuth, portfoliosController.portfolios_assets_remove_post);
-router.post('/:pid/assets/:aid', authMiddleware.requireAuth, portfoliosController.portfolios_assets_detail);
+router.get('/:pid/assets/:aid', authMiddleware.requireAuth, portfoliosController.portfolios_assets_detail);
 
 // transactions
 router.get('/:pid/assets/:aid/transactions/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_create_get);

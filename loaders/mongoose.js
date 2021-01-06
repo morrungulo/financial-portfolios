@@ -10,6 +10,7 @@ module.exports = {
         // const dbURI = 'mongodb://mongodb:27017/' + config.get('mongodb.dbname');
         
         // mongodb standalone docker (docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0)
+        // run mongo inside the container (docker exec -it mongodb /bin/bash)
         const dbURI = 'mongodb://172.17.0.5:27017/test';
         
         // database connection

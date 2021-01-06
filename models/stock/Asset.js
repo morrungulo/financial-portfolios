@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const transactionStockSchema = require('./Transaction');
-const { twoDecimalPoints } = require('../utils');
 
 // the schema
 const assetStockSchema = new mongoose.Schema({
@@ -28,49 +27,41 @@ const assetStockSchema = new mongoose.Schema({
     total_cost: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
     unrealized_value: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0,
     },
     unrealized_value_percentage: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
     realized_value: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0,
     },
     total_dividends: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0,
     },
     total_commissions: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0,
     },
     daily_value: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
     daily_value_percentage: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
 
@@ -78,13 +69,11 @@ const assetStockSchema = new mongoose.Schema({
     change_value: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
     change_value_percentage: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
 

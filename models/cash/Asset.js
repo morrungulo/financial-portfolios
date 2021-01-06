@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const transactionCashSchema = require('./Transaction');
-const { twoDecimalPoints } = require('../utils');
 
 // the schema
 const assetCashSchema = new mongoose.Schema({  
@@ -24,7 +23,6 @@ const assetCashSchema = new mongoose.Schema({
     total_commissions: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0,
     },
 
@@ -32,7 +30,6 @@ const assetCashSchema = new mongoose.Schema({
     total_interest: {
         type: Number,
         min: 0,
-        get: twoDecimalPoints,
         default: 0
     },
 

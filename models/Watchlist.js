@@ -20,19 +20,19 @@ const watchlistSchema = new mongoose.Schema({
     // the list of cash assets
     cash_entries: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeForex'        
+        ref: 'exchangeforex'        
     }],
 
     // the list of crypto assets
     crypto_entries: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeCrypto'        
+        ref: 'exchangecrypto'        
     }],
 
     // the list of stock assets
     stock_entries: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeStock'
+        ref: 'exchangestock'
     }]
 
 });

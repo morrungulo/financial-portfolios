@@ -1,19 +1,12 @@
 const mongoose = require('mongoose');
 
-// intraday of name
-const exchangeIntradaySchema = new mongoose.Schema({
+// time series of name
+const exchangeTimeSeriesSchema = new mongoose.Schema({
+    LastRefreshed: Date,
     Open: Number,
     High: Number,
     Low: Number,
-    Close: Number
-}, { timestamps: true });
-
-// daily of name
-const exchangeDailySchema = new mongoose.Schema({
-    Open: Number,
-    High: Number,
-    Low: Number,
-    Close: Number
+    Close: Number,
 }, { timestamps: true });
 
 // the schema
@@ -35,8 +28,8 @@ const exchangeCryptoSchema = new mongoose.Schema({
         required: [true, 'Please enter a currency']
     },
 
-    exchangeIntraday: exchangeIntradaySchema,
-    exchangeDaily: [exchangeDailySchema]
+    exchangeIntraday: [exchangeTimeSeriesSchema],
+    exchangeDaily: [exchangeTimeSeriesSchema]
 
 }, { timestamps: true});
 

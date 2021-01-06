@@ -5,12 +5,12 @@
         <h1>Overview</h1>
     </div>
     <div class="total-overview-row">
-        <% if (portfolios === undefined) { %>
+        <% if ((portfolios === undefined) || (watchlists === undefined)) { %>
             <div class="error">An error occurred!</div>
-        <% } else if (portfolios.length == 1) { %>
-            <h3>1 portfolio!</h3>
         <% } else { %>
-            <h3><%- portfolios.length %> portfolios!</h3>
+            <% const pstr = (portfolios.length == 1) ? 'portfolio' : 'portfolios'; %>
+            <% const wstr = (watchlists.length == 1) ? 'watchlist' : 'watchlists'; %>
+            <h3>(<%- portfolios.length %> <%- pstr %> and <%- watchlists.length %> <%- wstr %>)</h3>
         <% } %>
     </div>
 </div>

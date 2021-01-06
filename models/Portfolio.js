@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const assetCashSchema = require('./cash/Asset');
 const assetCryptoSchema = require('./crypto/Asset');
 const assetStockSchema = require('./stock/Asset');
-const { twoDecimalPoints } = require('./utils.js');
 
 // the schema
 const portfolioSchema = new mongoose.Schema({
@@ -41,57 +40,48 @@ const portfolioSchema = new mongoose.Schema({
     // calculated value
     unrealized_value: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
     unrealized_value_percentage: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
 
     // sum(asset.dividend + asset.realized)
     realized_value: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
 
     // sum(asset.cost)
     cost_basis: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
 
     // unrealized_value - cost-basis
     total_value: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
 
     // ((unrealized_value / cost_basis) - 1) * 100
     total_value_percentage: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
     
     annualized_value: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
     
     daily_value: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
     daily_value_percentage: {
         type: Number,
-        get: twoDecimalPoints,
         default: 0
     },
 });

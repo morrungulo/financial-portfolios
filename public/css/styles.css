@@ -222,21 +222,25 @@ footer {
 }
 
 /* make all tables borderless */
+
 table, th, td {
     border: none;
 }
 
 /* right-align monetary amounts */
+
 td[pos-neg-number-formatting] {
     color: green;
 }
 
 /* make the cells output their value */
+
 td[pos-neg-number-formatting]:before {
     content: attr(pos-neg-number-formatting);
 }
 
 /* make debit amounts show up in red */
+
 td[pos-neg-number-formatting^="-"]:before {
     color: red;
 }
@@ -315,6 +319,79 @@ td[pos-neg-number-formatting^="-"]:before {
     margin-right: auto;
 }
 
+/*
+  styles to display watchlist entries
+*/
+.entries-list {
+    width: 95%;
+    margin: 0 auto;
+    font-size: 0.9em;
+}
+
+.entries-list table {
+    margin: 1em auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.entries-list th, .entries-list td {
+    padding: 4px 8px;
+    text-align: right;
+}
+
+.entries-list thead th {
+    font-weight: bold;
+    vertical-align: text-top;
+    height: 2em;
+}
+
+.entries-list tbody tr:nth-child(odd) {
+    background: #f3e9be;
+}
+
+.entries-stock-list th:nth-child(1), .entries-stock-list tr *:nth-child(1),
+.entries-stock-list th:nth-child(2), .entries-stock-list tr *:nth-child(2),
+.entries-stock-list th:nth-child(3), .entries-stock-list tr *:nth-child(3) {
+    text-align: left;
+}
+
+
+
+/* 
+.entries-list {
+    width: 85%;
+    margin: 0 auto;
+}
+
+.entries-list table {
+    width: 100%;
+}
+
+.entries-list th {
+    height: 80px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.entries-list td {
+    text-align: right;
+}
+
+.entries-list th:first-child,
+.entries-list tr:first-child,
+.entries-list th:nth-child(2),
+.entries-list tr *:nth-child(2),
+.entries-list th:nth-child(3),
+.entries-list tr *:nth-child(3) {
+    text-align: left;
+}
+
+.entries-list td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+} */
 
 /*
 header {

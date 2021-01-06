@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
-const chalk = require('chalk');
+const { convertNoneToZero, convertStringWithPercentSignToNumber } = require('../utils');
 
-function convertNoneToZero(v) {
-    return (typeof(v) === 'string' && v == 'None') ? 0 : v;
-}
-
-// overview of name
+// overview 
 const exchangeOverviewSchema = new mongoose.Schema({
     Name: String,
     Description: String,
@@ -13,43 +9,48 @@ const exchangeOverviewSchema = new mongoose.Schema({
     Currency: String,
     Sector: String,
     Industry: String,
-    PEratio: Number,
-    Dividend: {
-        type: Number,
-        set: convertNoneToZero
-    },
-    DividendDate: {
-        type: Date,
-        set: convertNoneToZero
-    },
-    ExDividendDate: {
-        type: Date,
-        set: convertNoneToZero
-    },
-    EPS: Number,
-    Week52High: Number,
-    Week52Low: Number
+    PERatio: { type: Number, set: convertNoneToZero },
+    PEGRatio: { type: Number, set: convertNoneToZero },
+    ForwardPE: { type: Number, set: convertNoneToZero },
+    ProfitMargin: { type: Number, set: convertNoneToZero },
+    Dividend: { type: Number, set: convertNoneToZero },
+    DividendDate: { type: Date, set: convertNoneToZero },
+    ExDividendDate: { type: Date, set: convertNoneToZero },
+    EPS: { type: Number, set: convertNoneToZero },
+    Week52High: { type: Number, set: convertNoneToZero },
+    Week52Low: { type: Number, set: convertNoneToZero },
+    TargetPrice: { type: Number, set: convertNoneToZero },
+    SharesOutstanding: { type: Number, set: convertNoneToZero },
+    BookValue: { type: Number, set: convertNoneToZero },
+    PriceToSalesRatioTTM: { type: Number, set: convertNoneToZero },
+    PriceToBookRatio: { type: Number, set: convertNoneToZero },
+    MarketCapitalization: { type: Number, set: convertNoneToZero },
+    EBITDA: { type: Number, set: convertNoneToZero },
 }, { timestamps: true });  
 
-// intraday of name
-const exchangeIntradaySchema = new mongoose.Schema({
-    LastRefreshed: Date,
-    Open: Number,
-    High: Number,
-    Low: Number,
-    Close: Number
+// quote
+const exchangeQuoteSchema = new mongoose.Schema({
+    Open: { type: Number, set: convertNoneToZero },
+    High: { type: Number, set: convertNoneToZero },
+    Low: { type: Number, set: convertNoneToZero },
+    Price: { type: Number, set: convertNoneToZero },
+    Volume: { type: Number, set: convertNoneToZero },
+    LastTradingDay: { type: Date, set: convertNoneToZero },
+    PreviousClose: { type: Number, set: convertNoneToZero },
+    Change: { type: Number, set: convertNoneToZero },
+    ChangePercent: { type: Number, set: convertStringWithPercentSignToNumber },
 }, { timestamps: true });
 
-// daily of name
-const exchangeDailySchema = new mongoose.Schema({
-    LastRefreshed: Date,
-    Open: Number,
-    High: Number,
-    Low: Number,
-    Close: Number
+// time series
+const exchangeTimeSeriesSchema = new mongoose.Schema({
+    LastRefreshed: { type: Date, set: convertNoneToZero },
+    Open: { type: Number, set: convertNoneToZero },
+    High: { type: Number, set: convertNoneToZero },
+    Low: { type: Number, set: convertNoneToZero },
+    Close: { type: Number, set: convertNoneToZero },
 }, { timestamps: true });
 
-// the schema
+// the stock schema (aggregator)
 const exchangeStockSchema = new mongoose.Schema({
 
     // Stock ticker, eg. AAPL, AMZN, IBM
@@ -59,36 +60,14 @@ const exchangeStockSchema = new mongoose.Schema({
         uppercase: true,
         required: [true, 'Please enter a ticker']
     },
+    exchangeOverview: exchangeOverviewSchema,
+    exchangeQuote: exchangeQuoteSchema,
+    exchangeIntraday: [exchangeTimeSeriesSchema],
+    exchangeDaily: [exchangeTimeSeriesSchema]
 
-    exchangeOverview: {
-        type: exchangeOverviewSchema,
-        default: {}
-    },
-    // how often to refresh 'exchangeOverview' (in msec)
-    exchangeOverviewRefreshRate: {
-        type: Number,
-        default: Number(15 * 24 * 60 * 60 * 1000)   // 15d
-    },
-
-    exchangeIntraday: {
-        type: exchangeIntradaySchema,
-        default: {}
-    },
-    // how often to refresh 'exchangeIntraday' (in msec)
-    exchangeIntradayRefreshRate: {
-        type: Number,
-        default: Number(20 * 60 * 1000)   // 20min
-    },
-        
-    exchangeDaily: [exchangeDailySchema],
-    // how often to refresh 'exchangeDaily' (in msec)
-    exchangeDailyRefreshRate: {
-        type: Number,
-        default: Number(12 * 60 * 60 * 1000)   // 12h
-    },
-    
 }, { timestamps: true});
 
+// the model
 const ExchangeStock = mongoose.model('exchangestock', exchangeStockSchema);
 
 module.exports = ExchangeStock;

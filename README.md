@@ -45,9 +45,9 @@ Display the watchlist and its exchange data.
 
 A watchlist contains a list of exchange data entries.
 
-* watchlists/create (GET and POST)
+* ~~watchlists/create (GET and POST)~~
 * watchlists/remove (POST)
-* watchlists/:wid (GET)
+* *watchlists/:wid (GET)*
 
 ### Exchange data entry
 

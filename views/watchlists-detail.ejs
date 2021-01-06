@@ -1,0 +1,134 @@
+<%- include("./partials/header"); -%>
+
+<div class="total-overview">
+    <div class="total-overview-header">
+        <h1><%- watchlist.name %></h1>
+    </div>
+    <div class="total-overview-row">
+        <h3>
+            <% var stoc='stocks', cryp='cryptos', cash='currencies'; %>
+            <% if (watchlist.stock_entries.length == 1) { stoc='stock'; } %>
+            <% if (watchlist.crypto_entries.length == 1) { cryp='crypto'; } %>
+            <% if (watchlist.stock_entries.length == 1) { cash='currency'; } %>
+            <span class="larger-font">
+                (<%- watchlist.stock_entries.length %> <%- stoc %>, 
+                 <%- watchlist.crypto_entries.length %> <%- cryp %> and
+                 <%- watchlist.cash_entries.length %> <%- cash %>)
+            </span>
+        </h3>
+    </div>
+</div>
+
+<div class="mini-nav">
+    <ul>
+        <li><a href="/show">Return</a></li>
+        <li><a href="/watchlists/<%= watchlist._id %>/entries/create" class="btn">Add Entry</a></li>
+        <li><a href="/watchlists/<%= watchlist._id %>">Refresh</a></li>
+    </ul>
+</div>
+
+<div class="entries-list">
+    <div class="entries-stock-list">
+        <% if (watchlist.stock_entries.length == 0) { %>
+            <div class="error">There are no stocks!</div>
+        <% } else { %>
+            <table>
+                <thead>
+                    <th>Ticker</th>
+                    <th>Industry</th>
+                    <th>Sector</th>
+            
+                    <th>52wk High</th>
+                    <th>52wk Low</th>
+                    
+                    <th>Price</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Close</th>
+                    <th>Volume</th>
+                    <th>Change</th>
+                    <th>Change%</th>
+                    
+                    <th>PE Ratio</th>
+                    <th>EPS</th>
+                    <th>Dividend</th>
+                </thead>
+                <tbody>
+                <% watchlist.stock_entries.forEach(entry => { %>
+                    <tr>
+                        <td><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
+                        <td><%- entry.exchangeOverview.Industry %></td>
+                        <td><%- entry.exchangeOverview.Sector %></td>
+            
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></td>
+                        
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.High %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Low %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></td>
+                        <td class="format-integer"><%- entry.exchangeQuote.Volume %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></td>
+                        <td class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></td>
+                        
+                        <td class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></td>
+                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></td>
+                    </tr>
+            
+                <% }); %>
+                </tbody>
+            </table>
+            
+        <% } %>
+    </div>
+    <div class="entries-crypto-list">
+        <% if (watchlist.crypto_entries.length == 0) { %>
+            <div class="error">There are no cryptos!</div>
+        <% } else { %>
+        <% } %>
+    </div>
+    <div class="entries-cash-list">
+        <% if (watchlist.cash_entries.length == 0) { %>
+            <div class="error">There are no currencies!</div>
+        <% } else { %>
+        <% } %>
+    </div>
+</div>
+
+<%- include("./partials/footer"); -%>
+
+<script>
+    $(document).ready( function() {
+        $("td.format-currency-USD").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            }
+        });
+        $("td.format-percentage").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
+            }
+        });
+        $("td.format-3-fraction-digits").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            }
+        });
+        $("td.format-integer").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
+            }
+        });
+    });
+</script>

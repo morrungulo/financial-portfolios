@@ -1,12 +1,28 @@
 /**
- * Return 'num' with two decimal points.
- * 
- * @param {*} num 
+ * Return 0 iff 'v' is equal to 'None'.
+ * @param {String} v 
  */
-function twoDecimalPoints(num) {
-    return num.toFixed(2);
+function convertNoneToZero(v) {
+    return (typeof(v) === 'string' && v == 'None') ? 0 : v;
+}
+
+/**
+ * Remove the percent sign of the number (from '0.1234%' to '0.1234').
+ * @param {String} v 
+ */
+function convertStringWithPercentSignToNumber(v) {
+    if (typeof(v) === 'string') {
+        if (v == 'None') {
+            return 0;
+        } else if (v.endsWith('%')) {
+            return v.replace(/%$/g, '');
+        } else {
+            return v;
+        }
+    }
 }
 
 module.exports = {
-    twoDecimalPoints
+    convertNoneToZero,
+    convertStringWithPercentSignToNumber
 }
