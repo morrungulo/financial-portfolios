@@ -28,7 +28,7 @@
     <% } else if (portfolios.length == 0) { %>
         <div class="error">There are no portfolios!</div>
     <% } else { %>
-        <table>
+        <table class="sortable">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -40,19 +40,25 @@
             </thead>
             <tbody>
         <% portfolios.forEach((portfolio) => { %>
-                <tr>
-                    <td><a href="/portfolios/<%= portfolio._id %>"><%- portfolio.name %></a></td>          
-                    <td pos-neg-number-formatting=<%- portfolio.unrealized_value %> />
-                    <td pos-neg-number-formatting=<%- portfolio.cost_basis %> />
-                    <td pos-neg-number-formatting=<%- portfolio.daily_value %> />                    
-                    <td pos-neg-number-formatting=<%- portfolio.total_value %> />                    
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td pos-neg-number-formatting=<%- portfolio.daily_value_percentage %> >%</td>
-                    <td>&nbsp;</td>
-                    <td pos-neg-number-formatting=<%- portfolio.unrealized_value_percentage %> >%</td>
-                    <td pos-neg-number-formatting=<%- portfolio.total_value_percentage %> >%</td>                    
+                <tr class="item">
+                    <td sorttable_customkey="<%- portfolio.name %>">
+                        <a href="/portfolios/<%= portfolio._id %>"><%- portfolio.name %></a>
+                    </td>
+                    <td sorttable_customkey="<%- portfolio.unrealized_value %>">
+                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.unrealized_value %></span><br>
+                        <span class="format-percentage"><%- portfolio.unrealized_value_percentage %></span>
+                    </td>
+                    <td sorttable_customkey="<%- portfolio.cost_basis %>">
+                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.cost_basis %></span>
+                    </td>
+                    <td sorttable_customkey="<%- portfolio.daily_value %>">
+                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.daily_value %></span><br>
+                        <span class="format-percentage"><%- portfolio.daily_value %></span>
+                    </td>
+                    <td sorttable_customkey="<%- portfolio.total_value %>">
+                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_value %></span><br>
+                        <span class="format-percentage"><%- portfolio.total_value_percentage %></span>
+                    </td>
                 </tr>
         <% }); %>
             </tbody>
@@ -72,7 +78,7 @@
     <% } else if (watchlists.length == 0) { %>
         <div class="error">There are no watchlists!</div>
     <% } else { %>
-        <table>
+        <table class="sortable">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -83,8 +89,8 @@
             </thead>
             <tbody>
         <% watchlists.forEach((watchlist) => { %>
-                <tr>
-                    <td><a href="/watchlists/<%= watchlist._id %>"><%- watchlist.name %></a></td>
+                <tr class="item">
+                    <td sorttable_customkey="<%- watchlist.name %>"><a href="/watchlists/<%= watchlist._id %>"><%- watchlist.name %></a></td>
                     <td><%- watchlist.stock_entries.length %></td>      
                     <td><%- watchlist.crypto_entries.length %></td>      
                     <td><%- watchlist.cash_entries.length %></td>      
@@ -95,5 +101,45 @@
     <% } %>
 </div>
 
-
 <%- include("./partials/footer"); -%>
+
+<script>
+    $(document).ready( function() {
+        $(".format-currency-USD").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            }
+        });
+        $(".format-percentage").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
+            }
+        });
+        $(".format-3-fraction-digits").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            }
+        });
+        $(".format-integer").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
+            }
+        });
+        $(".format-time").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                const mdate = new Date($(this).text());
+                $(this).html(('0'+mdate.getHours()).slice(-2) + ':' + ('0'+mdate.getMinutes()).slice(-2));
+            }
+        });
+    });
+</script>

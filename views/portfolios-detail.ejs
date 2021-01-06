@@ -25,11 +25,7 @@
         <% if (portfolio.stock_assets.length == 0) { %>
             <div class="error">There are no stocks!</div>
         <% } else { %>
-            <table>
-                <thead>
-                    <th style="text-align: center;" colspan="3">Quotes</th>
-                    <th style="text-align: center;" colspan="3">Holdings</th>
-                </thead>
+            <table class="sortable">
                 <thead>
                     <th>Ticker</th>
                     <th>Price</th>
@@ -42,23 +38,32 @@
                 <tbody>
                 <% portfolio.stock_assets.forEach(asset => { %>
 
-                    <tr>
-                        <td><a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.name %></a></td>                                    
-                        <td class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></td>
-                        <td class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Change %></td>
+                    <tr class="item">
+                        <td sorttable_customkey="<%- asset.exchange_id.name %>">
+                            <a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.name %></a><br/>
+                            <span class="smaller-font"><a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
+                        </td>                                    
+                        <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
+                            <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
+                            <span class="smaller-font format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
+                        </td>
+                        <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
+                            <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
+                            <span class="smaller-font format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
+                        </td>
                         
-                        <td class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></td>
-                        <td class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></td>
-                        <td class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></td>                        
-                    </tr>
-                    <tr class="smaller-font">
-                        <td><a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></td>
-                        <td class="format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></td>
-                        <td class="format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></td>
-
-                        <td class="format-percentage"><%- asset.unrealized_value_percentage %></td>
-                        <td class="format-percentage"><%- asset.daily_value_percentage %></td>
-                        <td class="format-percentage"><%- asset.change_value_percentage %></td>                        
+                        <td sorttable_customkey="<%- asset.unrealized_value %>">
+                            <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span><br/>
+                            <span class="smaller-font format-percentage"><%- asset.unrealized_value_percentage %></span>
+                        </td>
+                        <td sorttable_customkey="<%- asset.daily_value %>">
+                            <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span><br/>
+                            <span class="smaller-font format-percentage"><%- asset.daily_value_percentage %></span>
+                        </td>
+                        <td sorttable_customkey="<%- asset.change_value %>">
+                            <span class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></span><br/>
+                            <span class="smaller-font format-percentage"><%- asset.change_value_percentage %></span> 
+                        </td>
                     </tr>
             
                 <% }); %>
@@ -66,46 +71,41 @@
             </table>
         <% } %>
     </div>
-
-
-
-
-
 </div>
 
 <%- include("./partials/footer"); -%>
 
 <script>
     $(document).ready( function() {
-        $("td.format-currency-USD").each(function() {
+        $(".format-currency-USD").each(function() {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
             }
         });
-        $("td.format-percentage").each(function() {
+        $(".format-percentage").each(function() {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
             }
         });
-        $("td.format-3-fraction-digits").each(function() {
+        $(".format-3-fraction-digits").each(function() {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
             }
         });
-        $("td.format-integer").each(function() {
+        $(".format-integer").each(function() {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
             }
         });
-        $("td.format-time").each(function() {
+        $(".format-time").each(function() {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {

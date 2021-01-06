@@ -9,14 +9,14 @@
 
 body {
     margin: 20px 40px;
-    font-size: 1.2rem;
+    font-size: 1.4em;
     letter-spacing: 1px;
-    background: #fafafa;
+    background: #ccc;
 }
 
 h1, h2, h3, h4, ul, li, a, p, input, label, button, select, div, header, footer {
     font-family: 'Quicksand', sans-serif;
-    color: #444;
+    color: #000;
 }
 
 ul {
@@ -68,6 +68,7 @@ header {
 .btn {
     border-radius: 32px;
     background: #FEE996;
+    border: 1px solid #f4e060;
 }
 
 .btn:hover {
@@ -148,7 +149,7 @@ form {
     padding: 30px;
     box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    background: #fff;
+    background: #aaa;
 }
 
 form h2 {
@@ -173,13 +174,13 @@ form button {
     margin-top: 30px;
     border-radius: 36px;
     background: #FEE996;
-    border: 0;
     text-transform: uppercase;
     font-weight: 700;
     font-size: 0.8em;
     display: block;
     padding: 10px 16px;
     letter-spacing: 2px;
+    border: 1px solid #f4e060;
 }
 
 form button:hover {
@@ -196,7 +197,7 @@ form button:hover {
 footer {
     text-align: center;
     margin-top: 120px;
-    color: #aaa;
+    color: #888;
 }
 
 .delete {
@@ -297,8 +298,7 @@ table, th, td {
     height: 2em;
 }
 
-.assets-list tbody tr:nth-child(4n+1),
-.assets-list tbody tr:nth-child(4n+2) {
+.assets-list tbody tr:nth-child(odd) {
     background: #f3e9be;
 }
 

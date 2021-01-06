@@ -32,7 +32,7 @@
         <% if (watchlist.stock_entries.length == 0) { %>
             <div class="error">There are no stocks!</div>
         <% } else { %>
-            <table>
+            <table class="sortable">
                 <thead>
                     <th>Ticker</th>
                     <th>Industry</th>
@@ -56,8 +56,8 @@
                 </thead>
                 <tbody>
                 <% watchlist.stock_entries.forEach(entry => { %>
-                    <tr>
-                        <td><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
+                    <tr class="item">
+                        <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
                         <td><%- entry.exchangeOverview.Industry %></td>
                         <td><%- entry.exchangeOverview.Sector %></td>
             
