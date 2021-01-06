@@ -19,6 +19,10 @@ const handleErrors = (err) => {
         errors.ticker = 'That ticker is already in the watchlist';
     }
 
+    if (err.message === 'transaction limits') {
+        errors.ticker = 'Could not satisfy request - please try later';
+    }
+
     // validation errors
     if (err.message.includes('exchangestock validation failed')) {
         Object.values(err.errors).map(properties => {
@@ -104,6 +108,9 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
                 }
             } else {
                 entry = await SS.createStock(ticker);
+                if (!entry) {
+                    throw Error('transaction limits');
+                }
             }
             watchlist.stock_entries.push(entry._id);
         } else if (kind === 'Crypto') {
