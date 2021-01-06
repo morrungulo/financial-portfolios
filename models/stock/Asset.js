@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const transactionStockSchema = require('./Transaction');
 
 // the schema
 const assetStockSchema = new mongoose.Schema({
@@ -9,15 +8,11 @@ const assetStockSchema = new mongoose.Schema({
         immutable: true
     },
 
-    ticker: {
-        type: String,
-        trim: true,
-        uppercase: true,
-        required: [true, "Please enter a ticker"]
-    },
-
     // buy, sell, etc.
-    transactions: [transactionStockSchema],
+    transactions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'transactionstock'
+    }],
     
     total_quantity: {
         type: Number,
@@ -77,14 +72,22 @@ const assetStockSchema = new mongoose.Schema({
         default: 0
     },
 
+    // portfolio data
+    portfolio_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'portfolio',
+        required: true
+    },
+
     // exchange data
     exchange_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeStock',
+        ref: 'exchangestock',
         required: true
     }
 });
 
-// there is no model
+// the model
+const AssetStock = mongoose.model('assetstock', assetStockSchema);
 
-module.exports = assetStockSchema;
+module.exports = AssetStock;

@@ -24,6 +24,7 @@ const transactionCashSchema = new mongoose.Schema({
     }
 });
 
-// there is no model
+// the model
+const TransactionCash = mongoose.model('transactioncash', transactionCashSchema);
 
-module.exports = transactionCashSchema;
+module.exports = TransactionCash;

@@ -28,6 +28,7 @@ const transactionStockSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// there is no model
+// the model
+const TransactionStock = mongoose.model('transactionstock', transactionStockSchema);
 
-module.exports = transactionStockSchema;
+module.exports = TransactionStock;

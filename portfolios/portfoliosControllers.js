@@ -1,16 +1,24 @@
 const config = require('config');
+const chalk = require('chalk');
 const Portfolio = require('../models/Portfolio');
-
-const { stockAssetService } = require('../services/StockService');
-
+const StockService = require('../services/StockService');
+const AssetStock = require('../models/stock/Asset');
 
 const handleErrors = (err) => {
-    console.log(err.message, err.code);
-    let errors = { portfolio: '', ticker: '', crypto: '', currency: ''};
+    console.log(chalk.red(err.message, err.code));
+    let errors = { portfolio: '', ticker: '', fromCrypto: '', toCrypto: '', fromCurrency: '', toCurrency: '' };
+
+    if (err.message === 'invalid ticker') {
+        errors.ticker = 'That ticker could not be found';
+    }
+
+    if (err.message === 'already in portfolio') {
+        errors.ticker = 'That ticker is already in the portfolio';
+    }
 
     // validation errors
     if (err.message.includes('portfolio validation failed')) {
-        Object.values(err.errors).forEach(({ properties }) => {
+        Object.values(err.errors).map(properties => {
             errors[properties.path] = properties.message;
         });
     }
@@ -27,7 +35,6 @@ module.exports.portfolios_create_post = async (req, res) => {
     const user_id = res.locals.user._id;
     try {
         let portfolio = await Portfolio.create({ name, user_id, currency });
-        console.log(portfolio);
         res.status(201).json({ portfolio });
     }
     catch (err) {
@@ -44,6 +51,11 @@ module.exports.portfolios_detail = async (req, res) => {
     const pid = req.params.pid;
     try {
         let portfolio = await Portfolio.findById(pid);
+        await portfolio
+            .populate({path: 'stock_assets'})
+            .populate({path: 'crypto_assets'})
+            .populate({path: 'cash_assets'})
+            .execPopulate();
         res.render('portfolios-detail', { title: portfolio.name, portfolio });
     }
     catch (err) {
@@ -66,21 +78,45 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
         let portfolio = await Portfolio.findById(pid);
         
         // create asset
-        let asset;
+        let asset = null;
         if (kind == 'Stock') {
-            asset = await stockService.get({ ticker });
 
-            await portfolio.stock_assets.push(asset);
+            // get the stock 
+            let entry = null;
+            const SS = new StockService();
+            const isValid = await SS.isTickerValid(ticker);
+            if (!isValid) {
+                throw Error('invalid ticker');
+            }
+            const hasStock = await SS.hasStock(ticker);
+            if (hasStock) {
+                entry = await SS.getStock(ticker);
+            } else {
+                entry = await SS.createStock(ticker);
+                if (!entry) {
+                    throw Error('transaction limits');
+                }
+            }
+
+            // is it already in portfolio?
+            const alreadyInPortfolio = await AssetStock.findOne({ 'portfolio_id': portfolio._id, 'exchange_id': entry._id });
+            if (alreadyInPortfolio) {
+                throw Error('already in portfolio');
+            }
+
+            // create asset and add to portfolio
+            asset = new AssetStock({ portfolio_id: portfolio._id, exchange_id: entry._id });
+            await asset.save();
+            portfolio.stock_assets.push(asset._id);
+            
         } else if (kind == 'Crypto') {
-            await portfolio.assets.push(asset);
             
         } else if (kind == 'Cash') {
             
-            await portfolio.assets.push(asset);
         }
 
         // save portfolio
-        portfolio.save(async (err) => {
+        portfolio.save(err => {
             if (err) {
                 const errors = handleErrors(err);
                 res.status(400).json({ errors });

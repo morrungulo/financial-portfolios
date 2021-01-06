@@ -20,6 +20,7 @@ const exchangeForexSchema = new mongoose.Schema({
     }
 }, { timestamps: true});
 
+// the model
 const ExchangeForex = mongoose.model('exchangeforex', exchangeForexSchema);
 
 module.exports = ExchangeForex;

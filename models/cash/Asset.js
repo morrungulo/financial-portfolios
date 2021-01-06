@@ -17,7 +17,10 @@ const assetCashSchema = new mongoose.Schema({
     },
 
     // deposits, withdrawls, etc.
-    transactions: [transactionCashSchema],
+    transactions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'transactioncash',
+    }],
 
     // commissions on deposits, withdrawls, etc.
     total_commissions: {
@@ -33,14 +36,22 @@ const assetCashSchema = new mongoose.Schema({
         default: 0
     },
 
+    // portfolio data
+    portfolio_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'portfolio',
+        required: true
+    },
+
     // exchange data
     exchange_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeForex',
+        ref: 'exchangeforex',
         required: true
     }
 });
 
-// there is no model
+// the model
+const AssetCash = mongoose.model('assetcash', assetCashSchema);
 
-module.exports = assetCashSchema;
+module.exports = AssetCash;

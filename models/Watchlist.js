@@ -13,7 +13,7 @@ const watchlistSchema = new mongoose.Schema({
     // who owns it
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
     },
 

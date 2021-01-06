@@ -16,7 +16,7 @@ const portfolioSchema = new mongoose.Schema({
     // who owns it
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
     },
 
@@ -29,13 +29,22 @@ const portfolioSchema = new mongoose.Schema({
     },
 
     // the list of cash assets
-    cash_assets: [assetCashSchema],
+    cash_assets: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'assetcash'
+    }],
 
     // the list of crypto assets
-    crypto_assets: [assetCryptoSchema],
+    crypto_assets: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'assetcrypto'
+    }],
 
     // the list of stock assets
-    stock_assets: [assetStockSchema],
+    stock_assets: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'assetstock'
+    }],
 
     // calculated value
     unrealized_value: {

@@ -25,6 +25,7 @@ const transactionCryptoSchema = new mongoose.Schema({
     }
 });
 
-// there is no model
+// the model
+const TransactionCrypto = mongoose.model('transactioncrypto', transactionCryptoSchema);
 
-module.exports = transactionCryptoSchema;
+module.exports = TransactionCrypto;

@@ -5,7 +5,6 @@ const ExchangeCrypto = require('../models/crypto/Exchange');
 const ExchangeForex = require('../models/cash/Exchange');
 const Watchlist = require('../models/Watchlist');
 const StockService = require('../services/StockService');
-const { watch } = require('../models/stock/Exchange');
 
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
@@ -92,8 +91,10 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
         let watchlist = await Watchlist.findById(wid);
         
         // create entry
-        let entry = null;
         if (kind === 'Stock') {
+            
+            // get the stock
+            let entry = null;
             const SS = new StockService();
             const isValid = await SS.isTickerValid(ticker);
             if (!isValid) {
@@ -102,17 +103,22 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             const hasStock = await SS.hasStock(ticker);
             if (hasStock) {
                 entry = await SS.getStock(ticker);
-                const alreadyInWatchlist = await Watchlist.find({"_id": wid, "stock_entries.name": entry.name});
-                if (alreadyInWatchlist) {
-                    throw Error('already in watchlist');
-                }
             } else {
                 entry = await SS.createStock(ticker);
                 if (!entry) {
                     throw Error('transaction limits');
                 }
             }
+
+            // is it already in watchlist?
+            const alreadyInWatchlist = await Watchlist.find({"_id": watchlist._id, "stock_entries.name": entry.name});
+            if (alreadyInWatchlist) {
+                throw Error('already in watchlist');
+            }
+
+            // add to watchlist
             watchlist.stock_entries.push(entry._id);
+
         } else if (kind === 'Crypto') {
 
         } else if (kind === 'Cash') {

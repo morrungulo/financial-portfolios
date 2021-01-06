@@ -138,7 +138,7 @@ class StockService {
                 // const { exchangeOverview, exchangeQuote, exchangeIntraday, exchangeDaily } = await stockProvider.fetchAll(ticker);
                 console.trace(chalk.red(exchangeOverviewInst));
                 console.trace(chalk.red(exchangeQuoteInst));
-                let exStock = new ExchangeStock({
+                const exStock = new ExchangeStock({
                     name: ticker,
                     exchangeOverview: exchangeOverviewInst,
                     exchangeQuote: exchangeQuoteInst,

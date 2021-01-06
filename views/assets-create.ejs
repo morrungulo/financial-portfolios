@@ -4,23 +4,23 @@
     <h2>Add Asset</h2>
     <div>
         <label for="kind">Kind</label>
-        <select id="kind">
+        <select id="kind" autofocus>
             <option value="Stock">Stock</option>
             <option value="Crypto">Crypto</option>
             <option value="Cash">Cash</option>
         </select>  
     </div>
-    <div id="asset-stock-div">
+    <div id="entry-stock-div">
         <label for="ticker">Ticker</label>
-        <input type="text" id="ticker" placeholder="Stock ticker"/>
+        <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
         <div class="ticker error"></div>
     </div>
-    <div id="asset-crypto-div">
-        <label for="crypto">Crypto</label>
-        <input type="text" id="crypto" placeholder="Crypto symbol"/>
+    <div id="entry-crypto-div">
+        <label for="crypto">From crypto</label>
+        <input type="text" id="crypto" placeholder="Crypto symbol (eg. ETH)"/>
         <div class="crypto error"></div>
     </div>
-    <div id="asset-cash-div">
+    <div id="entry-cash-div">
         <label for="currency">Currency</label>
         <select id="currency">
             <% currencies.forEach((currency) => { %>
@@ -39,26 +39,26 @@
 
 $("#kind").change(function () {
     if ($(this).val() == "Stock") {
-        $('#asset-stock-div').show();
+        $('#entry-stock-div').show();
         $('#ticker').attr('required', '');
     } else {
-        $('#asset-stock-div').hide();
+        $('#entry-stock-div').hide();
         $('#ticker').removeAttr('required');
         $('#ticker').val('');
     }
     if ($(this).val() == "Crypto") {
-        $('#asset-crypto-div').show();
+        $('#entry-crypto-div').show();
         $('#crypto').attr('required', '');
     } else {
-        $('#asset-crypto-div').hide();
+        $('#entry-crypto-div').hide();
         $('#crypto').removeAttr('required');
         $('#crypto').val('');
     }
     if ($(this).val() == "Cash") {
-        $('#asset-cash-div').show();
+        $('#entry-cash-div').show();
         $('#currency').attr('required', '');
     } else {
-        $('#asset-cash-div').hide();
+        $('#entry-cash-div').hide();
         $('#currency').removeAttr('required');
         $('#currency').val('');
     }
@@ -89,7 +89,7 @@ $("#kind").trigger("change");
         const currency = form.currency.value;
 
         try {
-            const res = await fetch('/portfolios/<%- portfolio._id %>/assets/create', {
+            const res = await fetch('/portfolios/<%- portfolio_id %>/assets/create', {
                 method: 'POST',
                 body: JSON.stringify({ kind, ticker, crypto, currency }),
                 headers: { 'Content-Type': 'application/json' }
@@ -102,8 +102,7 @@ $("#kind").trigger("change");
                 currencyError.textContent = data.errors.currency;
             }
             if (data.asset) {
-                // todo- should send user to asset created
-                location.assign('/portfolios/<%- portfolio._id %>');
+                location.assign('/portfolios/<%- portfolio_id %>');
             }
         }
         catch (err) {

@@ -17,7 +17,10 @@ const assetCryptoSchema = new mongoose.Schema({
     },
 
     // buy, sell, etc.
-    transactions: [transactionCryptoSchema],
+    transactions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'transactioncrypto'
+    }],
 
     total_quantity: {
         type: Number,
@@ -72,14 +75,22 @@ const assetCryptoSchema = new mongoose.Schema({
         default: 0
     },
 
+    // portfolio data
+    portfolio_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'portfolio',
+        required: true
+    },
+
     // exchange data
     exchange_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ExchangeCrypto',
+        ref: 'exchangecrypto',
         required: true
     }
 });
 
-// there is no model
+// the model
+const AssetCrypto = mongoose.model('assetcrypto', assetCryptoSchema);
 
-module.exports = assetCryptoSchema;
+module.exports = AssetCrypto;
