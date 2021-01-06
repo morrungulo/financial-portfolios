@@ -227,24 +227,6 @@ table, th, td {
     border: none;
 }
 
-/* right-align monetary amounts */
-
-td[pos-neg-number-formatting] {
-    color: green;
-}
-
-/* make the cells output their value */
-
-td[pos-neg-number-formatting]:before {
-    content: attr(pos-neg-number-formatting);
-}
-
-/* make debit amounts show up in red */
-
-td[pos-neg-number-formatting^="-"]:before {
-    color: red;
-}
-
 .portfolios-list {
     width: 85%;
     margin: 0 auto;
@@ -294,30 +276,36 @@ td[pos-neg-number-formatting^="-"]:before {
 }
 
 .assets-list {
-    width: 85%;
-    margin: 0 auto
+    width: 55%;
+    margin: 0 auto;
 }
 
 .assets-list table {
+    margin: 1em auto;
+    border-collapse: collapse;
     width: 100%;
 }
 
-.assets-list th {
-    height: 80px;
+.assets-list th, .assets-list td {
+    padding: 4px 8px;
     text-align: right;
-    font-weight: bold;
-    font-size: 1.1em;
 }
 
-.assets-list th:first-child, .assets-list th:nth-child(2) {
+.assets-list thead th {
+    font-weight: bold;
+    vertical-align: text-top;
+    height: 2em;
+}
+
+.assets-list tbody tr:nth-child(4n+1),
+.assets-list tbody tr:nth-child(4n+2) {
+    background: #f3e9be;
+}
+
+.assets-stock-list th:nth-child(1), .assets-stock-list tr *:nth-child(1) {
     text-align: left;
 }
 
-.assets-list td img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
 
 /*
   styles to display watchlist entries

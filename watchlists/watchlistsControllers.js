@@ -91,10 +91,10 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
         let watchlist = await Watchlist.findById(wid);
         
         // create entry
+        let entry = null;
         if (kind === 'Stock') {
             
             // get the stock
-            let entry = null;
             const SS = new StockService();
             const isValid = await SS.isTickerValid(ticker);
             if (!isValid) {
@@ -111,7 +111,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             }
 
             // is it already in watchlist?
-            const alreadyInWatchlist = await Watchlist.find({"_id": watchlist._id, "stock_entries.name": entry.name});
+            const alreadyInWatchlist = await Watchlist.findOne({"_id": watchlist._id, "stock_entries.name": entry.name});
             if (alreadyInWatchlist) {
                 throw Error('already in watchlist');
             }

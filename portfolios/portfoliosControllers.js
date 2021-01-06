@@ -16,6 +16,17 @@ const handleErrors = (err) => {
         errors.ticker = 'That ticker is already in the portfolio';
     }
 
+    if (err.message === 'transaction limits') {
+        errors.ticker = 'Could not satisfy request - please try later';
+    }
+
+    // validation errors
+    if (err.message.includes('exchangestock validation failed')) {
+        Object.values(err.errors).map(properties => {
+            errors.ticker = properties.message;
+        });
+    }
+            
     // validation errors
     if (err.message.includes('portfolio validation failed')) {
         Object.values(err.errors).map(properties => {
@@ -52,10 +63,13 @@ module.exports.portfolios_detail = async (req, res) => {
     try {
         let portfolio = await Portfolio.findById(pid);
         await portfolio
-            .populate({path: 'stock_assets'})
+            .populate({path: 'stock_assets', populate: {path: 'exchange_id'}})
             .populate({path: 'crypto_assets'})
             .populate({path: 'cash_assets'})
             .execPopulate();
+
+        console.log(chalk.cyan(JSON.stringify(portfolio, null, "  ")));
+        
         res.render('portfolios-detail', { title: portfolio.name, portfolio });
     }
     catch (err) {
