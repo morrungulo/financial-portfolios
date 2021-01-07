@@ -82,44 +82,57 @@ const buildFromAlphaTimeSeries = (alpha) => {
 
 async function fetchExchangeOverview(ticker) {
     const data = await alpha.fundamental.company_overview(ticker);
-    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaOverview(data);
-    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeIntraday(ticker) {
     const data = await alpha.data.intraday(ticker);
-    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaTimeSeries(data);
-    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeQuote(ticker) {
     const data = await alpha.data.quote(ticker);
-    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaQuote(data);
-    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeDaily(ticker) {
     const data = await alpha.data.daily_adjusted(ticker);
-    console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaTimeSeries(data);
-    console.log(chalk.green(JSON.stringify(result, null, "  ")));
+    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
+}
+
+function fetchExchangeCalculated() {
+    return new Promise((res, rej) => {
+        const result = {
+            DividendYieldPercent: 0,
+            DividendPayoutRatioPercent: 0,
+            Week52RangePercent: 0,
+        };
+        res(result);
+    });
 }
 
 async function fetchAll(ticker) {
     const result = await Promise.all([
         fetchExchangeOverview(ticker),
         fetchExchangeQuote(ticker),
+        fetchExchangeCalculated(),
         // fetchExchangeIntraday(ticker),
         // fetchExchangeDaily(ticker)
-    ]);    
-    console.trace(chalk.red(JSON.stringify(result, null, "  ")));
+    ]);
+
+    // console.trace(chalk.red(JSON.stringify(result, null, "  ")));
     return result;
 }
 
@@ -139,5 +152,6 @@ module.exports = {
     fetchExchangeQuote,
     fetchExchangeIntraday,
     fetchExchangeDaily,
+    fetchExchangeCalculated,
     isTickerValid,
 }

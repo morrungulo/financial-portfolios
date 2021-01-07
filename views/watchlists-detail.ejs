@@ -40,6 +40,7 @@
             
                     <th>52wk High</th>
                     <th>52wk Low</th>
+                    <th>52wk Range</th>
                     
                     <th>Price</th>
                     <th>Open</th>
@@ -53,6 +54,8 @@
                     <th>PE Ratio</th>
                     <th>EPS</th>
                     <th>Dividend</th>
+                    <th>Dividend Yield</th>
+                    <th>Dividend Payout Ratio</th>
                 </thead>
                 <tbody>
                 <% watchlist.stock_entries.forEach(entry => { %>
@@ -63,6 +66,7 @@
             
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></td>
+                        <td class="format-percentage"><%- entry.exchangeCalculated.Week52RangePercent %></td>
                         
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></td>
@@ -76,6 +80,8 @@
                         <td class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></td>
+                        <td class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></td>
+                        <td class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></td>
                     </tr>
             
                 <% }); %>
@@ -113,7 +119,7 @@
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
             }
         });
         $("td.format-3-fraction-digits").each(function() {

@@ -10,26 +10,27 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.8",
+    "mongoose-lifecycle": "^1.0.0",
     "morgan": "^1.10.0",
     "validator": "^13.5.2"
   },
   "scripts": {
     "start": "node app.js",
-    "stop": "pkill --signal SIGTERM financial-analysis"
+    "stop": "pkill --signal SIGTERM financial-portfolios"
   },
-  "name": "finance-analysis",
+  "name": "financial-portfolios",
   "description": "",
   "version": "1.0.0",
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/morrungulo/finance-analysis.git"
+    "url": "git+https://github.com/morrungulo/financial-portfolios.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/morrungulo/finance-analysis/issues"
+    "url": "https://github.com/morrungulo/financial-portfolios/issues"
   },
-  "homepage": "https://github.com/morrungulo/finance-analysis#readme"
+  "homepage": "https://github.com/morrungulo/financial-portfolios#readme"
 }

@@ -60,7 +60,7 @@ class StockService {
 
         // check if exchangeOverview needs to be refreshed
         if (this.#needsUpdate(exData.exchangeOverview.updatedAt, exData.exchangeOverviewRefreshRate)) {
-            console.log('exchangeOverview needs refreshing');
+            console.info('exchangeOverview needs refreshing');
             try {
                 const data = await stockProvider.fetchExchangeOverview(ticker);
                 exData.exchangeOverview = data;
@@ -72,7 +72,7 @@ class StockService {
 
         // check if exchangeQuote needs to be refreshed
         if (this.#needsUpdate(exData.exchangeQuote.updatedAt, exData.exchangeQuoteRefreshRate)) {
-            console.log('exchangeQuote needs refreshing');
+            console.info('exchangeQuote needs refreshing');
             try {
                 const data = await stockProvider.fetchExchangeQuote(ticker);
                 exData.exchangeQuote = data;
@@ -128,24 +128,25 @@ class StockService {
      */
     async createStock(ticker) {
         if (await this.hasStock(ticker)) {
-            console.info(`Ticker '${ticker}' already exists - no need to create!`);
+            console.warn(`Ticker '${ticker}' already exists - no need to create!`);
             return this.getStock(ticker);
         } else {
             try {
                 // for now
-                const [exchangeOverviewInst, exchangeQuoteInst] = await stockProvider.fetchAll(ticker);
-                const exchangeIntradayInst = [], exchangeDailyInst = [];
+                const [exchangeOverviewInst, exchangeQuoteInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
+                // const exchangeIntradayInst = [], exchangeDailyInst = [];
                 // const { exchangeOverview, exchangeQuote, exchangeIntraday, exchangeDaily } = await stockProvider.fetchAll(ticker);
-                console.trace(chalk.red(exchangeOverviewInst));
-                console.trace(chalk.red(exchangeQuoteInst));
+                // console.trace(chalk.red(exchangeOverviewInst));
+                // console.trace(chalk.red(exchangeQuoteInst));
                 const exStock = new ExchangeStock({
                     name: ticker,
                     exchangeOverview: exchangeOverviewInst,
                     exchangeQuote: exchangeQuoteInst,
-                    exchangeIntraday: exchangeIntradayInst,
-                    exchangeDaily: exchangeDailyInst
+                    exchangeCalculated: exchangeCalculatedInst,
+                    // exchangeIntraday: exchangeIntradayInst,
+                    // exchangeDaily: exchangeDailyInst
                 });
-                console.trace(chalk.red(exStock));
+                // console.trace(chalk.red(exStock));
                 return exStock.save();
             } catch (err) {
                 console.error(err);

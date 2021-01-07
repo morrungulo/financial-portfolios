@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLifecycle = require('mongoose-lifecycle');
 const { convertNoneToZero, convertStringWithPercentSignToNumber } = require('../utils');
 
 // overview 
@@ -50,6 +51,13 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
     Close: { type: Number, set: convertNoneToZero },
 }, { timestamps: true });
 
+// calculated items
+const exchangeCalculatedSchema = new mongoose.Schema({
+    DividendYieldPercent: Number,    // 100*(overview.dividend/quote.price)
+    DividendPayoutRatioPercent: Number,    // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
+    Week52RangePercent: Number,     // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
+}, { timestamps: true });
+
 // the stock schema (aggregator)
 const exchangeStockSchema = new mongoose.Schema({
 
@@ -62,12 +70,28 @@ const exchangeStockSchema = new mongoose.Schema({
     },
     exchangeOverview: exchangeOverviewSchema,
     exchangeQuote: exchangeQuoteSchema,
+    exchangeCalculated: exchangeCalculatedSchema,
     exchangeIntraday: [exchangeTimeSeriesSchema],
     exchangeDaily: [exchangeTimeSeriesSchema]
 
 }, { timestamps: true});
 
+// register listener
+exchangeStockSchema.plugin(mongooseLifecycle);
+
 // the model
 const ExchangeStock = mongoose.model('exchangestock', exchangeStockSchema);
+
+// listeners
+ExchangeStock.on('beforeSave', (entry) => {
+    entry.exchangeCalculated.DividendYieldPercent = 100 * (entry.exchangeOverview.Dividend / entry.exchangeQuote.Price);
+    if (entry.exchangeOverview.EPS != 0) {
+        entry.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (entry.exchangeOverview.EPS - entry.exchangeOverview.Dividend) / entry.exchangeOverview.EPS);
+    } else {
+        entry.exchangeCalculated.DividendPayoutRatioPercent = 0;
+    }
+    entry.exchangeCalculated.Week52RangePercent = 100 * ((entry.exchangeQuote.Price - entry.exchangeOverview.Week52Low) / (entry.exchangeOverview.Week52High - entry.exchangeOverview.Week52Low));
+});
+
 
 module.exports = ExchangeStock;
