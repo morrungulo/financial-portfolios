@@ -1,8 +1,5 @@
 const config = require('config');
 const chalk = require('chalk');
-const ExchangeStock = require('../models/stock/Exchange');
-const ExchangeCrypto = require('../models/crypto/Exchange');
-const ExchangeForex = require('../models/cash/Exchange');
 const Watchlist = require('../models/Watchlist');
 const StockService = require('../services/StockService');
 
@@ -66,8 +63,8 @@ module.exports.watchlists_detail = async (req, res) => {
         let watchlist = await Watchlist.findById(wid);
         await watchlist
             .populate({path: 'stock_entries'})
-            .populate({path: 'crypto_entries'})
-            .populate({path: 'cash_entries'})
+            // .populate({path: 'crypto_entries'})
+            // .populate({path: 'cash_entries'})
             .execPopulate();
         res.render('watchlists-detail', { title: watchlist.name, watchlist });
     }
@@ -89,7 +86,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
     try {
         // get the watchlist
         let watchlist = await Watchlist.findById(wid);
-        
+
         // create entry
         let entry = null;
         if (kind === 'Stock') {
@@ -111,7 +108,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             }
 
             // is it already in watchlist?
-            const alreadyInWatchlist = await Watchlist.findOne({"_id": watchlist._id, "stock_entries.name": entry.name});
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'stock_entries': { $in: [entry._id] }});
             if (alreadyInWatchlist) {
                 throw Error('already in watchlist');
             }
