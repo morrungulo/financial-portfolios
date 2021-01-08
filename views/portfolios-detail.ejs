@@ -1,5 +1,7 @@
 <%- include("./partials/header"); -%>
 
+<div class="main-body">
+
 <div class="total-overview">
     <div class="total-overview-header">
         <h1><%- portfolio.name %> <span class="smaller-font">(<%- portfolio.currency %>)</span></h1>
@@ -31,7 +33,7 @@
                     <th>Price</th>
                     <th>Change</th>
 
-                    <th>Value<br/>Cost</th>
+                    <th>Value/Cost</th>
                     <th>Daily</th>
                     <th>Total</th>
                 </thead>
@@ -73,45 +75,8 @@
     </div>
 </div>
 
+</div>
+
 <%- include("./partials/footer"); -%>
 
-<script>
-    $(document).ready( function() {
-        $(".format-currency-USD").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
-        });
-        $(".format-percentage").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
-            }
-        });
-        $(".format-3-fraction-digits").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
-            }
-        });
-        $(".format-integer").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
-            }
-        });
-        $(".format-time").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                const mdate = new Date($(this).text());
-                $(this).html(('0'+mdate.getHours()).slice(-2) + ':' + ('0'+mdate.getMinutes()).slice(-2));
-            }
-        });
-    });
-</script>
+<%- include("./partials/formatters"); -%>

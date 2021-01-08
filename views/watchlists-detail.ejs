@@ -1,5 +1,7 @@
 <%- include("./partials/header"); -%>
 
+<div class="main-extended-body">
+
 <div class="total-overview">
     <div class="total-overview-header">
         <h1><%- watchlist.name %></h1>
@@ -35,8 +37,8 @@
             <table class="sortable">
                 <thead>
                     <th>Ticker</th>
-                    <th>Industry</th>
-                    <th>Sector</th>
+                    <!-- <th>Industry</th> -->
+                    <!-- <th>Sector</th> -->
             
                     <th>52wk High</th>
                     <th>52wk Low</th>
@@ -51,18 +53,18 @@
                     <th>Change</th>
                     <th>Change%</th>
                     
-                    <th>PE Ratio</th>
+                    <th>P/E</th>
                     <th>EPS</th>
                     <th>Dividend</th>
                     <th>Dividend Yield</th>
-                    <th>Dividend Payout Ratio</th>
+                    <th>Dividend Payout</th>
                 </thead>
                 <tbody>
                 <% watchlist.stock_entries.forEach(entry => { %>
                     <tr class="item">
                         <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
-                        <td><%- entry.exchangeOverview.Industry %></td>
-                        <td><%- entry.exchangeOverview.Sector %></td>
+                        <!-- <td><%- entry.exchangeOverview.Industry %></td> -->
+                        <!-- <td><%- entry.exchangeOverview.Sector %></td> -->
             
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></td>
@@ -73,7 +75,7 @@
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.High %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Low %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></td>
-                        <td class="format-integer"><%- entry.exchangeQuote.Volume %></td>
+                        <td class="format-integer-short"><%- entry.exchangeQuote.Volume %></td>
                         <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></td>
                         <td class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></td>
                         
@@ -104,37 +106,8 @@
     </div>
 </div>
 
+</div>
+
 <%- include("./partials/footer"); -%>
 
-<script>
-    $(document).ready( function() {
-        $("td.format-currency-USD").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
-        });
-        $("td.format-percentage").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
-            }
-        });
-        $("td.format-3-fraction-digits").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
-            }
-        });
-        $("td.format-integer").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
-            }
-        });
-    });
-</script>
+<%- include("./partials/formatters"); -%>

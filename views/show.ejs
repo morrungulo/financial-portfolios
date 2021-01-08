@@ -1,5 +1,7 @@
 <%- include("./partials/header"); -%>
 
+<div class="main-body">
+
 <div class="total-overview">
     <div class="total-overview-header">
         <h1>Overview</h1>
@@ -31,7 +33,7 @@
         <table class="sortable">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Portfolio Name</th>
                     <th>Total Value</th>
                     <th>Cost Basis</th>
                     <th>Daily</th>
@@ -81,7 +83,7 @@
         <table class="sortable">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Watchlist Name</th>
                     <th>Stocks</th>
                     <th>Cryptos</th>
                     <th>Cash</th>
@@ -99,6 +101,8 @@
             </tbody>
         </table>
     <% } %>
+</div>
+
 </div>
 
 <%- include("./partials/footer"); -%>

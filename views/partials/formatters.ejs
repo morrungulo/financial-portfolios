@@ -1,0 +1,75 @@
+<script>
+    $(document).ready( function() {
+        $(".format-currency-USD").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            }
+        });
+        $(".format-percentage").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
+            }
+        });
+        $(".format-percentage-raw").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                const floatValue = parseFloat($(this).text()) * 100;
+                $(this).html(floatValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
+            }
+        });
+        $(".format-3-fraction-digits").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            }
+        });
+        $(".format-integer").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
+            }
+        });
+        $(".format-integer-short").each(function() {
+            if ($(this).text() == '0') {
+                $(this).html('-');
+            } else {
+                let intValue = parseInt($(this).text());
+                if (intValue >= 1000000) {
+                    intValue /= 1000000;
+                    let intSuffix = 'M';
+                    if (intValue >= 1000) {
+                        intValue /= 1000;
+                        intSuffix = 'B';
+                    }
+                    $(this).html(intValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + intSuffix);
+                } else {
+                    $(this).html(intValue.toLocaleString('en-US'));
+                }
+            }
+        });
+        $(".format-time").each(function() {
+            const mdate = new Date($(this).text());
+            if (mdate.getFullYear()==1970) {
+                $(this).html('-');
+            } else {
+                $(this).html(mdate.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }));
+            }
+        });
+        $(".format-date").each(function() {
+            const mdate = new Date($(this).text());
+            if (mdate.getFullYear()==1970) {
+                $(this).html('-');
+            } else {
+                const options = { month: 'short', day: 'numeric' };
+                $(this).html(mdate.toLocaleDateString([], options));
+            }
+        });
+    });
+</script>
