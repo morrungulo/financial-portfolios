@@ -1,4 +1,4 @@
-<%- include("./partials/header"); -%>
+<%- include("./partials/header"); %>
 
 <div class="main-extended-body">
 
@@ -29,85 +29,92 @@
     </ul>
 </div>
 
+<% if ((watchlist.stock_entries.length == 0) && (watchlist.crypto_entries.length == 0) && (watchlist.cash_entries.length == 0)) { %>
+    <div class="error">There are no entries!</div>
+<% } %>
+
+<% if (watchlist.stock_entries.length > 0) { %>
 <div class="entries-list">
     <div class="entries-stock-list">
-        <% if (watchlist.stock_entries.length == 0) { %>
-            <div class="error">There are no stocks!</div>
-        <% } else { %>
-            <table class="sortable">
-                <thead>
-                    <th>Ticker</th>
-                    <!-- <th>Industry</th> -->
-                    <!-- <th>Sector</th> -->
+        <table class="sortable">
+            <thead>
+                <th>Ticker</th>
+                <!-- <th>Industry</th> -->
+                <!-- <th>Sector</th> -->
+        
+                <th>52wk High</th>
+                <th>52wk Low</th>
+                <th>52wk Range</th>
+                
+                <th>Price</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Volume</th>
+                <th>Change</th>
+                <th>Change%</th>
+                
+                <th>P/E</th>
+                <th>EPS</th>
+                <th>Dividend</th>
+                <th>Dividend Yield</th>
+                <th>Dividend Payout</th>
+            </thead>
+            <tbody>
+            <% watchlist.stock_entries.forEach(entry => { %>
+                <tr class="item">
+                    <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
+                    <!-- <td><%#- entry.exchangeOverview.Industry %></td> -->
+                    <!-- <td><%#- entry.exchangeOverview.Sector %></td> -->
+        
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>
+                    <td><span class="format-percentage"><%- entry.exchangeCalculated.Week52RangePercent %></span></td>
+
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.High %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Low %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></span></td>
+
+                    <td><span class="format-integer-short"><%- entry.exchangeQuote.Volume %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></span></td>
+                    <td><span class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></span></td>
+                    <td><span class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></span></td>
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></span></td>
+
+                    <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></span></td>
+                    <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></span></td>
+                    <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></span></td>
+                </tr>
             
-                    <th>52wk High</th>
-                    <th>52wk Low</th>
-                    <th>52wk Range</th>
-                    
-                    <th>Price</th>
-                    <th>Open</th>
-                    <th>High</th>
-                    <th>Low</th>
-                    <th>Close</th>
-                    <th>Volume</th>
-                    <th>Change</th>
-                    <th>Change%</th>
-                    
-                    <th>P/E</th>
-                    <th>EPS</th>
-                    <th>Dividend</th>
-                    <th>Dividend Yield</th>
-                    <th>Dividend Payout</th>
-                </thead>
-                <tbody>
-                <% watchlist.stock_entries.forEach(entry => { %>
-                    <tr class="item">
-                        <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
-                        <!-- <td><%- entry.exchangeOverview.Industry %></td> -->
-                        <!-- <td><%- entry.exchangeOverview.Sector %></td> -->
-            
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></td>
-                        <td class="format-percentage"><%- entry.exchangeCalculated.Week52RangePercent %></td>
-                        
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.High %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Low %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></td>
-                        <td class="format-integer-short"><%- entry.exchangeQuote.Volume %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></td>
-                        <td class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></td>
-                        
-                        <td class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></td>
-                        <td class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></td>
-                        <td class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></td>
-                        <td class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></td>
-                    </tr>
-            
-                <% }); %>
-                </tbody>
-            </table>
-            
-        <% } %>
+            <% }); %>
+            </tbody>
+        </table>
     </div>
+</div>
+<% } %>
+
+<% if (watchlist.crypto_entries.length > 0) { %>
+<div class="entries-list">
     <div class="entries-crypto-list">
-        <% if (watchlist.crypto_entries.length == 0) { %>
-            <div class="error">There are no cryptos!</div>
-        <% } else { %>
-        <% } %>
+        todo
     </div>
+</div>
+<% } %>
+
+<% if (watchlist.cash_entries.length > 0) { %>
+<div class="entries-list">
     <div class="entries-cash-list">
-        <% if (watchlist.cash_entries.length == 0) { %>
-            <div class="error">There are no currencies!</div>
-        <% } else { %>
-        <% } %>
+        todo
     </div>
 </div>
+<% } %>
 
 </div>
 
-<%- include("./partials/footer"); -%>
+<%- include("./partials/footer"); %>
 
-<%- include("./partials/formatters"); -%>
+<%- include("./partials/formatters"); %>
+

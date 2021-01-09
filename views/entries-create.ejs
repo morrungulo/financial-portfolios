@@ -1,38 +1,40 @@
 <%- include("./partials/header"); -%>
 
-<form autocomplete="off">
-    <h2>Add Entry</h2>
-    <div>
-        <label for="kind">Kind</label>
-        <select id="kind" autofocus>
-            <option value="Stock">Stock</option>
-            <option value="Crypto">Crypto</option>
-            <option value="Cash">Cash</option>
-        </select>  
-    </div>
-    <div id="entry-stock-div">
-        <label for="ticker">Ticker</label>
-        <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
-        <div class="ticker error"></div>
-    </div>
-    <div id="entry-crypto-div">
-        <label for="fromCrypto">From crypto</label>
-        <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)"/>
-        <div class="fromCrypto error"></div>
-        <label for="toCrypto">to currency</label>
-        <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)"/>
-        <div class="toCrypto error"></div>
-    </div>
-    <div id="entry-cash-div">
-        <label for="fromCurrency">From currency</label>
-        <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)" />
-        <div class="fromCurrency error"></div>
-        <label for="toCurrency">To currency</label>
-        <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)" />
-        <div class="toCurrency error"></div>
-    </div>
-    <button>Add</button>
-</form>
+<div class="canvas-ask-user">
+    <form autocomplete="off">
+        <h2>Add Entry</h2>
+        <div>
+            <label for="kind">Kind</label>
+            <select id="kind" autofocus>
+                <option value="Stock">Stock</option>
+                <option value="Crypto">Crypto</option>
+                <option value="Cash">Cash</option>
+            </select>
+        </div>
+        <div id="entry-stock-div">
+            <label for="ticker">Ticker</label>
+            <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)" />
+            <div class="ticker error"></div>
+        </div>
+        <div id="entry-crypto-div">
+            <label for="fromCrypto">From crypto</label>
+            <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)" />
+            <div class="fromCrypto error"></div>
+            <label for="toCrypto">To currency</label>
+            <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)" />
+            <div class="toCrypto error"></div>
+        </div>
+        <div id="entry-cash-div">
+            <label for="fromCurrency">From currency</label>
+            <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)" />
+            <div class="fromCurrency error"></div>
+            <label for="toCurrency">To currency</label>
+            <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)" />
+            <div class="toCurrency error"></div>
+        </div>
+        <button>Add</button>
+    </form>
+</div>
 
 <%- include("./partials/footer"); -%>
 

@@ -1,19 +1,23 @@
 <%- include("./partials/header"); -%>
 
-<form autocomplete="off">
-    <h2>Add Portfolio</h2>
-    <label for="name">Portfolio name</label>
-    <input type="text" name="name" required autofocus />
-    <div class="name error"></div>
-    <label for="currency">Portfolio currency</label>
-    <select id="currency">
-        <% currencies.forEach((currency) => { %>
-            <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
+<div class="canvas-ask-user">
+    <form autocomplete="off">
+        <h2>Add Portfolio</h2>
+        <label for="name">Portfolio name</label>
+        <input type="text" name="name" required autofocus />
+        <div class="name error"></div>
+        <label for="currency">Portfolio currency</label>
+        <select id="currency">
+        <% currencies.forEach((currency)=> { %>
+            <option value="<%- currency.short %>">
+                <%- currency.long %> (<%- currency.symbol %>)
+            </option>
         <% }); %>
-    </select>
-    <div class="currency error"></div>
-    <button>Add</button>
-</form>
+        </select>
+        <div class="currency error"></div>
+        <button>Add</button>
+    </form>
+</div>
 
 <%- include("./partials/footer"); -%>
 

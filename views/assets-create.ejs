@@ -1,36 +1,38 @@
 <%- include("./partials/header"); -%>
 
-<form autocomplete="off">
-    <h2>Add Asset</h2>
-    <div>
-        <label for="kind">Kind</label>
-        <select id="kind" autofocus>
-            <option value="Stock">Stock</option>
-            <option value="Crypto">Crypto</option>
-            <option value="Cash">Cash</option>
-        </select>  
-    </div>
-    <div id="entry-stock-div">
-        <label for="ticker">Ticker</label>
-        <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
-        <div class="ticker error"></div>
-    </div>
-    <div id="entry-crypto-div">
-        <label for="crypto">From crypto</label>
-        <input type="text" id="crypto" placeholder="Crypto symbol (eg. ETH)"/>
-        <div class="crypto error"></div>
-    </div>
-    <div id="entry-cash-div">
-        <label for="currency">Currency</label>
-        <select id="currency">
+<div class="canvas-ask-user">
+    <form autocomplete="off">
+        <h2>Add Asset</h2>
+        <div>
+            <label for="kind">Kind</label>
+            <select id="kind" autofocus>
+                <option value="Stock">Stock</option>
+                <option value="Crypto">Crypto</option>
+                <option value="Cash">Cash</option>
+            </select>  
+        </div>
+        <div id="entry-stock-div">
+            <label for="ticker">Ticker</label>
+            <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
+            <div class="ticker error"></div>
+        </div>
+        <div id="entry-crypto-div">
+            <label for="crypto">Crypto</label>
+            <input type="text" id="crypto" placeholder="Crypto symbol (eg. ETH)"/>
+            <div class="crypto error"></div>
+        </div>
+        <div id="entry-cash-div">
+            <label for="currency">Currency</label>
+            <select id="currency">
             <% currencies.forEach((currency) => { %>
                 <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
             <% }); %>
-        </select>
-        <div class="currency error"></div>
-    </div>
-    <button>Add</button>
-</form>
+            </select>
+            <div class="currency error"></div>
+        </div>
+        <button>Add</button>
+    </form>
+</div>
 
 <%- include("./partials/footer"); -%>
 

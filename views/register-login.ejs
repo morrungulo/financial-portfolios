@@ -1,15 +1,18 @@
 <%- include("./partials/header"); -%>
 
-<form autocomplete="off">
-    <h2><%- title %></h2>
-    <label for="email">Email</label>
-    <input type="email" name="email" required autofocus />
-    <div class="email error"></div>
-    <label for="password">Password</label>
-    <input type="password" name="password" required />
-    <div class="password error"></div>
-    <button><%- buttonTitle %></button>
-</form>
+<div class="canvas-ask-user">
+    <form autocomplete="off">
+        <h2><%- title %></h2>
+        <label for="email">Email</label>
+        <input type="email" name="email" required autofocus />
+        <div class="email error"></div>
+        <label for="password">Password</label>
+        <input type="password" name="password" required />
+        <div class="password error"></div>
+        <button><%- buttonTitle %></button>
+    </form>
+</div>
+
 
 <%- include("./partials/footer"); -%>
 
