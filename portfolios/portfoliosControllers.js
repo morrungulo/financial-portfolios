@@ -38,7 +38,7 @@ const handleErrors = (err) => {
 }
 
 module.exports.portfolios_create_get = async (req, res) => {
-    res.render('portfolios-create', { title: 'Add Portfolio', currencies: config.get('currencies') });
+    res.render('portfolios/portfolios-create', { title: 'Add Portfolio', currencies: config.get('currencies') });
 }
 
 module.exports.portfolios_create_post = async (req, res) => {
@@ -70,7 +70,7 @@ module.exports.portfolios_detail = async (req, res) => {
 
         console.log(chalk.cyan(JSON.stringify(portfolio, null, "  ")));
         
-        res.render('portfolios-detail', { title: portfolio.name, portfolio });
+        res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio });
     }
     catch (err) {
         const errors = handleErrors(err);
@@ -80,7 +80,7 @@ module.exports.portfolios_detail = async (req, res) => {
 
 module.exports.portfolios_assets_create_get = (req, res) => {
     const pid = req.params.pid;
-    res.render('assets-create', { title: 'Add Asset', currencies: config.get('currencies'), portfolio_id: pid });
+    res.render('portfolios/assets-create', { title: 'Add Asset', currencies: config.get('currencies'), portfolio_id: pid });
 }
 
 module.exports.portfolios_assets_create_post = async (req, res) => {

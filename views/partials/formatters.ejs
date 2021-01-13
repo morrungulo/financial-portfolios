@@ -1,11 +1,26 @@
 <script>
+
+    // format 'elem' as a currency according to its 'locale'
+    function format_currency(elem, locale) {
+        if (elem.text() == '0') {
+            elem.html('-');
+        } else {
+            elem.html(parseFloat(elem.text()).toLocaleString(locale, {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
     $(document).ready( function() {
         $(".format-currency-USD").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
+            format_currency($(this), 'en-US');            
+        });
+        $(".format-currency-EUR").each(function() {
+            format_currency($(this), 'pt-PT');            
+        });
+        $(".format-currency-JPY").each(function() {
+            format_currency($(this), 'ja-JP');            
+        });
+        $(".format-currency-CNY").each(function() {
+            format_currency($(this), 'zh-CN');
         });
         $(".format-percentage").each(function() {
             if ($(this).text() == '0') {
@@ -48,6 +63,10 @@
                         intValue /= 1000;
                         intSuffix = 'B';
                     }
+                    // if (intValue >= 1000) {
+                    //     intValue /= 1000;
+                    //     intSuffix = 'T';
+                    // }
                     $(this).html(intValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + intSuffix);
                 } else {
                     $(this).html(intValue.toLocaleString('en-US'));

@@ -1,0 +1,77 @@
+
+<div id="<%- id %>-overlay" class="modal-overlay closed"></div>
+<div id="<%- id %>-modal" class="modal closed">
+    <button class="close-button" id="<%- id %>-close-button">&times;</button>
+    <div class="modal-content">
+        <form id="<%- id %>-form" class="modal-form" autocomplete="off">
+            <h2><%- title %></h2>
+            <label for="email">Email</label>
+            <input type="email" name="email" required autofocus />
+            <div class="email error"></div>
+            <label for="password">Password</label>
+            <input type="password" name="password" required />
+            <div class="password error"></div>
+            <div class="mini-nav">
+                <ul>
+                    <li><button title="Submit to <%- title %>"><%- title %></button></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var <%- id %>Button = document.getElementById("<%- id %>-button");    
+    var <%- id %>Overlay = document.getElementById("<%- id %>-overlay");
+    var <%- id %>Modal = document.getElementById("<%- id %>-modal");
+    var <%- id %>Form = document.getElementById("<%- id %>-form");
+    var <%- id %>CloseButton = document.getElementById("<%- id %>-close-button");
+
+    function <%- id %>Toggle() {
+        <%- id %>Modal.classList.toggle("closed");
+        <%- id %>Overlay.classList.toggle("closed");
+    }
+    <%- id %>Button.addEventListener("click", <%- id %>Toggle);
+    <%- id %>CloseButton.addEventListener("click", <%- id %>Toggle);
+    <%- id %>Overlay.addEventListener("click", (e) => {
+        if (e.target == <%- id %>Overlay) {
+            <%- id %>Toggle();
+        }
+    });
+    <%- id %>Form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // get elements
+        const emailError = document.querySelector('#<%- id %>-form .email.error');
+        const passwordError = document.querySelector('#<%- id %>-form .password.error');
+        
+        // reset errors
+        emailError.textContent = '';
+        passwordError.textContent = '';
+        
+        // get values
+        const email = <%- id %>Form.email.value;
+        const password = <%- id %>Form.password.value;
+        
+        try {
+            const res = await fetch('/auth/<%- post %>', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                emailError.textContent = data.errors.email;
+                passwordError.textContent = data.errors.password;
+            }
+            if (data.user) {
+                <%- id %>Toggle();
+                location.assign('/show');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

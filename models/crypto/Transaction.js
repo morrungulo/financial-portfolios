@@ -22,6 +22,9 @@ const transactionCryptoSchema = new mongoose.Schema({
     commission: {
         type: Number,
         min: 0
+    },
+    notes: {
+        type: Buffer
     }
 });
 

@@ -1,3 +1,4 @@
+const config = require('config');
 const Portfolio = require('../models/Portfolio');
 const Watchlist = require('../models/Watchlist');
 
@@ -44,5 +45,5 @@ module.exports.index = async (req, res) => {
         const errors = handleErrors(err);
         return res.status(500).json(err);
     }
-    res.render('show', {title: "Portfolios and Watchlists"});
+    res.render('show', {title: "Portfolios and Watchlists", currencies: config.get('currencies')});
 }

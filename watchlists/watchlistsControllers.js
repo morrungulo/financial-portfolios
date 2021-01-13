@@ -37,7 +37,7 @@ const handleErrors = (err) => {
 }
 
 module.exports.watchlists_create_get = async (req, res) => {
-    res.render('watchlists-create', { title: 'Create Watchlist' });
+    res.render('watchlists/watchlists-create', { title: 'Create Watchlist' });
 }
 
 module.exports.watchlists_create_post = async (req, res) => {
@@ -66,7 +66,7 @@ module.exports.watchlists_detail = async (req, res) => {
             // .populate({path: 'crypto_entries'})
             // .populate({path: 'cash_entries'})
             .execPopulate();
-        res.render('watchlists-detail', { title: watchlist.name, watchlist });
+        res.render('watchlists/watchlists-detail', { title: watchlist.name, watchlist });
     }
     catch (err) {
         const errors = handleErrors(err);
@@ -76,7 +76,7 @@ module.exports.watchlists_detail = async (req, res) => {
 
 module.exports.watchlists_entries_create_get = async (req, res) => {
     const wid = req.params.wid;
-    res.render('entries-create', { title: 'Add Entry', watchlist_id: wid });
+    res.render('watchlists/entries-create', { title: 'Add Entry', watchlist_id: wid });
 }
 
 module.exports.watchlists_entries_create_post = async (req, res) => {

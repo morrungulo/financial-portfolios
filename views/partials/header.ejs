@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/config.css">
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
@@ -10,19 +11,26 @@
 </head>
 <body>
     <header>
-        <nav class="mini-nav">
-            <div>
-                <a href="/"><h1>Financial Portfolios</h1></a>
-            </div>
+        <div>
+            <a href="/"><h1>Financial Portfolios</h1></a>
+        </div>
+        <div class="mini-nav">
             <ul>
                 <li><a href="/about">About</a></li>
-                <% if (user) { %>
-                    <li>Welcome, <%= user.email %></li>
-                    <li><a href="/auth/logout">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/auth/login">Login</a></li>
-                    <li><a href="/auth/register" class="btn">Register</a></li>
-                <% } %>
+            <% if (user) { %>
+                <li>Welcome, <%= user.email %></li>
+                <li><a href="/auth/logout">Logout</a></li>
+            <% } else { %>
+                <!-- <li><a href="/auth/login">Login</a></li> -->
+                <!-- <li><a href="/auth/register" class="btn">Register</a></li> -->
+                <!-- <li><button onclick="document.getElementById('login_modal').style.display='block'">Login</button></li> -->
+                <!-- <li><button onclick="document.getElementById('register_modal').style.display='block'">Register</button></li> -->
+                <li><button id="login-button">Login</button></li>
+                <li><button id="register-button">Register</button></li>
+            <% } %>
             </ul>
-        </nav>
+        </div>
     </header>
+
+    <%- include("../modal/register-login", {'id': 'login', 'title': 'Login', 'post': 'login'}); %>
+    <%- include("../modal/register-login", {'id': 'register', 'title': 'Register', 'post': 'register'}); %>

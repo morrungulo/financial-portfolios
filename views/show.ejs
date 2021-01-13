@@ -1,4 +1,4 @@
-<%- include("./partials/header"); -%>
+<%- include("./partials/header"); %>
 
 <div class="main-body">
 
@@ -7,143 +7,126 @@
         <h1>Overview</h1>
     </div>
     <div class="total-overview-row">
-        <% if ((portfolios === undefined) || (watchlists === undefined)) { %>
-            <div class="error">An error occurred!</div>
-        <% } else { %>
-            <% const pstr = (portfolios.length == 1) ? 'portfolio' : 'portfolios'; %>
-            <% const wstr = (watchlists.length == 1) ? 'watchlist' : 'watchlists'; %>
-            <h3>(<%- portfolios.length %> <%- pstr %> and <%- watchlists.length %> <%- wstr %>)</h3>
-        <% } %>
+    <% if ((portfolios === undefined) || (watchlists === undefined)) { %>
+        <div class="error">An error occurred!</div>
+    <% } else { %>
+        <% const pstr = (portfolios.length == 1) ? 'portfolio' : 'portfolios'; %>
+        <% const wstr = (watchlists.length == 1) ? 'watchlist' : 'watchlists'; %>
+        <h3>(<%- portfolios.length %> <%- pstr %> and <%- watchlists.length %> <%- wstr %>)</h3>
+    <% } %>
     </div>
 </div>
+            
+<div class="panel-container-2c">
+    <div class="panel-containee">
+        <div class="title">
+            <div class="mini-nav">
+                <ul>
+                    <li><button id="portfolios-add-button">Add Portfolio</button></li>
+                    <li><a href="/show">Refresh</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="standard-list">
+                <% if (portfolios === undefined) { %>
+                    <div class="error">An error occurred!</div>
+                <% } else if (portfolios.length == 0) { %>
+                    <div class="error">There are no portfolios!</div>
+                <% } else { %>
+                    <table class="sortable portfolios-list">
+                        <thead>
+                            <tr>
+                                <th>Portfolio Name</th>
+                                <th>Total Value</th>
+                                <th>Cost Basis</th>
+                                <th>Daily</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <% portfolios.forEach((portfolio) => { %>
+                            <tr class="item">
+                                <td sorttable_customkey="<%- portfolio.name %>">
+                                    <div class="truncated">
+                                        <a href="/portfolios/<%= portfolio._id %>"><%- portfolio.name %></a>
+                                    </div>
+                                </td>
+                                <td sorttable_customkey="<%- portfolio.unrealized_value %>">
+                                    <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.unrealized_value %></span><br>
+                                    <span class="format-percentage"><%- portfolio.unrealized_value_percentage %></span>
+                                </td>
+                                <td sorttable_customkey="<%- portfolio.cost_basis %>">
+                                    <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.cost_basis %></span>
+                                </td>
+                                <td sorttable_customkey="<%- portfolio.daily_value %>">
+                                    <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.daily_value %></span><br>
+                                    <span class="format-percentage"><%- portfolio.daily_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- portfolio.total_value %>">
+                                    <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_value %></span><br>
+                                    <span class="format-percentage"><%- portfolio.total_value_percentage %></span>
+                                </td>
+                            </tr>
+                    <% }); %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>            
+        </div>
+    </div>
 
-<div class="mini-nav">
-    <ul>
-        <li><a href="/portfolios/create" class="btn">Add Portfolio</a></li>
-        <li><a href="/show">Refresh</a></li>
-    </ul>
+    <div class="panel-containee">
+        <div class="title">
+            <div class="mini-nav">
+                <ul>
+                    <li><button id="watchlists-add-button">Add Watchlist</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="standard-list">
+                <% if (watchlists === undefined) { %>
+                    <div class="error">An error occurred!</div>
+                <% } else if (watchlists.length == 0) { %>
+                    <div class="error">There are no watchlists!</div>
+                <% } else { %>
+                    <table class="sortable watchlists-list">
+                        <thead>
+                            <tr>
+                                <th>Watchlist Name</th>
+                                <th>Stocks</th>
+                                <th>Cryptos</th>
+                                <th>Cash</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <% watchlists.forEach((watchlist) => { %>
+                            <tr class="item">
+                                <td sorttable_customkey="<%- watchlist.name %>">
+                                    <div class="truncated">
+                                        <a href="/watchlists/<%= watchlist._id %>"><%- watchlist.name %></a>
+                                    </div>
+                                </td>
+                                <td><%- watchlist.stock_entries.length %></td>      
+                                <td><%- watchlist.crypto_entries.length %></td>      
+                                <td><%- watchlist.cash_entries.length %></td>      
+                            </tr>
+                    <% }); %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>            
+        </div>
+    </div>
+
 </div>
 
-<div class="portfolios-list">
-    <% if (portfolios === undefined) { %>
-        <div class="error">An error occurred!</div>
-    <% } else if (portfolios.length == 0) { %>
-        <div class="error">There are no portfolios!</div>
-    <% } else { %>
-        <table class="sortable">
-            <thead>
-                <tr>
-                    <th>Portfolio Name</th>
-                    <th>Total Value</th>
-                    <th>Cost Basis</th>
-                    <th>Daily</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-        <% portfolios.forEach((portfolio) => { %>
-                <tr class="item">
-                    <td sorttable_customkey="<%- portfolio.name %>">
-                        <a href="/portfolios/<%= portfolio._id %>"><%- portfolio.name %></a>
-                    </td>
-                    <td sorttable_customkey="<%- portfolio.unrealized_value %>">
-                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.unrealized_value %></span><br>
-                        <span class="format-percentage"><%- portfolio.unrealized_value_percentage %></span>
-                    </td>
-                    <td sorttable_customkey="<%- portfolio.cost_basis %>">
-                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.cost_basis %></span>
-                    </td>
-                    <td sorttable_customkey="<%- portfolio.daily_value %>">
-                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.daily_value %></span><br>
-                        <span class="format-percentage"><%- portfolio.daily_value %></span>
-                    </td>
-                    <td sorttable_customkey="<%- portfolio.total_value %>">
-                        <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_value %></span><br>
-                        <span class="format-percentage"><%- portfolio.total_value_percentage %></span>
-                    </td>
-                </tr>
-        <% }); %>
-            </tbody>
-        </table>
-    <% } %>
 </div>
 
-<div class="mini-nav">
-    <ul>
-        <li><a href="/watchlists/create" class="btn">Add Watchlist</a></li>
-    </ul>
-</div>
 
-<div class="watchlists-list">
-    <% if (watchlists === undefined) { %>
-        <div class="error">An error occurred!</div>
-    <% } else if (watchlists.length == 0) { %>
-        <div class="error">There are no watchlists!</div>
-    <% } else { %>
-        <table class="sortable">
-            <thead>
-                <tr>
-                    <th>Watchlist Name</th>
-                    <th>Stocks</th>
-                    <th>Cryptos</th>
-                    <th>Cash</th>
-                </tr>
-            </thead>
-            <tbody>
-        <% watchlists.forEach((watchlist) => { %>
-                <tr class="item">
-                    <td sorttable_customkey="<%- watchlist.name %>"><a href="/watchlists/<%= watchlist._id %>"><%- watchlist.name %></a></td>
-                    <td><%- watchlist.stock_entries.length %></td>      
-                    <td><%- watchlist.crypto_entries.length %></td>      
-                    <td><%- watchlist.cash_entries.length %></td>      
-                </tr>
-        <% }); %>
-            </tbody>
-        </table>
-    <% } %>
-</div>
+<%- include("./modal/portfolios-add"); %>
+<%- include("./modal/watchlists-add"); %>
 
-</div>
-
-<%- include("./partials/footer"); -%>
-
-<script>
-    $(document).ready( function() {
-        $(".format-currency-USD").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
-        });
-        $(".format-percentage").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '%');
-            }
-        });
-        $(".format-3-fraction-digits").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
-            }
-        });
-        $(".format-integer").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
-            }
-        });
-        $(".format-time").each(function() {
-            if ($(this).text() == '0') {
-                $(this).html('-');
-            } else {
-                const mdate = new Date($(this).text());
-                $(this).html(('0'+mdate.getHours()).slice(-2) + ':' + ('0'+mdate.getMinutes()).slice(-2));
-            }
-        });
-    });
-</script>
+<%- include("./partials/footer"); %>
+<%- include("./partials/formatters"); %>

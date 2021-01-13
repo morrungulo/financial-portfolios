@@ -20,7 +20,7 @@ module.exports.exchanges_detail = async (req, res) => {
     const eid = req.params.eid;
     try {
         const entry = await ExchangeStock.findById(eid);
-        res.render('exchanges-detail', { title: entry.name, entry });
+        res.render('exchanges/exchanges-detail', { title: entry.name, entry });
     }
     catch (err) {
         const errors = handleErrors(err);

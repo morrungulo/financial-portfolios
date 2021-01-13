@@ -72,6 +72,18 @@ const assetStockSchema = new mongoose.Schema({
         default: 0
     },
 
+    // tags (categories)
+    tags: [{
+        type: String,
+        trim: true,
+        lowercase: true,
+    }],
+
+    // notes
+    notes: {
+        type: Buffer
+    },
+
     // portfolio data
     portfolio_id: {
         type: mongoose.Schema.Types.ObjectId,
