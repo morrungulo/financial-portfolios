@@ -1,0 +1,128 @@
+<%- include("../partials/header"); -%>
+
+<div class="canvas-ask-user">
+    <form autocomplete="off">
+        <h2>Add Entry</h2>
+        <div>
+            <label for="kind">Kind</label>
+            <select id="kind" autofocus>
+                <option value="Stock">Stock</option>
+                <option value="Crypto">Crypto</option>
+                <option value="Cash">Cash</option>
+            </select>
+        </div>
+        <div id="entry-stock-div">
+            <label for="ticker">Ticker</label>
+            <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)" />
+            <div class="ticker error"></div>
+        </div>
+        <div id="entry-crypto-div">
+            <label for="fromCrypto">From crypto</label>
+            <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)" />
+            <div class="fromCrypto error"></div>
+            <label for="toCrypto">To currency</label>
+            <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)" />
+            <div class="toCrypto error"></div>
+        </div>
+        <div id="entry-cash-div">
+            <label for="fromCurrency">From currency</label>
+            <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)" />
+            <div class="fromCurrency error"></div>
+            <label for="toCurrency">To currency</label>
+            <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)" />
+            <div class="toCurrency error"></div>
+        </div>
+        <button>Add</button>
+    </form>
+</div>
+
+<%- include("../partials/footer"); -%>
+
+<script>
+$("#kind").change(function () {
+    if ($(this).val() == "Stock") {
+        $('#entry-stock-div').show();
+        $('#ticker').attr('required', '');
+    } else {
+        $('#entry-stock-div').hide();
+        $('#ticker').removeAttr('required');
+        $('#ticker').val('');
+    }
+    if ($(this).val() == "Crypto") {
+        $('#entry-crypto-div').show();
+        $('#fromCrypto').attr('required', '');
+        $('#toCrypto').attr('required', '');
+    } else {
+        $('#entry-crypto-div').hide();
+        $('#fromCrypto').removeAttr('required');
+        $('#toCrypto').removeAttr('required');
+        $('#fromCrypto').val('');
+        $('#toCrypto').val('');
+    }
+    if ($(this).val() == "Cash") {
+        $('#entry-cash-div').show();
+        $('#fromCurrency').attr('required', '');
+        $('#toCurrency').attr('required', '');
+    } else {
+        $('#entry-cash-div').hide();
+        $('#fromCurrency').removeAttr('required');
+        $('#toCurrency').removeAttr('required');
+        $('#fromCurrency').val('');
+        $('#toCurrency').val('');
+    }
+});
+$("#kind").trigger("change");
+
+//]]>
+</script>
+
+<script type="text/javascript">
+    const form = document.querySelector('form');
+    const tickerError = document.querySelector('.ticker.error');
+    const fromCryptoError = document.querySelector('.fromCrypto.error');
+    const toCryptoError = document.querySelector('.toCrypto.error');
+    const fromCurrencyError = document.querySelector('.fromCurrency.error');
+    const toCurrencyError = document.querySelector('.toCurrency.error');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // reset errors
+        tickerError.textContent = '';
+        fromCryptoError.textContent = '';
+        toCryptoError.textContent = '';
+        fromCurrencyError.textContent = '';
+        toCurrencyError.textContent = '';
+
+        // get values
+        const kind = form.kind.value;
+        const ticker = form.ticker.value;
+        const fromCrypto = form.fromCrypto.value;
+        const toCrypto = form.toCrypto.value;
+        const fromCurrency = form.fromCurrency.value;
+        const toCurrency = form.toCurrency.value;
+
+        try {
+            const res = await fetch('/watchlists/<%- watchlist_id %>/entries/create', {
+                method: 'POST',
+                body: JSON.stringify({ kind, ticker, fromCrypto, toCrypto, fromCurrency, toCurrency }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                tickerError.textContent = data.errors.ticker;
+                fromCryptoError.textContent = data.errors.fromCrypto;
+                toCryptoError.textContent = data.errors.toCrypto;
+                fromCurrencyError.textContent = data.errors.fromCurrency;
+                toCurrencyError.textContent = data.errors.toCurrency;
+            }
+            if (data.entry) {
+                location.assign('/watchlists/<%- watchlist_id %>');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

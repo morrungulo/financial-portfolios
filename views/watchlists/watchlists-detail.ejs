@@ -1,0 +1,133 @@
+<%- include("../partials/header"); %>
+
+<% var hasAssets = true; %>
+<% var nPanels = 0; %>
+<% if (watchlist.stock_entries.length > 0) { %>
+<%     nPanels += 1; %>
+<% } else if (watchlist.crypto_entries.length > 0) { %>
+<%     nPanels += 1; %>
+<% } else if (watchlist.cash_entries.length > 0) { %>
+<%     nPanels += 1; %>
+<% } %>
+<% if (nPanels == 0) { nPanels = 1; hasAssets = false; } %>
+
+<div class="main-body-extended">
+
+<div class="total-overview">
+    <div class="total-overview-header">
+        <h1><%- watchlist.name %></h1>
+    </div>
+    <div class="total-overview-row">
+        <h3>
+            <% var stoc='stocks', cryp='cryptos', cash='currencies'; %>
+            <% if (watchlist.stock_entries.length == 1) { stoc='stock'; } %>
+            <% if (watchlist.crypto_entries.length == 1) { cryp='crypto'; } %>
+            <% if (watchlist.stock_entries.length == 1) { cash='currency'; } %>
+            <span class="emphasize-plus">
+                (<%- watchlist.stock_entries.length %> <%- stoc %>, 
+                 <%- watchlist.crypto_entries.length %> <%- cryp %> and
+                 <%- watchlist.cash_entries.length %> <%- cash %>)
+            </span>
+        </h3>
+    </div>
+</div>
+
+<div class="panel-container-1c-fullwidth">
+    <div class="panel-containee panel-border">
+        <div class="title">
+            <div class="mini-nav">
+                <ul>
+                    <li><button id="entries-add-button">Add Entry</button></li>
+                    <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
+                    <li><a href="/watchlists/<%- watchlist._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+        <% if (hasAssets) { %>
+            <% if (watchlist.stock_entries.length > 0) { %>
+            <div class="standard-list">
+                <table class="sortable watchlists-assets-list">
+                    <thead>
+                        <th>Ticker</th>
+                
+                        <th>52wk High</th>
+                        <th>52wk Low</th>
+                        <th>52wk Range</th>
+                        
+                        <th>Price</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Volume</th>
+                        <th>Change</th>
+                        <th>Change%</th>
+                        
+                        <th>P/E</th>
+                        <th>EPS</th>
+                        <th>Dividend</th>
+                        <th>Dividend Yield</th>
+                        <th>Dividend Payout</th>
+                    </thead>
+                    <tbody>
+                    <% watchlist.stock_entries.forEach(entry => { %>
+                        <tr class="item">
+                            <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
+                
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>
+                            <td><span class="format-percentage"><%- entry.exchangeCalculated.Week52RangePercent %></span></td>
+                
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.High %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Low %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></span></td>
+                
+                            <td><span class="format-integer-short"><%- entry.exchangeQuote.Volume %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></span></td>
+                            <td><span class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></span></td>
+                            <td><span class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></span></td>
+                
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></span></td>
+                            <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></span></td>
+                            <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></span></td>
+                        </tr>
+                    <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        <% } else { %>
+            <div class="error">There are no entries!</div>
+        <% } %>
+        </div>
+    </div>
+</div>
+
+
+<% if (watchlist.crypto_entries.length > 0) { %>
+<div class="entries-list">
+    <div class="entries-crypto-list">
+        todo
+    </div>
+</div>
+<% } %>
+
+<% if (watchlist.cash_entries.length > 0) { %>
+<div class="entries-list">
+    <div class="entries-cash-list">
+        todo
+    </div>
+</div>
+<% } %>
+
+</div>
+
+<%- include("../modal/entries-add"); %>
+
+<%- include("../partials/footer"); %>
+<%- include("../partials/formatters"); %>
+

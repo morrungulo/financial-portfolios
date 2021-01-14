@@ -1,0 +1,149 @@
+
+<div id="entries-add-overlay" class="modal-overlay closed"></div>
+<div id="entries-add-modal" class="modal closed">
+    <button class="close-button" id="entries-add-close-button">&times;</button>
+    <div class="modal-content">
+        <form id="entries-add-form" class="modal-form" autocomplete="off">
+            <h2>Add Entry</h2>
+            <div>
+                <label for="kind">Kind</label>
+                <select id="kind" autofocus>
+                    <option value="Stock">Stock</option>
+                    <option value="Crypto">Crypto</option>
+                    <option value="Cash">Cash</option>
+                </select>  
+            </div>
+            <div id="entry-stock-div">
+                <label for="ticker">Ticker</label>
+                <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
+                <div class="ticker error"></div>
+            </div>
+            <div id="entry-crypto-div">
+                <label for="fromCrypto">From crypto</label>
+                <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)" />
+                <div class="fromCrypto error"></div>
+                <label for="toCrypto">To currency</label>
+                <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)" />
+                <div class="toCrypto error"></div>
+                </div>
+            <div id="entry-cash-div">
+                <label for="fromCurrency">From currency</label>
+                <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)" />
+                <div class="fromCurrency error"></div>
+                <label for="toCurrency">To currency</label>
+                <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)" />
+                <div class="toCurrency error"></div>
+            </div>
+            <div class="mini-nav">
+                <ul>
+                    <li><button title="Add entry">Add</button></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$("#kind").change(function () {
+    if ($(this).val() == "Stock") {
+        $('#entry-stock-div').show();
+        $('#ticker').attr('required', '');
+    } else {
+        $('#entry-stock-div').hide();
+        $('#ticker').removeAttr('required');
+        $('#ticker').val('');
+    }
+    if ($(this).val() == "Crypto") {
+        $('#entry-crypto-div').show();
+        $('#fromCrypto').attr('required', '');
+        $('#toCrypto').attr('required', '');
+    } else {
+        $('#entry-crypto-div').hide();
+        $('#fromCrypto').removeAttr('required');
+        $('#toCrypto').removeAttr('required');
+        $('#fromCrypto').val('');
+        $('#toCrypto').val('');
+    }
+    if ($(this).val() == "Cash") {
+        $('#entry-cash-div').show();
+        $('#fromCurrency').attr('required', '');
+        $('#toCurrency').attr('required', '');
+    } else {
+        $('#entry-cash-div').hide();
+        $('#fromCurrency').removeAttr('required');
+        $('#toCurrency').removeAttr('required');
+        $('#fromCurrency').val('');
+        $('#toCurrency').val('');
+    }
+});
+$("#kind").trigger("change");
+</script>
+    
+<script type="text/javascript">
+    var entriesAddButton = document.getElementById("entries-add-button");    
+    var entriesAddOverlay = document.getElementById("entries-add-overlay");
+    var entriesAddModal = document.getElementById("entries-add-modal");
+    var entriesAddForm = document.getElementById("entries-add-form");
+    var entriesAddCloseButton = document.getElementById("entries-add-close-button");
+
+    function entriesAddToggle() {
+        entriesAddModal.classList.toggle("closed");
+        entriesAddOverlay.classList.toggle("closed");
+    }
+    entriesAddButton.addEventListener("click", entriesAddToggle);
+    entriesAddCloseButton.addEventListener("click", entriesAddToggle);
+    entriesAddOverlay.addEventListener("click", (e) => {
+        if (e.target == entriesAddOverlay) {
+            entriesAddToggle();
+        }
+    });
+    entriesAddForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // get elements
+        const tickerError = document.querySelector('#entries-add-form .ticker.error');
+        const fromCryptoError = document.querySelector('#entries-add-form .fromCrypto.error');
+        const toCryptoError = document.querySelector('#entries-add-form .toCrypto.error');
+        const fromCurrencyError = document.querySelector('#entries-add-form .fromCurrency.error');
+        const toCurrencyError = document.querySelector('#entries-add-form .toCurrency.error');
+        
+        // reset errors
+        tickerError.textContent = '';
+        fromCryptoError.textContent = '';
+        toCryptoError.textContent = '';
+        fromCurrencyError.textContent = '';
+        toCurrencyError.textContent = '';
+        
+        // get values
+        const kind = entriesAddForm.kind.value;
+        const ticker = entriesAddForm.ticker.value;
+        const fromCrypto = entriesAddForm.fromCrypto.value;
+        const toCrypto = entriesAddForm.toCrypto.value;
+        const fromCurrency = entriesAddForm.fromCurrency.value;
+        const toCurrency = entriesAddForm.toCurrency.value;
+        
+        try {
+            const res = await fetch('/watchlists/<%- watchlist._id %>/entries/create', {
+                method: 'POST',
+                body: JSON.stringify({ kind, ticker, fromCrypto, toCrypto, fromCurrency, toCurrency }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                tickerError.textContent = data.errors.ticker;
+                fromCryptoError.textContent = data.errors.fromCrypto;
+                toCryptoError.textContent = data.errors.toCrypto;
+                fromCurrencyError.textContent = data.errors.fromCurrency;
+                toCurrencyError.textContent = data.errors.toCurrency;
+            }
+            if (data.entry) {
+                entriesAddToggle();
+                location.assign('/watchlists/<%- watchlist._id %>');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

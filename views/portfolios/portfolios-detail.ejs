@@ -1,0 +1,119 @@
+<%- include("../partials/header"); -%>
+
+<% var hasAssets = true; %>
+<% var nPanels = 0; %>
+<% if (portfolio.stock_assets.length > 0) { %>
+<%     nPanels += 1; %>
+<% } else if (portfolio.crypto_assets.length > 0) { %>
+<%     nPanels += 1; %>
+<% } else if (portfolio.cash_assets.length > 0) { %>
+<%     nPanels += 1; %>
+<% } %>
+<% if (nPanels == 0) { nPanels = 1; hasAssets = false; } %>
+
+<!-- <% if (nPanels > 1) { %>
+    <div class="main-body-extended">
+<% } else { %>
+    <div class="main-body">
+<% } %> -->
+
+<div class="main-body-extended">
+
+<div class="total-overview">
+    <div class="total-overview-header">
+        <h1><%- portfolio.name %> <span class="emphasize-minusminus">(<%- portfolio.currency %>)</span></h1>
+    </div>
+    <div class="total-overview-row">
+        <h3>
+           <span class="emphasize-plus"><%- portfolio.unrealized_value %></span>
+           <span class="emphasize-minus">(<%- portfolio.realized_value %>)</span>
+        </h3>
+    </div>
+</div>
+
+<div class="panel-container-3c">
+    <div class="panel-containee panel-border">
+        <div class="title">
+            <div class="mini-nav">
+                <ul>
+                    <li><button id="assets-add-button">Add Asset</button></li>
+                    <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
+                    <li><a href="/portfolios/<%- portfolio._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+        <% if (hasAssets) { %>
+            <% if (portfolio.stock_assets.length > 0) { %>
+            <div class="standard-list">
+                <table class="sortable portfolios-assets-list">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Price</th>
+                            <th>Change</th>
+        
+                            <th>Value/Cost</th>
+                            <th>Daily</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% portfolio.stock_assets.forEach(asset => { %>
+                        <tr class="item">
+                            <td sorttable_customkey="<%- asset.exchange_id.name %>">
+                                <a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.name %></a><br/>
+                                <span class="smaller-font"><a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
+                            </td>                                    
+                            <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
+                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
+                                <span class="smaller-font format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
+                            </td>
+                            <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
+                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
+                                <span class="smaller-font format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
+                            </td>
+                            
+                            <td sorttable_customkey="<%- asset.unrealized_value %>">
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span><br/>
+                                <span class="smaller-font format-percentage"><%- asset.unrealized_value_percentage %></span>
+                            </td>
+                            <td sorttable_customkey="<%- asset.daily_value %>">
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span><br/>
+                                <span class="smaller-font format-percentage"><%- asset.daily_value_percentage %></span>
+                            </td>
+                            <td sorttable_customkey="<%- asset.change_value %>">
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></span><br/>
+                                <span class="smaller-font format-percentage"><%- asset.change_value_percentage %></span> 
+                            </td>
+                        </tr>
+                    <% }); %>        
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        <% } else { %>
+            <div class="error">There are no assets!</div>
+        <% } %>
+        </div>
+    </div>
+
+    <% if (portfolio.crypto_assets.length > 0) { %>
+    <div class="panel-containee">
+    </div>
+    <% } %>
+
+    <% if (portfolio.cash_assets.length > 0) { %>
+    <div class="panel-containee">
+    </div>
+    <% } %>
+
+</div>
+
+</div>
+
+
+<%- include("../modal/assets-add"); %>
+
+<%- include("../partials/footer"); %>
+<%- include("../partials/formatters"); %>

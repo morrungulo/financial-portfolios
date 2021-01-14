@@ -1,0 +1,38 @@
+:root {
+
+    /* colors */
+    --text: #000;
+    --text-lighter: #777;
+    --text-bg: #ddd;
+    --separator: #666;
+    --main-bg: #ddd;
+    
+    --canvas-modal-bg: #444;
+    --canvas-content: #aaa;
+    --form-bg: #ddd;
+    --form-border: #aaa; 
+
+    --panel-bg: #ccc;
+    --panel-emphasize: #f7f0d5;
+    --list-offset: #f7f0d5;
+    --button-bg: #f1f383;
+    --button-border: #c7b64b;
+    --footer: #888;
+    --error: #ff0099;
+    /* end colors */
+
+    /* sizes */
+    --normal: 0.9em;
+    --normalp: 1.1em;
+    --normalpp: 1.4em;
+    --normalm: 0.8em;
+    --normalmm: 0.6em;
+    --title: 1.2em;
+    --titlep: 1.4em;
+    --titlepp: 1.8em;
+    --titlem: 1.0em;
+    --titlemm: 0.8em;
+    --close: 2em;
+    /* end sizes */
+
+  }

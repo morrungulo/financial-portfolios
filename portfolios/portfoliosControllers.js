@@ -70,7 +70,7 @@ module.exports.portfolios_detail = async (req, res) => {
 
         console.log(chalk.cyan(JSON.stringify(portfolio, null, "  ")));
         
-        res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio });
+        res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
     }
     catch (err) {
         const errors = handleErrors(err);

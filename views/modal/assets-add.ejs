@@ -1,0 +1,133 @@
+
+<div id="assets-add-overlay" class="modal-overlay closed"></div>
+<div id="assets-add-modal" class="modal closed">
+    <button class="close-button" id="assets-add-close-button">&times;</button>
+    <div class="modal-content">
+        <form id="assets-add-form" class="modal-form" autocomplete="off">
+            <h2>Add Asset</h2>
+            <div>
+                <label for="kind">Kind</label>
+                <select id="kind" autofocus>
+                    <option value="Stock">Stock</option>
+                    <option value="Crypto">Crypto</option>
+                    <option value="Cash">Cash</option>
+                </select>  
+            </div>
+            <div id="entry-stock-div">
+                <label for="ticker">Ticker</label>
+                <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
+                <div class="ticker error"></div>
+            </div>
+            <div id="entry-crypto-div">
+                <label for="crypto">Crypto</label>
+                <input type="text" id="crypto" placeholder="Crypto symbol (eg. ETH)"/>
+                <div class="crypto error"></div>
+            </div>
+            <div id="entry-cash-div">
+                <label for="currency">Currency</label>
+                <select id="currency">
+                <% currencies.forEach((currency) => { %>
+                    <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
+                <% }); %>
+                </select>
+                <div class="currency error"></div>
+            </div>
+            <div class="mini-nav">
+                <ul>
+                    <li><button title="Add asset">Add</button></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#kind").change(function () {
+        if ($(this).val() == "Stock") {
+            $('#entry-stock-div').show();
+            $('#ticker').attr('required', '');
+        } else {
+            $('#entry-stock-div').hide();
+            $('#ticker').removeAttr('required');
+            $('#ticker').val('');
+        }
+        if ($(this).val() == "Crypto") {
+            $('#entry-crypto-div').show();
+            $('#crypto').attr('required', '');
+        } else {
+            $('#entry-crypto-div').hide();
+            $('#crypto').removeAttr('required');
+            $('#crypto').val('');
+        }
+        if ($(this).val() == "Cash") {
+            $('#entry-cash-div').show();
+            $('#currency').attr('required', '');
+        } else {
+            $('#entry-cash-div').hide();
+            $('#currency').removeAttr('required');
+            $('#currency').val('');
+        }
+    });
+    $("#kind").trigger("change");
+</script>
+    
+<script type="text/javascript">
+    var assetsAddButton = document.getElementById("assets-add-button");    
+    var assetsAddOverlay = document.getElementById("assets-add-overlay");
+    var assetsAddModal = document.getElementById("assets-add-modal");
+    var assetsAddForm = document.getElementById("assets-add-form");
+    var assetsAddCloseButton = document.getElementById("assets-add-close-button");
+
+    function assetsAddToggle() {
+        assetsAddModal.classList.toggle("closed");
+        assetsAddOverlay.classList.toggle("closed");
+    }
+    assetsAddButton.addEventListener("click", assetsAddToggle);
+    assetsAddCloseButton.addEventListener("click", assetsAddToggle);
+    assetsAddOverlay.addEventListener("click", (e) => {
+        if (e.target == assetsAddOverlay) {
+            assetsAddToggle();
+        }
+    });
+    assetsAddForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // get elements
+        const tickerError = document.querySelector('#assets-add-form .ticker.error');
+        const cryptoError = document.querySelector('#assets-add-form .crypto.error');
+        const currencyError = document.querySelector('#assets-add-form .currency.error');
+        
+        // reset errors
+        tickerError.textContent = '';
+        cryptoError.textContent = '';
+        currencyError.textContent = '';
+        
+        // get values
+        const kind = assetsAddForm.kind.value;
+        const ticker = assetsAddForm.ticker.value;
+        const crypto = assetsAddForm.crypto.value;
+        const currency = assetsAddForm.currency.value;
+        
+        try {
+            const res = await fetch('/portfolios/<%- portfolio._id %>/assets/create', {
+                method: 'POST',
+                body: JSON.stringify({ kind, ticker, crypto, currency }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                tickerError.textContent = data.errors.ticker;
+                cryptoError.textContent = data.errors.crypto;
+                currencyError.textContent = data.errors.currency;
+            }
+            if (data.asset) {
+                assetsAddToggle();
+                location.assign('/portfolios/<%- portfolio._id %>');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>
