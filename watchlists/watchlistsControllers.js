@@ -36,10 +36,6 @@ const handleErrors = (err) => {
     return errors;
 }
 
-module.exports.watchlists_create_get = async (req, res) => {
-    res.render('watchlists/watchlists-create', { title: 'Create Watchlist' });
-}
-
 module.exports.watchlists_create_post = async (req, res) => {
     const { name } = req.body;
     const user_id = res.locals.user._id;
@@ -72,11 +68,6 @@ module.exports.watchlists_detail = async (req, res) => {
         const errors = handleErrors(err);
         res.status(400).json({ errors });
     }
-}
-
-module.exports.watchlists_entries_create_get = async (req, res) => {
-    const wid = req.params.wid;
-    res.render('watchlists/entries-create', { title: 'Add Entry', watchlist_id: wid });
 }
 
 module.exports.watchlists_entries_create_post = async (req, res) => {
@@ -140,8 +131,4 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
 
 module.exports.watchlists_entries_remove_post = async (req, res) => {
     res.send("Not implemented - watchlists_entry_remove_post!");
-}
-
-module.exports.watchlists_entries_detail = async (req, res) => {
-    res.send("Not implemented - watchlists_entry_detail!");
 }

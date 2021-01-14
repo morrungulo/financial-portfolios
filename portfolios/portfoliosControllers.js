@@ -37,10 +37,6 @@ const handleErrors = (err) => {
     return errors;
 }
 
-module.exports.portfolios_create_get = async (req, res) => {
-    res.render('portfolios/portfolios-create', { title: 'Add Portfolio', currencies: config.get('currencies') });
-}
-
 module.exports.portfolios_create_post = async (req, res) => {
     const { name, currency } = req.body;
     const user_id = res.locals.user._id;
@@ -76,11 +72,6 @@ module.exports.portfolios_detail = async (req, res) => {
         const errors = handleErrors(err);
         res.status(400).json({ errors });
     }
-}
-
-module.exports.portfolios_assets_create_get = (req, res) => {
-    const pid = req.params.pid;
-    res.render('portfolios/assets-create', { title: 'Add Asset', currencies: config.get('currencies'), portfolio_id: pid });
 }
 
 module.exports.portfolios_assets_create_post = async (req, res) => {
@@ -145,16 +136,8 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
     }
 }
 
-module.exports.portfolios_assets_detail = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_detail!");
-}
-
 module.exports.portfolios_assets_remove_post = async (req, res) => {
     res.send("Not implemented - portfolios_asset_remove_post!");
-}
-
-module.exports.portfolios_assets_transactions_create_get = async (req, res) => {
-    res.send("Not implemented - portfolios_assets_transactions_create_get!");
 }
 
 module.exports.portfolios_assets_transactions_create_post = async (req, res) => {
