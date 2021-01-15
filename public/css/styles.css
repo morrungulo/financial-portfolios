@@ -84,13 +84,11 @@ header {
 .main-body {
     margin: 0 auto;
     width: 80%;
-    /* border: 2px solid red; */
 }
 
 .main-body-extended {
     margin: 0 auto;
     width: 95%;
-    /* border: 2px solid red; */
 }
 
 /* home page layout */
@@ -346,6 +344,19 @@ button:hover {
     outline: none;
 }
 
+/* buttons in the form of icons */
+button.icon {
+    background: none;
+    border: none;
+    opacity: 0.8;
+}
+
+button.icon:hover {
+    opacity: 1;
+    cursor: pointer;
+    outline: none;
+}
+
 /* font sizes */
 .emphasize-plusplus {
     font-size: var(--normalpp);
@@ -369,9 +380,18 @@ button:hover {
     font-size: var(--normalmm);
 }
 
-.button-svg {}
+.button-svg {
+    width: 20px;
+    height: 20px;
+    float: right;
+}
 .button-svg:hover {
     filter: invert(34%) sepia(0%) saturate(1637%) hue-rotate(165deg) brightness(108%) contrast(76%);
+}
+
+.button-svg.shrink {
+    width: 14px;
+    height: 14px;
 }
 
 /* totals */
@@ -401,16 +421,15 @@ table, th, td {
 .truncated {
     width: 0;
     min-width: 100%;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .standard-list {
     width: 100%;
     margin: 0 auto 15px;
     background-color: var(--panel-bg);
-    /* box-sizing: border-box; */
 }
 
 .standard-list table {
@@ -436,6 +455,10 @@ table, th, td {
 .standard-list td:first-child,
 .standard-list td:last-child {
     padding: 0 3px;
+}
+
+.standard-list td.delete-row {
+    min-width: 30px;
 }
 
 .standard-list tbody tr:nth-child(odd) {

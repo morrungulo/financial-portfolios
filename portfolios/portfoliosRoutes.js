@@ -10,8 +10,8 @@ router.post('/remove', authMiddleware.requireAuth, portfoliosController.portfoli
 router.get('/:pid', authMiddleware.requireAuth, portfoliosController.portfolios_detail);
 
 // assets
-router.post('/:pid/assets/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_post);
-router.post('/:pid/assets/remove', authMiddleware.requireAuth, portfoliosController.portfolios_assets_remove_post);
+router.post('/:pid/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_post);
+router.post('/:pid/remove', authMiddleware.requireAuth, portfoliosController.portfolios_assets_remove_post);
 
 // transactions
 router.post('/:pid/assets/:aid/transactions/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_transactions_create_post);

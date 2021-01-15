@@ -56,6 +56,8 @@
                             <th>Value/Cost</th>
                             <th>Daily</th>
                             <th>Total</th>
+
+                            <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,8 +86,10 @@
                             </td>
                             <td sorttable_customkey="<%- asset.change_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></span><br/>
-                                <span class="smaller-font format-percentage"><%- asset.change_value_percentage %></span> 
+                                <span class="smaller-font format-percentage"><%- asset.change_value_percentage %></span>
                             </td>
+
+                            <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'kind': 'Stock', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                         </tr>
                     <% }); %>        
                     </tbody>
@@ -114,6 +118,7 @@
 
 
 <%- include("../modal/assets-add"); %>
+<%- include("../modal/remove-confirm", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
 
 <%- include("../partials/footer"); %>
 <%- include("../partials/formatters"); %>

@@ -3,33 +3,31 @@ const chalk = require('chalk');
 const Watchlist = require('../models/Watchlist');
 const StockService = require('../services/StockService');
 
+const splitOnce = (s, on) => {
+    [first, second, ...rest] = s.split(on)
+    return [first, second, rest.length > 0? rest.join(on) : null]
+}
+
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
-    let errors = { watchlist: '', ticker: '', fromCrypto: '', toCrypto: '', fromCurrency: '', toCurrency: '' };
+    let errors = { watchlist: '', exchangestock: '' };
 
-    if (err.message === 'invalid ticker') {
-        errors.ticker = 'That ticker could not be found';
-    }
-
-    if (err.message === 'already in watchlist') {
-        errors.ticker = 'That ticker is already in the watchlist';
-    }
-
-    if (err.message === 'transaction limits') {
-        errors.ticker = 'Could not satisfy request - please try later';
+    if (err.message.startsWith("controller")) {
+        const [ctrl, code, message] = splitOnce(err.message, ':');
+        errors[code] = message;
     }
 
     // validation errors
     if (err.message.includes('exchangestock validation failed')) {
         Object.values(err.errors).map(properties => {
-            errors.ticker = properties.message;
+            errors.exchangestock = properties.message;
         });
     }
     
     // validation errors
     if (err.message.includes('watchlist validation failed')) {
         Object.values(err.errors).map(properties => {
-            errors[properties.path] = properties.message;
+            errors.watchlist = properties.message;
         });
     }
 
@@ -50,7 +48,15 @@ module.exports.watchlists_create_post = async (req, res) => {
 }
 
 module.exports.watchlists_remove_post = async (req, res) => {
-    res.send("Not implemented - watchlists_remove_post!");
+    const { id } = req.body;
+    try {
+        let removed = await Watchlist.findByIdAndDelete(id);
+        res.status(201).json({ removed });
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
 module.exports.watchlists_detail = async (req, res) => {
@@ -86,7 +92,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             const SS = new StockService();
             const isValid = await SS.isTickerValid(ticker);
             if (!isValid) {
-                throw Error('invalid ticker');
+                throw Error('controller:ticker:That ticker could not be found');
             }
             const hasStock = await SS.hasStock(ticker);
             if (hasStock) {
@@ -94,14 +100,14 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             } else {
                 entry = await SS.createStock(ticker);
                 if (!entry) {
-                    throw Error('transaction limits');
+                    throw Error('controller:ticker:Could not satisfy request - please try later');
                 }
             }
 
             // is it already in watchlist?
             const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'stock_entries': { $in: [entry._id] }});
             if (alreadyInWatchlist) {
-                throw Error('already in watchlist');
+                throw Error('controller:ticker:That ticker is already in the watchlist');
             }
 
             // add to watchlist
@@ -130,5 +136,40 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
 }
 
 module.exports.watchlists_entries_remove_post = async (req, res) => {
-    res.send("Not implemented - watchlists_entry_remove_post!");
+    const { kind, id } = req.body;
+    const wid = req.params.wid;
+
+    try {
+        // get the watchlist
+        let watchlist = await Watchlist.findById(wid);
+        if (!watchlist) {
+            throw Error('controller:remove:Unknown watchlist');
+        }
+        
+        let removed = null;
+        if (kind == 'Stock') {
+
+            // remove it from our list
+            removed = watchlist.stock_entries.pull({ _id: id });
+
+        } else if (kind == 'Crypto') {
+            
+        } else if (kind == 'Cash') {
+
+        }
+
+        // save watchlist
+        watchlist.save(err => {
+            if (err) {
+                const errors = handleErrors(err);
+                res.status(400).json({ errors });
+            } else {
+                res.status(201).json({ removed });
+            }
+        });
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }

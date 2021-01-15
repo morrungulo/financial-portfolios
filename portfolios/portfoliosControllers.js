@@ -4,33 +4,31 @@ const Portfolio = require('../models/Portfolio');
 const StockService = require('../services/StockService');
 const AssetStock = require('../models/stock/Asset');
 
+const splitOnce = (s, on) => {
+    [first, second, ...rest] = s.split(on)
+    return [first, second, rest.length > 0? rest.join(on) : null]
+}
+
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
-    let errors = { portfolio: '', ticker: '', fromCrypto: '', toCrypto: '', fromCurrency: '', toCurrency: '' };
+    let errors = { portfolio: '', exchangestock: '' };
 
-    if (err.message === 'invalid ticker') {
-        errors.ticker = 'That ticker could not be found';
-    }
-
-    if (err.message === 'already in portfolio') {
-        errors.ticker = 'That ticker is already in the portfolio';
-    }
-
-    if (err.message === 'transaction limits') {
-        errors.ticker = 'Could not satisfy request - please try later';
+    if (err.message.startsWith("controller")) {
+        const [ctrl, code, message] = splitOnce(err.message, ':');
+        errors[code] = message;
     }
 
     // validation errors
     if (err.message.includes('exchangestock validation failed')) {
         Object.values(err.errors).map(properties => {
-            errors.ticker = properties.message;
+            errors.exchangestock = properties.message;
         });
     }
             
     // validation errors
     if (err.message.includes('portfolio validation failed')) {
         Object.values(err.errors).map(properties => {
-            errors[properties.path] = properties.message;
+            errors.portfolio = properties.message;
         });
     }
 
@@ -51,7 +49,15 @@ module.exports.portfolios_create_post = async (req, res) => {
 }
 
 module.exports.portfolios_remove_post = async (req, res) => {
-    res.send("Not implemented - portfolios_remove_post!");
+    const { id } = req.body;
+    try {
+        let removed = await Portfolio.findByIdAndDelete(id);
+        res.status(201).json({ removed });
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
 module.exports.portfolios_detail = async (req, res) => {
@@ -63,9 +69,6 @@ module.exports.portfolios_detail = async (req, res) => {
             .populate({path: 'crypto_assets'})
             .populate({path: 'cash_assets'})
             .execPopulate();
-
-        console.log(chalk.cyan(JSON.stringify(portfolio, null, "  ")));
-        
         res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
     }
     catch (err) {
@@ -91,7 +94,7 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
             const SS = new StockService();
             const isValid = await SS.isTickerValid(ticker);
             if (!isValid) {
-                throw Error('invalid ticker');
+                throw Error('controller:ticker:That ticker could not be found');
             }
             const hasStock = await SS.hasStock(ticker);
             if (hasStock) {
@@ -99,14 +102,14 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
             } else {
                 entry = await SS.createStock(ticker);
                 if (!entry) {
-                    throw Error('transaction limits');
+                    throw Error('controller:ticker:Could not satisfy request - please try later');
                 }
             }
 
             // is it already in portfolio?
             const alreadyInPortfolio = await AssetStock.findOne({ 'portfolio_id': portfolio._id, 'exchange_id': entry._id });
             if (alreadyInPortfolio) {
-                throw Error('already in portfolio');
+                throw Error('controller:ticker:That ticker is already in the portfolio');
             }
 
             // create asset and add to portfolio
@@ -137,7 +140,47 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
 }
 
 module.exports.portfolios_assets_remove_post = async (req, res) => {
-    res.send("Not implemented - portfolios_asset_remove_post!");
+    const { kind, id } = req.body;
+    const pid = req.params.pid;
+
+    try {
+        // get the portfolio
+        let portfolio = await Portfolio.findById(pid);
+        if (!portfolio) {
+            throw Error('controller:remove:Unknown portfolio');
+        }
+        
+        let removed = null;
+        if (kind == 'Stock') {
+
+            // find the asset with id
+            removed = await AssetStock.findOneAndDelete({ _id: id, portfolio_id: portfolio._id });
+            if (!removed) {
+                throw Error('controller:remove:Could not find this asset in the portfolio');
+            }
+            // remove it from our list
+            portfolio.stock_assets.pull({ _id: id });
+
+        } else if (kind == 'Crypto') {
+            
+        } else if (kind == 'Cash') {
+
+        }
+
+        // save portfolio
+        portfolio.save(err => {
+            if (err) {
+                const errors = handleErrors(err);
+                res.status(400).json({ errors });
+            } else {
+                res.status(201).json({ removed });
+            }
+        });
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
 module.exports.portfolios_assets_transactions_create_post = async (req, res) => {

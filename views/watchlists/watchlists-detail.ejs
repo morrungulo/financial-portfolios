@@ -69,6 +69,8 @@
                         <th>Dividend</th>
                         <th>Dividend Yield</th>
                         <th>Dividend Payout</th>
+
+                        <th>&nbsp;</th>
                     </thead>
                     <tbody>
                     <% watchlist.stock_entries.forEach(entry => { %>
@@ -94,6 +96,8 @@
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></span></td>
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></span></td>
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></span></td>
+
+                            <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.name %>', { 'kind': 'Stock', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                         </tr>
                     <% }); %>
                     </tbody>
@@ -127,6 +131,7 @@
 </div>
 
 <%- include("../modal/entries-add"); %>
+<%- include("../modal/remove-confirm", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
 
 <%- include("../partials/footer"); %>
 <%- include("../partials/formatters"); %>

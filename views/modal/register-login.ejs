@@ -1,9 +1,9 @@
 
-<div id="<%- id %>-overlay" class="modal-overlay closed"></div>
-<div id="<%- id %>-modal" class="modal closed">
-    <button class="close-button" id="<%- id %>-close-button">&times;</button>
+<div id="<%- prefix %>-overlay" class="modal-overlay closed"></div>
+<div id="<%- prefix %>-modal" class="modal closed">
+    <button class="close-button" id="<%- prefix %>-close-button">&times;</button>
     <div class="modal-content">
-        <form id="<%- id %>-form" class="modal-form" autocomplete="off">
+        <form id="<%- prefix %>-form" class="modal-form" autocomplete="off">
             <h2><%- title %></h2>
             <label for="email">Email</label>
             <input type="email" name="email" required autofocus />
@@ -21,37 +21,37 @@
 </div>
 
 <script type="text/javascript">
-    var <%- id %>Button = document.getElementById("<%- id %>-button");    
-    var <%- id %>Overlay = document.getElementById("<%- id %>-overlay");
-    var <%- id %>Modal = document.getElementById("<%- id %>-modal");
-    var <%- id %>Form = document.getElementById("<%- id %>-form");
-    var <%- id %>CloseButton = document.getElementById("<%- id %>-close-button");
+    var <%- prefix %>Button = document.getElementById("<%- prefix %>-button");    
+    var <%- prefix %>Overlay = document.getElementById("<%- prefix %>-overlay");
+    var <%- prefix %>Modal = document.getElementById("<%- prefix %>-modal");
+    var <%- prefix %>Form = document.getElementById("<%- prefix %>-form");
+    var <%- prefix %>CloseButton = document.getElementById("<%- prefix %>-close-button");
 
-    function <%- id %>Toggle() {
-        <%- id %>Modal.classList.toggle("closed");
-        <%- id %>Overlay.classList.toggle("closed");
+    function <%- prefix %>Toggle() {
+        <%- prefix %>Modal.classList.toggle("closed");
+        <%- prefix %>Overlay.classList.toggle("closed");
     }
-    <%- id %>Button.addEventListener("click", <%- id %>Toggle);
-    <%- id %>CloseButton.addEventListener("click", <%- id %>Toggle);
-    <%- id %>Overlay.addEventListener("click", (e) => {
-        if (e.target == <%- id %>Overlay) {
-            <%- id %>Toggle();
+    <%- prefix %>Button.addEventListener("click", <%- prefix %>Toggle);
+    <%- prefix %>CloseButton.addEventListener("click", <%- prefix %>Toggle);
+    <%- prefix %>Overlay.addEventListener("click", (e) => {
+        if (e.target == <%- prefix %>Overlay) {
+            <%- prefix %>Toggle();
         }
     });
-    <%- id %>Form.addEventListener("submit", async (e) => {
+    <%- prefix %>Form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         // get elements
-        const emailError = document.querySelector('#<%- id %>-form .email.error');
-        const passwordError = document.querySelector('#<%- id %>-form .password.error');
+        const emailError = document.querySelector('#<%- prefix %>-form .email.error');
+        const passwordError = document.querySelector('#<%- prefix %>-form .password.error');
         
         // reset errors
         emailError.textContent = '';
         passwordError.textContent = '';
         
         // get values
-        const email = <%- id %>Form.email.value;
-        const password = <%- id %>Form.password.value;
+        const email = <%- prefix %>Form.email.value;
+        const password = <%- prefix %>Form.password.value;
         
         try {
             const res = await fetch('/auth/<%- post %>', {
@@ -66,7 +66,7 @@
                 passwordError.textContent = data.errors.password;
             }
             if (data.user) {
-                <%- id %>Toggle();
+                <%- prefix %>Toggle();
                 location.assign('/show');
             }
         }

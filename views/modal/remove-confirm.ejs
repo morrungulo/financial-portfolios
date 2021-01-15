@@ -1,0 +1,75 @@
+<!-- requires 'id', 'name' and 'post' -->
+<div id="<%- prefix %>-remove-confirm-overlay" class="modal-overlay closed"></div>
+<div id="<%- prefix %>-remove-confirm-modal" class="modal closed">
+    <button class="close-button" id="<%- prefix %>-remove-confirm-close-button">&times;</button>
+    <div class="modal-content">
+        <form id="<%- prefix %>-remove-confirm-form" class="modal-form" autocomplete="off">
+            <h2>Remove</h2>
+            <label for="name" id="<%- prefix %>-remove-confirm-form-label"></label>
+            <input type="hidden" name="dataobj">
+            <div class="remove error"></div>
+            <div class="mini-nav">
+                <ul>
+                    <li><button title="Confirm">Confirm</button></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var <%- prefix %>RemoveConfirmOverlay = document.getElementById("<%- prefix %>-remove-confirm-overlay");
+    var <%- prefix %>RemoveConfirmModal = document.getElementById("<%- prefix %>-remove-confirm-modal");
+    var <%- prefix %>RemoveConfirmLabel = document.getElementById("<%- prefix %>-remove-confirm-form-label");
+    var <%- prefix %>RemoveConfirmForm = document.getElementById("<%- prefix %>-remove-confirm-form");
+    var <%- prefix %>RemoveConfirmCloseButton = document.getElementById("<%- prefix %>-remove-confirm-close-button");
+
+
+    function <%- prefix %>RemoveConfirmButton(identifier, dataobj) {
+        <%- prefix %>RemoveConfirmLabel.textContent = `Are you sure you want to remove "${identifier}"?`;
+        <%- prefix %>RemoveConfirmForm.dataobj.value = JSON.stringify(dataobj);
+        <%- prefix %>RemoveConfirmToggle();
+    }
+    function <%- prefix %>RemoveConfirmToggle() {
+        <%- prefix %>RemoveConfirmModal.classList.toggle("closed");
+        <%- prefix %>RemoveConfirmOverlay.classList.toggle("closed");
+    }
+    <%- prefix %>RemoveConfirmCloseButton.addEventListener("click", <%- prefix %>RemoveConfirmToggle);
+    <%- prefix %>RemoveConfirmOverlay.addEventListener("click", (e) => {
+        if (e.target == <%- prefix %>RemoveConfirmOverlay) {
+            <%- prefix %>RemoveConfirmToggle();
+        }
+    });
+    <%- prefix %>RemoveConfirmForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // get elements
+        const removeError = document.querySelector('#<%- prefix %>-remove-confirm-form .remove.error');
+        
+        // reset errors
+        removeError.textContent = '';
+
+        // get value (already stringified)
+        const dataobj = <%- prefix %>RemoveConfirmForm.dataobj.value;
+
+        try {
+            const res = await fetch('<%- post %>/remove', {
+                method: 'POST',
+                body: dataobj,
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                removeError.textContent = data.errors.remove;
+            }
+            if (data.removed) {
+                <%- prefix %>RemoveConfirmToggle();
+                location.assign('<% if(typeof redirect !== "undefined") { redirect; } else { post; } %>');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

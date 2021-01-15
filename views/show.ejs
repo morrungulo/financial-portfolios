@@ -42,6 +42,7 @@
                                 <th>Cost Basis</th>
                                 <th>Daily</th>
                                 <th>Total</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,6 +68,7 @@
                                     <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_value %></span><br>
                                     <span class="format-percentage"><%- portfolio.total_value_percentage %></span>
                                 </td>
+                                <td class="delete-row"><button onclick="portfoliosRemoveConfirmButton('<%- portfolio.name %>', { 'id': '<%- portfolio._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                             </tr>
                     <% }); %>
                         </tbody>
@@ -98,6 +100,7 @@
                                 <th>Stocks</th>
                                 <th>Cryptos</th>
                                 <th>Cash</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,7 +113,12 @@
                                 </td>
                                 <td><%- watchlist.stock_entries.length %></td>      
                                 <td><%- watchlist.crypto_entries.length %></td>      
-                                <td><%- watchlist.cash_entries.length %></td>      
+                                <td><%- watchlist.cash_entries.length %></td> 
+                                <td class="delete-row">
+                                    <button onclick="watchlistsRemoveConfirmButton('<%- watchlist.name %>', { 'id': '<%- watchlist._id %>' })" class="icon">
+                                        <img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink">
+                                    </button>
+                                </td>     
                             </tr>
                     <% }); %>
                         </tbody>
@@ -127,6 +135,8 @@
 
 <%- include("./modal/portfolios-add"); %>
 <%- include("./modal/watchlists-add"); %>
+<%- include("./modal/remove-confirm", {'prefix': 'portfolios', 'post': '/portfolios', 'redirect': '/show' }); %>
+<%- include("./modal/remove-confirm", {'prefix': 'watchlists', 'post': '/watchlists', 'redirect': '/show' }); %>
 
 <%- include("./partials/footer"); %>
 <%- include("./partials/formatters"); %>
