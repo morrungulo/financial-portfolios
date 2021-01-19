@@ -1,0 +1,175 @@
+<!-- requires 'kind' -->
+<div id="transactions-stocks-add-modal" class="modal">
+    <div class="modal-header">
+        <div class="title">Add <%- kind %> Transaction</div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
+    <div class="modal-content">
+        <form id="transactions-stocks-add-form" class="modal-form" autocomplete="off">
+            <% if(kind == 'Stock') { %>
+
+            <!-- select the transaction type -->
+            <label for="kind">Transaction Type</label>
+            <select name="kind" id="kind" autofocus>
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+                <option value="split">Split</option>
+                <option value="dividend">Dividend</option>
+            </select>
+
+            <!-- date -->
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required>
+            <div class="date error"></div>
+
+            <!-- buy / sell -->
+            <div id="entry-buy-sell-div">
+                <!-- quantity -->
+                <label for="quantity">Shares</label>
+                <input type="number" name="quantity" id="quantity" min="0" placeholder="Number of Shares" step="any">
+                <div class="quantity error"></div>
+                
+                <!-- price -->
+                <label for="price">Price</label>
+                <input type="number" name="price" id="price" min="0" placeholder="Price per Share" step="any">
+                <div class="price error"></div>
+
+                <!-- commission -->
+                <label for="commission">Commissions</label>
+                <input type="number" name="commission" id="commission" value="0" min="0" placeholder="Commission for the Transaction" step="any">
+                <div class="commission error"></div>                
+            </div>
+
+            <!-- split -->
+            <div id="entry-split-div">
+                <!-- split ratio -->
+                <p>
+                    A 3-for-1 split will multiply shares owned by 3 and divide cost paid per share by 3.<br/>
+                    A 1-for-3 reverse split will divide shares owned by 3 and multiply cost paid per share by 3.
+                </p>
+                <label for="splitbefore">Split Ratio</label>
+                <input type="number" name="splitbefore" id="splitbefore" min="1">
+                <div class="splitbefore error"></div>
+                <label for="splitafter">For</label>
+                <input type="number" name="splitafter" id="splitafter" min="1">
+                <div class="splitafter error"></div>
+            </div>
+            
+            <!-- dividend -->
+            <div id="entry-dividend-div">
+                <!-- dividend -->
+                <label for="dividend">Amount</label>
+                <input type="number" name="dividend" id="dividend" min="0">
+                <div class="dividend error"></div>
+            </div>
+            
+            <% } else if(kind == 'Crypto') { %>
+            <% } else if(kind == 'Cash') { %>
+            <% } %>
+
+            <!-- notes -->
+            <label for="notes">Notes</label>
+            <input type="text" name="notes" id="notes" placeholder="Transaction Notes" maxlength="256">
+            
+            <div class="mini-nav">
+                <ul>
+                    <li><button title="Add transaction">Add</button></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$("#kind").change(function () {
+    if ($(this).val() == "buy" || $(this).val() == "sell") {
+        $('#entry-buy-sell-div').show();
+        $('#quantity').attr('required', '');
+        $('#price').attr('required', '');
+    } else {
+        $('#entry-buy-sell-div').hide();
+        $('#quantity').removeAttr('required', '');
+        $('#price').removeAttr('required', '');
+    }
+    if ($(this).val() == "split") {
+        $('#entry-split-div').show();
+        $('#splitbefore').attr('required', '');
+        $('#splitafter').attr('required', '');
+    } else {
+        $('#entry-split-div').hide();
+        $('#splitbefore').removeAttr('required', '');
+        $('#splitafter').removeAttr('required', '');
+    }
+    if ($(this).val() == "dividend") {
+        $('#entry-dividend-div').show();
+        $('#dividend').attr('required', '');
+    } else {
+        $('#entry-dividend-div').hide();
+        $('#dividend').removeAttr('required', '');
+    }
+});
+$("#kind").trigger("change");
+</script>
+    
+<script type="text/javascript">
+    var transactionsStocksAddModal = document.getElementById("transactions-stocks-add-modal");
+    var transactionsStocksAddForm = document.getElementById("transactions-stocks-add-form");
+    transactionsStocksAddForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // get elements
+        const dateError = document.querySelector('#transactions-stocks-add-form .date.error');
+        const quantityError = document.querySelector('#transactions-stocks-add-form .quantity.error');
+        const priceError = document.querySelector('#transactions-stocks-add-form .price.error');
+        const commissionError = document.querySelector('#transactions-stocks-add-form .commission.error');
+        const splitbeforeError = document.querySelector('#transactions-stocks-add-form .splitbefore.error');
+        const splitafterError = document.querySelector('#transactions-stocks-add-form .splitafter.error');
+        const dividendError = document.querySelector('#transactions-stocks-add-form .dividend.error');
+        
+        // reset errors
+        dateError.textContent = '';
+        quantityError.textContent = '';
+        priceError.textContent = '';
+        commissionError.textContent = '';
+        splitbeforeError.textContent = '';
+        splitafterError.textContent = '';
+        dividendError.textContent = '';
+        
+        // get values
+        const kind = transactionsStocksAddForm.kind.value;
+        const date = transactionsStocksAddForm.date.value;
+        const quantity = transactionsStocksAddForm.quantity.value;
+        const price = transactionsStocksAddForm.price.value;
+        const commission = transactionsStocksAddForm.commission.value;
+        const splitbefore = transactionsStocksAddForm.splitbefore.value;
+        const splitafter = transactionsStocksAddForm.splitafter.value;
+        const dividend = transactionsStocksAddForm.dividend.value;
+        const notes = transactionsStocksAddForm.notes.value;
+        
+        try {
+            const res = await fetch('/assets/stocks/<%- asset._id %>/create', {
+                method: 'POST',
+                body: JSON.stringify({ kind, date, quantity, price, commission, splitbefore, splitafter, dividend, notes }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.errors) {
+                dateError.textContent = data.errors.date;
+                quantityError.textContent = data.errors.quantity;
+                priceError.textContent = data.errors.price;
+                commissionError.textContent = data.errors.commission;
+                splitbeforeError.textContent = data.errors.splitbefore;
+                splitafterError.textContent = data.errors.splitafter;
+                dividendError.textContent = data.errors.dividend;
+            }
+            if (data.asset) {   // should return the transaction (todo)
+                closeModal(transactionsStocksAddModal);
+                location.assign('/assets/stocks/<%- asset._id %>');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+</script>

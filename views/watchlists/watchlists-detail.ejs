@@ -15,6 +15,13 @@
 
 <div class="total-overview">
     <div class="total-overview-header">
+        <div class="mini-nav">
+            <ul>
+                <li><a href="/show" title="Go back" class="icon">Back to Overview</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="total-overview-header">
         <h1><%- watchlist.name %></h1>
     </div>
     <div class="total-overview-row">
@@ -37,7 +44,7 @@
         <div class="title">
             <div class="mini-nav">
                 <ul>
-                    <li><button id="entries-add-button">Add Entry</button></li>
+                    <li><button data-modal-target="#entries-add-modal">Add Entry</button></li>
                     <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
                     <li><a href="/watchlists/<%- watchlist._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
                 </ul>
@@ -130,9 +137,8 @@
 
 </div>
 
-<%- include("../modal/entries-add"); %>
-<%- include("../modal/remove-confirm", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
-
 <%- include("../partials/footer"); %>
 <%- include("../partials/formatters"); %>
-
+<%- include("../modal/entries-add-modal"); %>
+<%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
+<%- include("../modal/modal"); %>

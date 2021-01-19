@@ -1,10 +1,11 @@
 
-<div id="assets-add-overlay" class="modal-overlay closed"></div>
-<div id="assets-add-modal" class="modal closed">
-    <button class="close-button" id="assets-add-close-button">&times;</button>
+<div id="assets-add-modal" class="modal">
+    <div class="modal-header">
+        <div class="title">Add Asset</div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
     <div class="modal-content">
         <form id="assets-add-form" class="modal-form" autocomplete="off">
-            <h2>Add Asset</h2>
             <div>
                 <label for="kind">Kind</label>
                 <select id="kind" autofocus>
@@ -72,23 +73,8 @@
 </script>
     
 <script type="text/javascript">
-    var assetsAddButton = document.getElementById("assets-add-button");    
-    var assetsAddOverlay = document.getElementById("assets-add-overlay");
     var assetsAddModal = document.getElementById("assets-add-modal");
     var assetsAddForm = document.getElementById("assets-add-form");
-    var assetsAddCloseButton = document.getElementById("assets-add-close-button");
-
-    function assetsAddToggle() {
-        assetsAddModal.classList.toggle("closed");
-        assetsAddOverlay.classList.toggle("closed");
-    }
-    assetsAddButton.addEventListener("click", assetsAddToggle);
-    assetsAddCloseButton.addEventListener("click", assetsAddToggle);
-    assetsAddOverlay.addEventListener("click", (e) => {
-        if (e.target == assetsAddOverlay) {
-            assetsAddToggle();
-        }
-    });
     assetsAddForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -122,7 +108,7 @@
                 currencyError.textContent = data.errors.currency;
             }
             if (data.asset) {
-                assetsAddToggle();
+                closeModal(assetsAddModal);
                 location.assign('/portfolios/<%- portfolio._id %>');
             }
         }

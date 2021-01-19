@@ -1,4 +1,4 @@
-<%- include("../partials/header"); -%>
+<%- include("../partials/header"); %>
 
 <% var hasAssets = true; %>
 <% var nPanels = 0; %>
@@ -31,12 +31,12 @@
     </div>
 </div>
 
-<div class="panel-container-3c">
+<div class="panel-container-3c-le">
     <div class="panel-containee panel-border">
         <div class="title">
             <div class="mini-nav">
                 <ul>
-                    <li><button id="assets-add-button">Add Asset</button></li>
+                    <li><button data-modal-target="#assets-add-modal">Add Asset</button></li>
                     <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
                     <li><a href="/portfolios/<%- portfolio._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
                 </ul>
@@ -64,29 +64,29 @@
                     <% portfolio.stock_assets.forEach(asset => { %>
                         <tr class="item">
                             <td sorttable_customkey="<%- asset.exchange_id.name %>">
-                                <a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.name %></a><br/>
-                                <span class="smaller-font"><a href="/exchanges/<%- asset.exchange_id._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
+                                <a href="/assets/stocks/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
+                                <span class="emphasize-minus"><a href="/assets/stocks/<%- asset._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
                             </td>                                    
                             <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
                                 <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
-                                <span class="smaller-font format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
+                                <span class="emphasize-minus format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
                                 <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
-                                <span class="smaller-font format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
+                                <span class="emphasize-minus format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
                             </td>
                             
                             <td sorttable_customkey="<%- asset.unrealized_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span><br/>
-                                <span class="smaller-font format-percentage"><%- asset.unrealized_value_percentage %></span>
+                                <span class="emphasize-minus format-percentage"><%- asset.unrealized_value_percentage %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.daily_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span><br/>
-                                <span class="smaller-font format-percentage"><%- asset.daily_value_percentage %></span>
+                                <span class="emphasize-minus format-percentage"><%- asset.daily_value_percentage %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.change_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></span><br/>
-                                <span class="smaller-font format-percentage"><%- asset.change_value_percentage %></span>
+                                <span class="emphasize-minus format-percentage"><%- asset.change_value_percentage %></span>
                             </td>
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'kind': 'Stock', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
@@ -116,9 +116,8 @@
 
 </div>
 
-
-<%- include("../modal/assets-add"); %>
-<%- include("../modal/remove-confirm", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
-
 <%- include("../partials/footer"); %>
 <%- include("../partials/formatters"); %>
+<%- include("../modal/assets-add-modal"); %>
+<%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
+<%- include("../modal/modal"); %>

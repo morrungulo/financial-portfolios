@@ -1,10 +1,10 @@
-
-<div id="portfolios-add-overlay" class="modal-overlay closed"></div>
-<div id="portfolios-add-modal" class="modal closed">
-    <button class="close-button" id="portfolios-add-close-button">&times;</button>
+<div id="portfolios-add-modal" class="modal">
+    <div class="modal-header">
+        <div class="title">Add Portfolio</div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
     <div class="modal-content">
         <form id="portfolios-add-form" class="modal-form" autocomplete="off">
-            <h2>Add Portfolio</h2>
             <label for="name">Portfolio name</label>
             <input type="text" name="name" required autofocus />
             <div class="name error"></div>
@@ -27,23 +27,8 @@
 </div>
 
 <script type="text/javascript">
-    var portfoliosAddButton = document.getElementById("portfolios-add-button");    
-    var portfoliosAddOverlay = document.getElementById("portfolios-add-overlay");
     var portfoliosAddModal = document.getElementById("portfolios-add-modal");
     var portfoliosAddForm = document.getElementById("portfolios-add-form");
-    var portfoliosAddCloseButton = document.getElementById("portfolios-add-close-button");
-
-    function portfoliosAddToggle() {
-        portfoliosAddModal.classList.toggle("closed");
-        portfoliosAddOverlay.classList.toggle("closed");
-    }
-    portfoliosAddButton.addEventListener("click", portfoliosAddToggle);
-    portfoliosAddCloseButton.addEventListener("click", portfoliosAddToggle);
-    portfoliosAddOverlay.addEventListener("click", (e) => {
-        if (e.target == portfoliosAddOverlay) {
-            portfoliosAddToggle();
-        }
-    });
     portfoliosAddForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -72,7 +57,7 @@
                 currencyError.textContent = data.errors.currency;
             }
             if (data.portfolio) {
-                portfoliosAddToggle();
+                closeModal(portfoliosAddModal);
                 location.assign('/show');
             }
         }

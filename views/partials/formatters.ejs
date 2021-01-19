@@ -90,5 +90,14 @@
                 $(this).html(mdate.toLocaleDateString([], options));
             }
         });
+        $(".format-date-long").each(function() {
+            const mdate = new Date($(this).text());
+            if (mdate.getFullYear()==1970) {
+                $(this).html('-');
+            } else {
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                $(this).html(mdate.toLocaleDateString([], options));
+            }
+        });
     });
 </script>

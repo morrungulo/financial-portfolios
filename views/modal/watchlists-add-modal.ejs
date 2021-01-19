@@ -1,10 +1,10 @@
-
-<div id="watchlists-add-overlay" class="modal-overlay closed"></div>
-<div id="watchlists-add-modal" class="modal closed">
-    <button class="close-button" id="watchlists-add-close-button">&times;</button>
+<div id="watchlists-add-modal" class="modal">
+    <div class="modal-header">
+        <div class="title">Add Watchlist</div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
     <div class="modal-content">
         <form id="watchlists-add-form" class="modal-form" autocomplete="off">
-            <h2>Add Watchlist</h2>
             <label for="name">Watchlist name</label>
             <input type="text" name="name" required autofocus />
             <div class="name error"></div>
@@ -18,23 +18,8 @@
 </div>
 
 <script type="text/javascript">
-    var watchlistsAddButton = document.getElementById("watchlists-add-button");    
-    var watchlistsAddOverlay = document.getElementById("watchlists-add-overlay");
     var watchlistsAddModal = document.getElementById("watchlists-add-modal");
     var watchlistsAddForm = document.getElementById("watchlists-add-form");
-    var watchlistsAddCloseButton = document.getElementById("watchlists-add-close-button");
-
-    function watchlistsAddToggle() {
-        watchlistsAddModal.classList.toggle("closed");
-        watchlistsAddOverlay.classList.toggle("closed");
-    }
-    watchlistsAddButton.addEventListener("click", watchlistsAddToggle);
-    watchlistsAddCloseButton.addEventListener("click", watchlistsAddToggle);
-    watchlistsAddOverlay.addEventListener("click", (e) => {
-        if (e.target == watchlistsAddOverlay) {
-            watchlistsAddToggle();
-        }
-    });
     watchlistsAddForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -59,7 +44,7 @@
                 nameError.textContent = data.errors.portfolio;
             }
             if (data.watchlist) {
-                watchlistsAddToggle();
+                closeModal(watchlistsAddModal);
                 location.assign('/show');
             }
         }

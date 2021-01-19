@@ -1,10 +1,10 @@
-
-<div id="entries-add-overlay" class="modal-overlay closed"></div>
-<div id="entries-add-modal" class="modal closed">
-    <button class="close-button" id="entries-add-close-button">&times;</button>
+<div id="entries-add-modal" class="modal">
+    <div class="modal-header">
+        <div class="title">Add Entry</div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
     <div class="modal-content">
         <form id="entries-add-form" class="modal-form" autocomplete="off">
-            <h2>Add Entry</h2>
             <div>
                 <label for="kind">Kind</label>
                 <select id="kind" autofocus>
@@ -15,23 +15,23 @@
             </div>
             <div id="entry-stock-div">
                 <label for="ticker">Ticker</label>
-                <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)"/>
+                <input type="text" id="ticker" placeholder="Stock ticker (eg. MSFT)">
                 <div class="ticker error"></div>
             </div>
             <div id="entry-crypto-div">
                 <label for="fromCrypto">From crypto</label>
-                <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)" />
+                <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)">
                 <div class="fromCrypto error"></div>
                 <label for="toCrypto">To currency</label>
-                <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)" />
+                <input type="text" id="toCrypto" placeholder="3-letter symbol (eg. USD)">
                 <div class="toCrypto error"></div>
                 </div>
             <div id="entry-cash-div">
                 <label for="fromCurrency">From currency</label>
-                <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)" />
+                <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)">
                 <div class="fromCurrency error"></div>
                 <label for="toCurrency">To currency</label>
-                <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)" />
+                <input type="text" id="toCurrency" placeholder="3-letter symbol (eg. GBP)">
                 <div class="toCurrency error"></div>
             </div>
             <div class="mini-nav">
@@ -80,23 +80,8 @@ $("#kind").trigger("change");
 </script>
     
 <script type="text/javascript">
-    var entriesAddButton = document.getElementById("entries-add-button");    
-    var entriesAddOverlay = document.getElementById("entries-add-overlay");
     var entriesAddModal = document.getElementById("entries-add-modal");
     var entriesAddForm = document.getElementById("entries-add-form");
-    var entriesAddCloseButton = document.getElementById("entries-add-close-button");
-
-    function entriesAddToggle() {
-        entriesAddModal.classList.toggle("closed");
-        entriesAddOverlay.classList.toggle("closed");
-    }
-    entriesAddButton.addEventListener("click", entriesAddToggle);
-    entriesAddCloseButton.addEventListener("click", entriesAddToggle);
-    entriesAddOverlay.addEventListener("click", (e) => {
-        if (e.target == entriesAddOverlay) {
-            entriesAddToggle();
-        }
-    });
     entriesAddForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -138,7 +123,7 @@ $("#kind").trigger("change");
                 toCurrencyError.textContent = data.errors.toCurrency;
             }
             if (data.entry) {
-                entriesAddToggle();
+                closeModal(entriesAddModal);
                 location.assign('/watchlists/<%- watchlist._id %>');
             }
         }

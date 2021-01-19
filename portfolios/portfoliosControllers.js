@@ -183,21 +183,6 @@ module.exports.portfolios_assets_remove_post = async (req, res) => {
     }
 }
 
-module.exports.portfolios_assets_transactions_create_post = async (req, res) => {
-    res.send("Not implemented - portfolios_assets_transactions_create_post!");
-}
-
-module.exports.portfolios_assets_transactions_remove_post = async (req, res) => {
-    res.send("Not implemented - portfolios_assets_transactions_remove_post!");
-}
-
-module.exports.portfolios_assets_transactions_detail = async (req, res) => {
-    res.send("Not implemented - portfolios_assets_transactions_detail!");
-}
-
-module.exports.portfolios_assets_transactions_update = async (req, res) => {
-    res.send("Not implemented - portfolios_assets_transactions_update!");
-}
 
 /*
 

@@ -22,7 +22,7 @@
         <div class="title">
             <div class="mini-nav">
                 <ul>
-                    <li><button id="portfolios-add-button">Add Portfolio</button></li>
+                    <li><button data-modal-target="#portfolios-add-modal">Add Portfolio</button></li>
                     <li><a href="/show" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
                 </ul>
             </div>
@@ -82,7 +82,7 @@
         <div class="title">
             <div class="mini-nav">
                 <ul>
-                    <li><button id="watchlists-add-button">Add Watchlist</button></li>
+                    <li><button data-modal-target="#watchlists-add-modal">Add Watchlist</button></li>
                 </ul>
             </div>
         </div>
@@ -133,10 +133,10 @@
 </div>
 
 
-<%- include("./modal/portfolios-add"); %>
-<%- include("./modal/watchlists-add"); %>
-<%- include("./modal/remove-confirm", {'prefix': 'portfolios', 'post': '/portfolios', 'redirect': '/show' }); %>
-<%- include("./modal/remove-confirm", {'prefix': 'watchlists', 'post': '/watchlists', 'redirect': '/show' }); %>
-
 <%- include("./partials/footer"); %>
 <%- include("./partials/formatters"); %>
+<%- include("./modal/portfolios-add-modal"); %>
+<%- include("./modal/watchlists-add-modal"); %>
+<%- include("./modal/remove-confirm-modal", { 'prefix': 'portfolios', 'post': '/portfolios', 'redirect': '/show' }); %>
+<%- include("./modal/remove-confirm-modal", { 'prefix': 'watchlists', 'post': '/watchlists', 'redirect': '/show' }); %>
+<%- include("./modal/modal"); %>

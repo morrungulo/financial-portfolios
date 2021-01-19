@@ -7,6 +7,7 @@ const showRoutes = require('../show/showRoutes');
 const portfoliosRoutes = require('../portfolios/portfoliosRoutes');
 const watchlistsRoutes = require('../watchlists/watchlistsRoutes');
 const exchangesRoutes = require('../exchanges/exchangesRoutes');
+const assetsRoutes = require('../assets/assetsRoutes');
 
 module.exports = {
     initialize: ({ expressApp }, callback) => {
@@ -44,6 +45,7 @@ module.exports = {
         expressApp.use('/portfolios', portfoliosRoutes);
         expressApp.use('/watchlists', watchlistsRoutes);
         expressApp.use('/exchanges', exchangesRoutes)
+        expressApp.use('/assets', assetsRoutes);
 
         // last page to be registered, the 404 page
         expressApp.use((req, res) => res.status(404).render('404', { title: 'Page Not Found', page: req.url }));
