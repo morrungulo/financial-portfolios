@@ -139,37 +139,17 @@ module.exports.watchlists_entries_remove_post = async (req, res) => {
     const { kind, id } = req.body;
     const wid = req.params.wid;
 
-    try {
-        // get the watchlist
-        let watchlist = await Watchlist.findById(wid);
-        if (!watchlist) {
-            throw Error('controller:remove:Unknown watchlist');
-        }
-        
-        let removed = null;
-        if (kind == 'Stock') {
-
-            // remove it from our list
-            removed = watchlist.stock_entries.pull({ _id: id });
-
-        } else if (kind == 'Crypto') {
-            
-        } else if (kind == 'Cash') {
-
-        }
-
-        // save watchlist
-        watchlist.save(err => {
+    const mapp = { 'Stock': 'stock_entries', 'Crypto': 'crypto_entries', 'Cash': 'cash_entries' };
+    if (mapp[kind]) {
+        let ssobj = {};
+        ssobj[mapp[kind]] = id;
+        Watchlist.findByIdAndUpdate(wid, {$pull: ssobj}, (err, data) => {
             if (err) {
                 const errors = handleErrors(err);
                 res.status(400).json({ errors });
             } else {
-                res.status(201).json({ removed });
+                res.status(201).json({});
             }
         });
-    }
-    catch (err) {
-        const errors = handleErrors(err);
-        res.status(400).json({ errors });
     }
 }

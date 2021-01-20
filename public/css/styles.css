@@ -11,6 +11,7 @@
     box-sizing: border-box;
 
     /* border: 1px solid red; */
+    
 }
 
 body {
@@ -276,7 +277,7 @@ footer {
     border-radius: 14px;
     z-index: 100;
     background-color: var(--canvas-content);
-    width: 400px; 
+    width: 450px; 
     max-width: 30%;
     box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
 }
@@ -323,7 +324,7 @@ footer {
     margin-bottom: 10px;
     font-size: var(--titlem);
     font-weight: bold;
-
+    /* white-space: nowrap; */
 }
 
 .modal-form p {
@@ -417,7 +418,7 @@ button.icon:hover {
 .button-svg {
     width: 20px;
     height: 20px;
-    float: right;
+    /* float: right; */
 }
 .button-svg:hover {
     filter: invert(34%) sepia(0%) saturate(1637%) hue-rotate(165deg) brightness(108%) contrast(76%);
@@ -444,6 +445,7 @@ button.icon:hover {
 /* standard tables */
 table, th, td {
     border: none;
+    /* border: 1px solid blue; */
 }
 
 .nowrap {
@@ -526,4 +528,15 @@ table, th, td {
 
 .standard-list .assets-stocks-list {
     text-align: left;
+}
+
+/* color and style formatters */
+.red {
+    color: red;
+    font-weight: bold;
+}
+
+.green {
+    color: green;
+    font-weight: bold;
 }

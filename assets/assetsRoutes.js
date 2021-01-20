@@ -9,6 +9,7 @@ router.get('/stocks/:aid', authMiddleware.requireAuth, assetsController.assets_s
 
 // stock transactions
 router.post('/stocks/:aid/create', authMiddleware.requireAuth, assetsController.transactions_stocks_create_post);
+router.post('/stocks/:aid/remove', authMiddleware.requireAuth, assetsController.transactions_stocks_remove_post);
 
 // crypto
 

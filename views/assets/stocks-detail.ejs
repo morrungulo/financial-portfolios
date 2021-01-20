@@ -25,8 +25,6 @@
         <% } %>
     </div>
     <div class="panel-container-3c-eq">
-        <%- include("../partials/exchanges-stock-profile", { 'stock': asset.exchange_id }); %>
-        <%- include("../partials/exchanges-stock-summary", { 'stock': asset.exchange_id }); %>
 
         <!-- transactions -->
         <div class="panel-containee panel-border">
@@ -55,12 +53,12 @@
                         </thead>
                         <tbody>
                         <% asset.transactions.forEach(transaction => { %>
-                            <tr>
+                            <tr title="<%- transaction.kind %>">
                                 <td><span class="format-date-long"><%- transaction.date %></span></td>
                                 <td><%- transaction.kind %></td>
                                 <td>
                                 <% if(['buy', 'sell'].includes(transaction.kind)) { %>
-                                    <span class="format-3-fraction-digits"><%- transaction.quantity %></span> @
+                                    <span class="format-3-fraction-digits"><%- transaction.quantity %></span> shares @
                                     <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span>
                                 <% } else if(transaction.kind == 'dividend') { %>
                                     <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.dividend %></span>
@@ -70,11 +68,9 @@
                                 <% } %>
                                 </td>
 
-                                <td class="icons">
-                                    <button onclick="transactionsEditButton(<%- transaction %>)" class="icon">
-                                        <img src="/img/iconmonstr-edit-10.svg" alt="Edit row" class="button-svg shrink">
-                                    </button>
-                                    <button onclick="transactionsStocksRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'id': '<%- transaction._id %>' })" class="icon">
+                                <td>
+                                    <% var fdate = transaction.date.toLocaleDateString([], {month: 'short', day: 'numeric'}); %>
+                                    <button onclick="transactionsStocksRemoveConfirmButton('the <%- transaction.kind %> transaction on <%- fdate %>', { 'id': '<%- transaction._id %>' })" class="icon">
                                         <img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink">
                                     </button>
                                 </td>
@@ -89,6 +85,10 @@
                 <% } %>
             </div>
         </div>
+
+        <%- include("../partials/exchanges-stock-profile", { 'stock': asset.exchange_id }); %>
+        <%- include("../partials/exchanges-stock-summary", { 'stock': asset.exchange_id }); %>
+        
     </div>
 </div>
 

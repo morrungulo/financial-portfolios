@@ -163,7 +163,7 @@ $("#kind").trigger("change");
                 splitafterError.textContent = data.errors.splitafter;
                 dividendError.textContent = data.errors.dividend;
             }
-            if (data.asset) {   // should return the transaction (todo)
+            if (data.transaction) {
                 closeModal(transactionsStocksAddModal);
                 location.assign('/assets/stocks/<%- asset._id %>');
             }

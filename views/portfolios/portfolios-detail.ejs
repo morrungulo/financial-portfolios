@@ -72,8 +72,8 @@
                                 <span class="emphasize-minus format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
-                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
+                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
+                                <span class="emphasize-minus format-percentage format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
                             </td>
                             
                             <td sorttable_customkey="<%- asset.unrealized_value %>">

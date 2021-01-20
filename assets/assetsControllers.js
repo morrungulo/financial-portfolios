@@ -5,16 +5,21 @@ const TransactionStock = require('../models/stock/Transaction');
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
-    return [first, second, rest.length > 0? rest.join(on) : null]
+    return [first, second, rest.length > 0 ? rest.join(on) : null]
 }
 
 const handleErrors = (err) => {
+    console.log(chalk.magenta(err));
     console.log(chalk.red(err.message, err.code));
-    let errors = { assetstock: '', transactionstock: '' };
+    let errors = { '404': '', assetstock: '', transactionstock: '' };
 
     if (err.message.startsWith("controller")) {
         const [ctrl, code, message] = splitOnce(err.message, ':');
         errors[code] = message;
+    }
+
+    if (err.message.startsWith("Cast to ObjectId failed")) {
+        errors['404'] = message;
     }
 
     // validation errors
@@ -30,7 +35,7 @@ const handleErrors = (err) => {
             errors.transactionstock = properties.message;
         });
     }
-            
+
     return errors;
 }
 
@@ -39,9 +44,9 @@ module.exports.assets_stocks_detail = async (req, res) => {
     try {
         let asset = await AssetStock.findById(aid);
         await asset
-            .populate({path: 'transactions', options: { sort : { date: -1 }}})
-            .populate({path: 'portfolio_id'})
-            .populate({path: 'exchange_id'})
+            .populate({ path: 'transactions', options: { sort: { date: -1 } } })
+            .populate({ path: 'portfolio_id' })
+            .populate({ path: 'exchange_id' })
             .execPopulate();
         res.render('assets/stocks-detail', { title: asset.exchange_id.name, asset });
     }
@@ -51,46 +56,54 @@ module.exports.assets_stocks_detail = async (req, res) => {
     }
 }
 
-const validateDate = (datetime) => {
-    const date = new Date(datetime);
-    if (date > Date.now()) {
-        throw Error("controller:datetime:The date cannot be in the future");
-    }
+const validateBuyTransactionStock = (obj) => {
+    return validateSellTransactionStock(obj);
 }
 
-const validateBuyTransactionStock = (kind, quantity, price, commission) => {
-    return validateSellTransactionStock(kind, quantity, price, commission);
-}
-
-const validateSellTransactionStock = (kind, quantity, price, commission) => {
-    if (kind == 'buy' || kind == 'sell') {
-        if (parseFloat(quantity) == 0) {
+const validateSellTransactionStock = (obj) => {
+    if (['buy', 'sell'].includes(obj.kind)) {
+        if (parseFloat(obj.quantity) == 0) {
             throw Error("controller:quantity:This value cannot be zero");
         }
+        // reset other values
+        obj.dividend = 0
+        obj.splitbefore = 1;
+        obj.splitafter = 1;
     }
 }
 
-const validateDividendTransactionStock = (kind, dividend) => {
-    if (kind == 'dividend') {
-        if (parseFloat(dividend) == 0) {
+const validateDividendTransactionStock = (obj) => {
+    if (obj.kind == 'dividend') {
+        if (parseFloat(obj.dividend) == 0) {
             throw Error("controller:dividend:This value cannot be zero");
         }
+        // reset other values
+        obj.quantity = 0;
+        obj.price = 0;
+        obj.commission = 0;
+        obj.splitbefore = 1;
+        obj.splitafter = 1;
     }
 }
 
-const validateSplitTransactionStock = (kind, splitbefore, splitafter) => {
-    if (kind == 'split') {
-        if (parseInt(splitbefore) < 1) {
+const validateSplitTransactionStock = (obj) => {
+    if (obj.kind == 'split') {
+        if (parseInt(obj.splitbefore) < 1) {
             throw Error("controller:splitbefore:This value cannot be less than one");
-        } else if (parseInt(splitafter) < 1) {
+        } else if (parseInt(obj.splitafter) < 1) {
             throw Error("controller:splitafter:This value cannot be less than one");
         }
+        // reset other values
+        obj.quantity = 0;
+        obj.price = 0;
+        obj.commission = 0;
+        obj.dividend = 0;
     }
 }
 
 module.exports.transactions_stocks_create_post = async (req, res) => {
     const params = req.body;
-    // { kind, datetime, quantity, price, commission, splitbefore, splitafter, dividend, notes } = req.body;
+    // { kind, date, quantity, price, commission, splitbefore, splitafter, dividend, notes }
     const aid = req.params.aid;
 
     try {
@@ -100,44 +113,55 @@ module.exports.transactions_stocks_create_post = async (req, res) => {
             throw Error('404');
         }
 
-        console.log(chalk.cyan(JSON.stringify(asset, null, "  ")));
-        console.log(chalk.cyan(JSON.stringify(params, null, "  ")));
-
         // validate data
-        validateDate(params.datetime);
         validateBuyTransactionStock(params);
         validateSellTransactionStock(params);
         validateSplitTransactionStock(params);
         validateDividendTransactionStock(params);
 
-        // todo
-        if (kind == 'buy' || kind == 'sell') {
-        }
-        else if (kind == 'dividend') {
-        }
-        else if (kind == 'split') {
-        }
-        // const cost = (kind == 'buy' || kind == 'sell') ? cost = 
-
         // create transaction
-        // let transaction = await TransactionStock.create({
-        //     kind, datetime, quantity, price, commission,
-        // });
-        // updatePortfolioFromTransaction(asset, transaction);
+        let transaction = await TransactionStock.create({
+            kind: params.kind,
+            date: params.date,
+            quantity: params.quantity,
+            price: params.price,
+            commission: params.commission,
+            dividend: params.dividend,
+            split_before: params.splitbefore,
+            split_after: params.splitafter,
+            notes: params.notes,
+        });
 
-        await asset
-            .populate({path: 'transactions'})
-            .populate({path: 'portfolio_id'})
-            .populate({path: 'exchange_id'})
-            .execPopulate();
-        res.status(201).json({ asset });  // temp (should return transaction)
+        // push and save
+        asset.transactions.push(transaction._id);
+        asset.save(err => {
+            if (err) {
+                const errors = handleErrors(err);
+                res.status(400).json({ errors });
+            } else {
+                res.status(201).json({ transaction });
+            }
+        });
     }
     catch (err) {
         if (err.message === '404') {
-           res.status(404).render('404', { title: 'Page Not Found', page: req.url });
+            res.status(404).render('404', { title: 'Page Not Found', page: req.url });
         } else {
             const errors = handleErrors(err);
             res.status(400).json({ errors });
         }
     }
+}
+
+module.exports.transactions_stocks_remove_post = async (req, res) => {
+    const { id } = req.body;
+    const aid = req.params.aid;
+    AssetStock.findByIdAndUpdate(aid, {$pull: {transactions: id}}, (err, data) => {
+        if (err) {
+            const errors = handleErrors(err);
+            res.status(400).json({ errors });
+        } else {
+            res.status(201).json({});
+        }
+    });
 }

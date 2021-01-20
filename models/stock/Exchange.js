@@ -93,5 +93,4 @@ ExchangeStock.on('beforeSave', (entry) => {
     entry.exchangeCalculated.Week52RangePercent = 100 * ((entry.exchangeQuote.Price - entry.exchangeOverview.Week52Low) / (entry.exchangeOverview.Week52High - entry.exchangeOverview.Week52Low));
 });
 
-
 module.exports = ExchangeStock;

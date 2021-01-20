@@ -15,13 +15,6 @@
 
 <div class="total-overview">
     <div class="total-overview-header">
-        <div class="mini-nav">
-            <ul>
-                <li><a href="/show" title="Go back" class="icon">Back to Overview</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="total-overview-header">
         <h1><%- watchlist.name %></h1>
     </div>
     <div class="total-overview-row">
@@ -81,7 +74,7 @@
                     </thead>
                     <tbody>
                     <% watchlist.stock_entries.forEach(entry => { %>
-                        <tr class="item">
+                        <tr class="item" title="<%- entry.exchangeOverview.Name %>">
                             <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
                 
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></span></td>
@@ -95,8 +88,8 @@
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.PreviousClose %></span></td>
                 
                             <td><span class="format-integer-short"><%- entry.exchangeQuote.Volume %></span></td>
-                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Change %></span></td>
-                            <td><span class="format-percentage"><%- entry.exchangeQuote.ChangePercent %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %> format-pos-neg-color"><%- entry.exchangeQuote.Change %></span></td>
+                            <td><span class="format-percentage format-pos-neg-color"><%- entry.exchangeQuote.ChangePercent %></span></td>
                             <td><span class="format-3-fraction-digits"><%- entry.exchangeOverview.PERatio %></span></td>
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.EPS %></span></td>
                 

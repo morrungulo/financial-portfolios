@@ -23,8 +23,8 @@
     var <%- prefix %>RemoveConfirmLabel = document.getElementById("<%- prefix %>-remove-confirm-form-label");
     var <%- prefix %>RemoveConfirmForm = document.getElementById("<%- prefix %>-remove-confirm-form");
 
-    function <%- prefix %>RemoveConfirmButton(identifier, dataobj) {
-        <%- prefix %>RemoveConfirmLabel.textContent = `Are you sure you want to remove "${identifier}"?`;
+    function <%- prefix %>RemoveConfirmButton(message, dataobj) {
+        <%- prefix %>RemoveConfirmLabel.textContent = `Are you sure you want to remove ${message}?`;
         <%- prefix %>RemoveConfirmForm.dataobj.value = JSON.stringify(dataobj);
         openModal(<%- prefix %>RemoveConfirmModal);
     }
@@ -50,8 +50,7 @@
             console.log(data);
             if (data.errors) {
                 removeError.textContent = data.errors.remove;
-            }
-            if (data.removed) {
+            } else {
                 closeModal(<%- prefix %>RemoveConfirmModal);
                 location.assign('<% if(typeof redirect !== "undefined") { redirect; } else { post; } %>');
             }

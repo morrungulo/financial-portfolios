@@ -10,6 +10,15 @@
     }
 
     $(document).ready( function() {
+        $(".format-pos-neg-color").each(function() {
+            const value = parseFloat($(this).text());
+            if (value < 0) {
+                $(this).addClass('red');
+            }
+            else if (value > 0) {
+                $(this).addClass('green');
+            }
+        });
         $(".format-currency-USD").each(function() {
             format_currency($(this), 'en-US');            
         });
