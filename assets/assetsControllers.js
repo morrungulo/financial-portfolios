@@ -2,6 +2,8 @@ const config = require('config');
 const chalk = require('chalk');
 const AssetStock = require('../models/stock/Asset');
 const TransactionStock = require('../models/stock/Transaction');
+const TransactionStockEmitter = require('../events/transactionStockEmitter');
+const { assetStockCalculatorFull } = require('./assetsCalculator');
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
@@ -56,15 +58,37 @@ module.exports.assets_stocks_detail = async (req, res) => {
     }
 }
 
-const validateBuyTransactionStock = (obj) => {
-    return validateSellTransactionStock(obj);
+module.exports.assets_stocks_recalculate = async (req, res) => {
+    const aid = req.params.aid;
+    try {
+        await assetStockCalculatorFull(aid);
+        res.redirect('.');
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
-const validateSellTransactionStock = (obj) => {
-    if (['buy', 'sell'].includes(obj.kind)) {
+const validateBuyTransactionStock = (obj) => {
+    if (obj.kind == 'buy') {
         if (parseFloat(obj.quantity) == 0) {
             throw Error("controller:quantity:This value cannot be zero");
         }
+        // reset other values
+        obj.dividend = 0
+        obj.splitbefore = 1;
+        obj.splitafter = 1;
+    }
+}
+
+const validateSellTransactionStock = (obj) => {
+    if (obj.kind == 'sell') {
+        if (parseFloat(obj.quantity) == 0) {
+            throw Error("controller:quantity:This value cannot be zero");
+        }
+        // change sign of quantity
+        obj.quantity = -obj.quantity;
         // reset other values
         obj.dividend = 0
         obj.splitbefore = 1;
@@ -108,7 +132,7 @@ module.exports.transactions_stocks_create_post = async (req, res) => {
 
     try {
         // data is valid
-        let asset = await AssetStock.findById(aid);
+        let asset = await AssetStock.findById(aid).lean();
         if (!asset) {
             throw Error('404');
         }
@@ -130,18 +154,10 @@ module.exports.transactions_stocks_create_post = async (req, res) => {
             split_before: params.splitbefore,
             split_after: params.splitafter,
             notes: params.notes,
+            asset_id: asset._id,
         });
-
-        // push and save
-        asset.transactions.push(transaction._id);
-        asset.save(err => {
-            if (err) {
-                const errors = handleErrors(err);
-                res.status(400).json({ errors });
-            } else {
-                res.status(201).json({ transaction });
-            }
-        });
+        TransactionStockEmitter.emit('create', transaction);
+        res.status(201).json({ transaction });
     }
     catch (err) {
         if (err.message === '404') {
@@ -156,12 +172,12 @@ module.exports.transactions_stocks_create_post = async (req, res) => {
 module.exports.transactions_stocks_remove_post = async (req, res) => {
     const { id } = req.body;
     const aid = req.params.aid;
-    AssetStock.findByIdAndUpdate(aid, {$pull: {transactions: id}}, (err, data) => {
-        if (err) {
-            const errors = handleErrors(err);
-            res.status(400).json({ errors });
-        } else {
-            res.status(201).json({});
-        }
-    });
+    try {
+        let transaction = await TransactionStock.findByIdAndDelete(id);
+        TransactionStockEmitter.emit('delete', transaction);
+        res.status(201).json({});
+    } catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }

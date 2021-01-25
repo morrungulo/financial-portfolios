@@ -77,6 +77,24 @@ module.exports.portfolios_detail = async (req, res) => {
     }
 }
 
+module.exports.portfolios_recalculate = async (req, res) => {
+    res.send('not yet implemented');
+    // const pid = req.params.pid;
+    // try {
+    //     let portfolio = await Portfolio.findById(pid);
+    //     await portfolio
+    //         .populate({path: 'stock_assets', populate: {path: 'exchange_id'}})
+    //         .populate({path: 'crypto_assets'})
+    //         .populate({path: 'cash_assets'})
+    //         .execPopulate();
+    //     res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
+    // }
+    // catch (err) {
+    //     const errors = handleErrors(err);
+    //     res.status(400).json({ errors });
+    // }
+}
+
 module.exports.portfolios_assets_create_post = async (req, res) => {
     const { kind, ticker, crypto, currency } = req.body;
     const pid = req.params.pid;
@@ -113,8 +131,9 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
             }
 
             // create asset and add to portfolio
-            asset = new AssetStock({ portfolio_id: portfolio._id, exchange_id: entry._id });
-            await asset.save();
+            asset = await AssetStock.create({ portfolio_id: portfolio._id, exchange_id: entry._id });
+            
+            // push to list but sort list
             portfolio.stock_assets.push(asset._id);
             
         } else if (kind == 'Crypto') {

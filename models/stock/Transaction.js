@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongooseLifecycle = require('mongoose-lifecycle');
 
 // the schema
 const transactionStockSchema = new mongoose.Schema({
@@ -9,16 +8,15 @@ const transactionStockSchema = new mongoose.Schema({
         lowercase: true,
         enum: ['buy', 'sell', 'dividend', 'split']
     },
-    
+
     date: {
         type: Date,
-        required: [true, "A Transaction Date is required"]
+        required: [true, "A date is required"],
     },
 
-    /* buy and sell */
+    // buy and sell
     quantity: {
         type: Number,
-        min: 0
     },
     price: {
         type: Number,
@@ -28,14 +26,24 @@ const transactionStockSchema = new mongoose.Schema({
         type: Number,
         min: 0
     },
+    // calculated
+    cost: {
+        type: Number,
+        default: 0
+    },
+    // calculated
+    realized: {
+        type: Number,
+        default: 0
+    },
 
-    /* dividend only */
+    // dividend only
     dividend: {
         type: Number,
         min: 0
     },
 
-    /* split only */
+    // split only
     split_before: {
         type: Number,
         min: 1
@@ -44,31 +52,41 @@ const transactionStockSchema = new mongoose.Schema({
         type: Number,
         min: 1
     },
+    // before/after (calculated)
+    split_ratio: {
+        type: Number,
+        default: 1
+    },
 
-    /* notes */
+    // notes
     notes: {
         type: String
     },
 
-    // calculated
-    // if buy, cost = price*quantity+commission
-    // if sell, cost = price*quantity+commission
-    value_cost: {
-        type: Number,
-        min: 0
-    },
+    // the asset this transaction belongs to
+    asset_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'assetstock',
+        required: [true, 'An asset is required']
+    }
 
 }, { timestamps: true });
 
-// register listener
-transactionStockSchema.plugin(mongooseLifecycle);
+// calculate some fields
+transactionStockSchema.pre('save', function(next) {
+    if (this.kind == 'buy') {
+        this.cost = (this.price * this.quantity) + this.commission;
+    }
+    else if (this.kind == 'sell') {
+        this.realized = (this.price * -this.quantity) - this.commission;
+    }
+    else if (this.kind == 'split') {
+        this.split_ratio = (this.split_before / this.split_after);
+    }
+    next();
+});
 
 // the model
 const TransactionStock = mongoose.model('transactionstock', transactionStockSchema);
-
-// listeners
-TransactionStock.on('beforeSave', (entry) => {
-    entry.value_cost = (entry.price * entry.quantity) + entry.commission;
-});
 
 module.exports = TransactionStock;

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+// const ExchangeStock = require('./Exchange');
+// const TransactionStock = require('./Transaction');
 
 // the schema
 const assetStockSchema = new mongoose.Schema({
@@ -7,16 +9,9 @@ const assetStockSchema = new mongoose.Schema({
         default: 'Stock',
         immutable: true
     },
-
-    // buy, sell, etc.
-    transactions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'transactionstock'
-    }],
     
     total_quantity: {
         type: Number,
-        min: 0,
         default: 0
     },
     total_cost: {
@@ -24,6 +19,8 @@ const assetStockSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
+
+    // price*total_quantity
     unrealized_value: {
         type: Number,
         min: 0,
@@ -34,41 +31,45 @@ const assetStockSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
+
+    // sum(sell transactions + total_dividends)
     realized_value: {
         type: Number,
         min: 0,
         default: 0,
     },
+
+    // sum(dividend transactions)
     total_dividends: {
         type: Number,
         min: 0,
         default: 0,
     },
+
+    // sum(buy.commission + sell.commission)
     total_commissions: {
         type: Number,
         min: 0,
         default: 0,
     },
+
+    // change*total_quantity
     daily_value: {
         type: Number,
-        min: 0,
         default: 0
     },
     daily_value_percentage: {
         type: Number,
-        min: 0,
         default: 0
     },
 
-    // calculated
+    // are these needed?
     change_value: {
         type: Number,
-        min: 0,
         default: 0
     },
     change_value_percentage: {
         type: Number,
-        min: 0,
         default: 0
     },
 
@@ -79,9 +80,15 @@ const assetStockSchema = new mongoose.Schema({
         lowercase: true,
     }],
 
+    total_transactions: {
+        type: Number,
+        min: 0,
+        default: 0
+    },
+
     // notes
     notes: {
-        type: Buffer
+        type: String,
     },
 
     // portfolio data
@@ -97,6 +104,14 @@ const assetStockSchema = new mongoose.Schema({
         ref: 'exchangestock',
         required: true
     }
+
+}, { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true });
+
+// virtuals (child to parent referencing)
+assetStockSchema.virtual('transactions', {
+    ref: 'transactionstock',
+    foreignField: 'asset_id',
+    localField: '_id',
 });
 
 // the model

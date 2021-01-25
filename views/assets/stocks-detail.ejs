@@ -36,6 +36,7 @@
                     <ul>
                         <li><button data-modal-target="#transactions-stocks-add-modal">Add Transaction</button></li>
                         <li><a href="/portfolios/<%- asset.portfolio_id._id %>" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
+                        <li><a href="/assets/stocks/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
                     </ul>
                 </div>
             </div>
@@ -57,9 +58,14 @@
                                 <td><span class="format-date-long"><%- transaction.date %></span></td>
                                 <td><%- transaction.kind %></td>
                                 <td>
-                                <% if(['buy', 'sell'].includes(transaction.kind)) { %>
+                                <% if(transaction.kind == 'buy') { %>
                                     <span class="format-3-fraction-digits"><%- transaction.quantity %></span> shares @
-                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span>
+                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span><br>
+                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> emphasize-minus"><%- transaction.cost %></span>
+                                <% } else if(transaction.kind == 'sell') { %>
+                                    <span class="format-3-fraction-digits"><%- -transaction.quantity %></span> shares @
+                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span><br>
+                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> emphasize-minus"><%- transaction.realized %></span>
                                 <% } else if(transaction.kind == 'dividend') { %>
                                     <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.dividend %></span>
                                 <% } else if(transaction.kind == 'split') { %>

@@ -6,6 +6,7 @@ const router = Router();
 
 // stock assets
 router.get('/stocks/:aid', authMiddleware.requireAuth, assetsController.assets_stocks_detail);
+router.get('/stocks/:aid/recalculate', authMiddleware.requireAuth, assetsController.assets_stocks_recalculate);
 
 // stock transactions
 router.post('/stocks/:aid/create', authMiddleware.requireAuth, assetsController.transactions_stocks_create_post);

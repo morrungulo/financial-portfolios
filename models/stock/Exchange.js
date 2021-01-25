@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongooseLifecycle = require('mongoose-lifecycle');
 const { convertNoneToZero, convertStringWithPercentSignToNumber } = require('../utils');
 
 // overview 
@@ -76,21 +75,19 @@ const exchangeStockSchema = new mongoose.Schema({
 
 }, { timestamps: true});
 
-// register listener
-exchangeStockSchema.plugin(mongooseLifecycle);
+// listeners
+exchangeStockSchema.pre('save', function(next) {
+    this.exchangeCalculated.DividendYieldPercent = 100 * (this.exchangeOverview.Dividend / this.exchangeQuote.Price);
+    if (this.exchangeOverview.EPS != 0) {
+        this.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (this.exchangeOverview.EPS - this.exchangeOverview.Dividend) / this.exchangeOverview.EPS);
+    } else {
+        this.exchangeCalculated.DividendPayoutRatioPercent = 0;
+    }
+    this.exchangeCalculated.Week52RangePercent = 100 * ((this.exchangeQuote.Price - this.exchangeOverview.Week52Low) / (this.exchangeOverview.Week52High - this.exchangeOverview.Week52Low));
+    next();
+});
 
 // the model
 const ExchangeStock = mongoose.model('exchangestock', exchangeStockSchema);
-
-// listeners
-ExchangeStock.on('beforeSave', (entry) => {
-    entry.exchangeCalculated.DividendYieldPercent = 100 * (entry.exchangeOverview.Dividend / entry.exchangeQuote.Price);
-    if (entry.exchangeOverview.EPS != 0) {
-        entry.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (entry.exchangeOverview.EPS - entry.exchangeOverview.Dividend) / entry.exchangeOverview.EPS);
-    } else {
-        entry.exchangeCalculated.DividendPayoutRatioPercent = 0;
-    }
-    entry.exchangeCalculated.Week52RangePercent = 100 * ((entry.exchangeQuote.Price - entry.exchangeOverview.Week52Low) / (entry.exchangeOverview.Week52High - entry.exchangeOverview.Week52Low));
-});
 
 module.exports = ExchangeStock;

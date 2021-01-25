@@ -16,21 +16,20 @@
         </div>
         <div class="mini-nav">
             <ul>
+            <% if (user) { %>
+                <li><a href="/show">User Home</a></li>
+            <% } %>                
                 <li><a href="/about">About</a></li>
             <% if (user) { %>
                 <li>Welcome, <%= user.email %></li>
                 <li><a href="/auth/logout">Logout</a></li>
             <% } else { %>
-                <!-- <li><a href="/auth/login">Login</a></li> -->
-                <!-- <li><a href="/auth/register" class="btn">Register</a></li> -->
-                <!-- <li><button onclick="document.getElementById('login_modal').style.display='block'">Login</button></li> -->
-                <!-- <li><button onclick="document.getElementById('register_modal').style.display='block'">Register</button></li> -->
-                <li><button id="login-button">Login</button></li>
-                <li><button id="register-button">Register</button></li>
+                <li><button data-modal-target="#login-modal">Login</button></li>
+                <li><button data-modal-target="#register-modal">Register</button></li>
             <% } %>
             </ul>
         </div>
     </header>
 
-    <%- include("../modal/register-login", {'prefix': 'login', 'title': 'Login', 'post': 'login'}); %>
-    <%- include("../modal/register-login", {'prefix': 'register', 'title': 'Register', 'post': 'register'}); %>
+<%- include("../modal/register-login-modal", {'prefix': 'login', 'title': 'Login', 'post': 'login'}); %>
+<%- include("../modal/register-login-modal", {'prefix': 'register', 'title': 'Register', 'post': 'register'}); %>

@@ -38,7 +38,7 @@
                 <ul>
                     <li><button data-modal-target="#assets-add-modal">Add Asset</button></li>
                     <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
-                    <li><a href="/portfolios/<%- portfolio._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
+                    <li><a href="/portfolios/<%- portfolio._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
                 </ul>
             </div>
         </div>
@@ -53,7 +53,8 @@
                             <th>Price</th>
                             <th>Change</th>
         
-                            <th>Value/Cost</th>
+                            <th>Unrealized</th>
+                            <th>Realized</th>
                             <th>Daily</th>
                             <th>Total</th>
 
@@ -79,6 +80,9 @@
                             <td sorttable_customkey="<%- asset.unrealized_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span><br/>
                                 <span class="emphasize-minus format-percentage"><%- asset.unrealized_value_percentage %></span>
+                            </td>
+                            <td sorttable_customkey="<%- asset.realized_value %>">
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.realized_value %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.daily_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span><br/>

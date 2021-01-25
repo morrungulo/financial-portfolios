@@ -1,10 +1,11 @@
 
-<div id="<%- prefix %>-overlay" class="modal-overlay closed"></div>
-<div id="<%- prefix %>-modal" class="modal closed">
-    <button class="close-button" id="<%- prefix %>-close-button">&times;</button>
+<div id="<%- prefix %>-modal" class="modal">
+    <div class="modal-header">
+        <div class="title"><%- title %></div>
+        <button data-modal-close-button class="close-button">&times;</button>
+    </div>
     <div class="modal-content">
         <form id="<%- prefix %>-form" class="modal-form" autocomplete="off">
-            <h2><%- title %></h2>
             <label for="email">Email</label>
             <input type="email" name="email" required autofocus />
             <div class="email error"></div>
@@ -21,23 +22,8 @@
 </div>
 
 <script type="text/javascript">
-    var <%- prefix %>Button = document.getElementById("<%- prefix %>-button");    
-    var <%- prefix %>Overlay = document.getElementById("<%- prefix %>-overlay");
     var <%- prefix %>Modal = document.getElementById("<%- prefix %>-modal");
     var <%- prefix %>Form = document.getElementById("<%- prefix %>-form");
-    var <%- prefix %>CloseButton = document.getElementById("<%- prefix %>-close-button");
-
-    function <%- prefix %>Toggle() {
-        <%- prefix %>Modal.classList.toggle("closed");
-        <%- prefix %>Overlay.classList.toggle("closed");
-    }
-    <%- prefix %>Button.addEventListener("click", <%- prefix %>Toggle);
-    <%- prefix %>CloseButton.addEventListener("click", <%- prefix %>Toggle);
-    <%- prefix %>Overlay.addEventListener("click", (e) => {
-        if (e.target == <%- prefix %>Overlay) {
-            <%- prefix %>Toggle();
-        }
-    });
     <%- prefix %>Form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -66,7 +52,7 @@
                 passwordError.textContent = data.errors.password;
             }
             if (data.user) {
-                <%- prefix %>Toggle();
+                closeModal(<%- prefix %>Modal);
                 location.assign('/show');
             }
         }

@@ -8,6 +8,7 @@ const router = Router();
 router.post('/create', authMiddleware.requireAuth, authMiddleware.checkUser, portfoliosController.portfolios_create_post);
 router.post('/remove', authMiddleware.requireAuth, portfoliosController.portfolios_remove_post);
 router.get('/:pid', authMiddleware.requireAuth, portfoliosController.portfolios_detail);
+router.get('/:pid/recalculate', authMiddleware.requireAuth, portfoliosController.portfolios_recalculate);
 
 // assets
 router.post('/:pid/create', authMiddleware.requireAuth, portfoliosController.portfolios_assets_create_post);
