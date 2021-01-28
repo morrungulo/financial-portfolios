@@ -56,7 +56,7 @@
                             <th>Unrealized</th>
                             <th>Realized</th>
                             <th>Daily</th>
-                            <th>Total</th>
+                            <th>ROI%</th>
 
                             <th>&nbsp;</th>
                         </tr>
@@ -78,19 +78,22 @@
                             </td>
                             
                             <td sorttable_customkey="<%- asset.unrealized_value %>">
-                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span><br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.unrealized_value_percentage %></span>
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span>
+                                <!-- <br/>
+                                <span class="emphasize-minus format-percentage"><%- asset.unrealized_value_percentage %></span> -->
                             </td>
                             <td sorttable_customkey="<%- asset.realized_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.realized_value %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.daily_value %>">
-                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span><br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.daily_value_percentage %></span>
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span>
+                                <!-- <br/>
+                                <span class="emphasize-minus format-percentage"><%- asset.daily_value_percentage %></span> -->
                             </td>
-                            <td sorttable_customkey="<%- asset.change_value %>">
-                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.change_value %></span><br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.change_value_percentage %></span>
+                            <td sorttable_customkey="<%- asset.unrealized_value_percentage %>">
+                                <span class="format-percentage"><%- asset.unrealized_value_percentage %></span>
+                                <!-- <br/>
+                                <span class="emphasize-minus format-percentage"><%- asset.change_value_percentage %></span> -->
                             </td>
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'kind': 'Stock', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>

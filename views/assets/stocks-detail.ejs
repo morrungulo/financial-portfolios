@@ -1,30 +1,68 @@
 <%- include("../partials/header"); %>
 
 <div class="main-body-extended">
-    <div class="total-overview">
-        <div class="total-overview-header">
-            <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.exchangeOverview.Name %>)</span></h1>
-        </div>
-        <% if (asset.transactions.length > 0) { %>
-        <div class="total-overview-row">
-            <h4>
-               <span class="emphasize-plus format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.unrealized_value %></span>
-               (<span class="emphasize-minus format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.realized_value %></span>)
-            </h4>
-            <h4>
-                Unrealized: <span class="format-integer"><%- asset.total_quantity %></span> @
-                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_cost %></span>
-            </h4>
-            <h4>
-                Dividends: <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_dividends %></span>
-            </h4>
-            <h4>
-                Commissions: <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_commissions %></span>
-            </h4>
-        </div>    
-        <% } %>
-    </div>
     <div class="panel-container-3c-eq">
+
+        <div class="panel-containee">
+            <div class="title">
+                <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.exchangeOverview.Name %>)</span></h1>
+            </div>
+            <% if (asset.transactions.length > 0) { %>
+            <div class="content">
+                <div class="panel-container-2c">
+                    <div class="panel-container-2c">
+                        <div class="panel-containee left">
+                            <p class="emphasize-plusplus">
+                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.unrealized_value %></span>
+                            </p>
+                            <p class="emphasize-plus">
+                                <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.daily_value %></span>
+                            </p>
+                        </div>
+                        <div class="panel-containee right"></div>
+                    </div>
+                    <div class="panel-container-2c">
+                        <div class="panel-containee left"></div>
+                        <div class="panel-containee right">
+                            <p class="emphasize-plusplus">
+                                <span class="format-percentage"><%- asset.unrealized_value_percentage %></span>
+                            </p>
+                            <p class="emphasize-plus">
+                                <span class="format-percentage"><%- asset.daily_value_percentage %></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="panel-container-2c">
+                        <div class="panel-containee left">
+                            <p class="ptitle nowrap">Realized</p>
+                            <p class="ptitle nowrap">Unrealized</p>
+                            <p class="ptitle nowrap">Transactions</p>
+                        </div>
+                        <div class="panel-containee right">
+                            <p class="nowrap"><span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.realized_value %></span></p>
+                            <p class="nowrap"><span class="format-integer"><%- asset.total_quantity %></span> @ <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.avg_cost_per_share %></span></p>
+                            <p class="nowrap"><span class="format-integer"><%- asset.total_transactions %></span</p>
+                        </div>
+                    </div>
+                    <div class="panel-container-2c">
+                        <div class="panel-containee left">
+                            <p class="ptitle nowrap">Costs</p>
+                            <p class="ptitle nowrap">Dividends</p>
+                            <p class="ptitle nowrap">Commissions</p>
+                        </div>
+                        <div class="panel-containee right">
+                            <p class="nowrap"><span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_cost %></span></p>
+                            <p class="nowrap"><span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_dividends %></span></p>
+                            <p class="nowrap"><span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.total_commissions %></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>          
+        <div class="panel-containee"></div>
+        <div class="panel-containee"></div>
 
         <!-- transactions -->
         <div class="panel-containee panel-border">

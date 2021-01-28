@@ -1,15 +1,23 @@
 const AssetStock = require('../models/stock/Asset');
 
 function isSame(left, right) {
-    return (
-        (left.unrealized_value === right.unrealized_value) &&
-        (left.daily_value === right.daily_value) &&
-        (left.daily_value_percentage === right.daily_value_percentage)
-    );
+    return left === right;
 }
 
-function buildObject(unrealized_value, daily_value, daily_value_percentage) {
-    return { unrealized_value, daily_value, daily_value_percentage };
+function buildObject(asset) {
+    return JSON.stringify(asset);
+}
+
+function calculateUnrealizedValueAndPercentage(asset) {
+    const hasCost = (asset.total_cost != 0);
+    asset.unrealized_value = asset.total_quantity * asset.exchange_id.exchangeQuote.Price;
+    asset.unrealized_value_percentage = hasCost ? 100 * (asset.unrealized_value + asset.realized_value - asset.total_cost) / asset.total_cost : 0;
+}
+
+function calculateDailyValueAndPercentage(asset) {
+    const hasShares = (asset.total_quantity != 0);
+    asset.daily_value = hasShares ? asset.total_quantity * asset.exchange_id.exchangeQuote.Change : 0;
+    asset.daily_value_percentage = hasShares ? asset.exchange_id.exchangeQuote.ChangePercent : 0;
 }
 
 /**
@@ -20,28 +28,28 @@ function buildObject(unrealized_value, daily_value, daily_value_percentage) {
  */
 function assetStockCalculator(asset) {
     // get current values
-    const oldval = buildObject(asset.unrealized_value, asset.daily_value, asset.daily_value_percentage);
-
+    const oldval = buildObject(asset);
+    
     // calculate new values
-    asset.unrealized_value = asset.total_quantity * asset.exchange_id.exchangeQuote.Price;
-    asset.daily_value = asset.total_quantity * asset.exchange_id.exchangeQuote.Change;
-    asset.daily_value_percentage = asset.exchange_id.exchangeQuote.ChangePercent;
-    
-    // return if values have changed
-    const newval = buildObject(asset.unrealized_value, asset.daily_value, asset.daily_value_percentage);
-    
+    calculateUnrealizedValueAndPercentage(asset);
+    calculateDailyValueAndPercentage(asset);
+
+    // check if values have changed
+    const newval = buildObject(asset);
     return !isSame(oldval, newval);
 }
 
-async function assetStockCalculatorFull(asset_id) {
+async function assetStockCalculator(asset_id) {
     let asset = await AssetStock.findById(asset_id);
-    await asset.populate({ path: 'exchange_id' }).execPopulate();
-    if (assetStockCalculator(asset)) {
-        await asset.save();
+    if (asset) {
+        await asset.populate({ path: 'exchange_id' }).execPopulate();
+        if (assetStockCalculator(asset)) {
+            await asset.save();
+        }
     }
 }
 
 module.exports = {
-    assetStockCalculatorFull,
+    assetStockCalculator,
 }
     

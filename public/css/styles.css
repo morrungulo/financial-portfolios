@@ -6,12 +6,10 @@
 
 /* global */
 *, *::after, *::before {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-
-    /* border: 1px solid red; */
-    
+    /* border: 1px solid red; */   
 }
 
 body {
@@ -465,7 +463,6 @@ table, th, td {
 .standard-list {
     width: 100%;
     margin: 0 auto 15px;
-    background-color: var(--panel-bg);
 }
 
 .standard-list table {
@@ -481,16 +478,15 @@ table, th, td {
 
 .standard-list th {
     padding-bottom: 12px;
-    /* padding-left: 10px; */
 }
 
 .standard-list td {
-    padding: 4px 0;
+    padding: 3px 0;
 }
 
 .standard-list td:first-child,
 .standard-list td:last-child {
-    padding: 0 3px;
+    padding-left: 12px;
 }
 
 .standard-list td.delete-row {
@@ -498,7 +494,7 @@ table, th, td {
 }
 
 .standard-list tbody tr:nth-child(odd) {
-    background: var(--list-offset);
+    background-color: var(--list-offset);
 }
 
 .standard-list .portfolios-list th:first-child,

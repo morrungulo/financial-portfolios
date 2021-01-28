@@ -17,41 +17,50 @@ const transactionStockSchema = new mongoose.Schema({
     // buy and sell
     quantity: {
         type: Number,
+        default: 0,
     },
     price: {
         type: Number,
-        min: 0
+        min: 0,
+        default: 0,
     },
     commission: {
         type: Number,
-        min: 0
+        min: 0,
+        default: 0,
     },
-    // calculated
+
+    // cost, realized (calculated)
     cost: {
         type: Number,
-        default: 0
+        min: 0,
+        default: 0,
     },
-    // calculated
     realized: {
         type: Number,
-        default: 0
+        min: 0,
+        default: 0,
     },
 
     // dividend only
     dividend: {
         type: Number,
-        min: 0
+        min: 0,
+        default: 0,
     },
 
     // split only
     split_before: {
         type: Number,
-        min: 1
+        min: 1,
+        default: 1,
     },
     split_after: {
         type: Number,
-        min: 1
+        min: 1,
+        default: 1,
     },
+
     // before/after (calculated)
     split_ratio: {
         type: Number,
@@ -78,6 +87,7 @@ transactionStockSchema.pre('save', function(next) {
         this.cost = (this.price * this.quantity) + this.commission;
     }
     else if (this.kind == 'sell') {
+        this.cost = this.commission;
         this.realized = (this.price * -this.quantity) - this.commission;
     }
     else if (this.kind == 'split') {
