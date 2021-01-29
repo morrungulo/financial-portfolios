@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const AssetStock = require('../models/stock/Asset');
 const TransactionStock = require('../models/stock/Transaction');
 const TransactionStockEmitter = require('../events/transactionStockEmitter');
-const { assetStockCalculatorFull } = require('./assetsCalculator');
+const { calculateAssetStockFromExchangeData } = require('./assetsStocksCalculator');
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
@@ -61,7 +61,7 @@ module.exports.assets_stocks_detail = async (req, res) => {
 module.exports.assets_stocks_recalculate = async (req, res) => {
     const aid = req.params.aid;
     try {
-        await assetStockCalculatorFull(aid);
+        await calculateAssetStockFromExchangeData(aid);
         res.redirect('.');
     }
     catch (err) {

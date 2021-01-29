@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const Portfolio = require('../models/Portfolio');
 const StockService = require('../services/StockService');
 const AssetStock = require('../models/stock/Asset');
+const { calculatePortfolioFromExchangeData } = require('./portfoliosCalculator');
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
@@ -66,8 +67,8 @@ module.exports.portfolios_detail = async (req, res) => {
         let portfolio = await Portfolio.findById(pid);
         await portfolio
             .populate({path: 'stock_assets', populate: {path: 'exchange_id'}})
-            .populate({path: 'crypto_assets'})
-            .populate({path: 'cash_assets'})
+            // .populate({path: 'crypto_assets'})
+            // .populate({path: 'cash_assets'})
             .execPopulate();
         res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
     }
@@ -78,21 +79,15 @@ module.exports.portfolios_detail = async (req, res) => {
 }
 
 module.exports.portfolios_recalculate = async (req, res) => {
-    res.send('not yet implemented');
-    // const pid = req.params.pid;
-    // try {
-    //     let portfolio = await Portfolio.findById(pid);
-    //     await portfolio
-    //         .populate({path: 'stock_assets', populate: {path: 'exchange_id'}})
-    //         .populate({path: 'crypto_assets'})
-    //         .populate({path: 'cash_assets'})
-    //         .execPopulate();
-    //     res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
-    // }
-    // catch (err) {
-    //     const errors = handleErrors(err);
-    //     res.status(400).json({ errors });
-    // }
+    const pid = req.params.pid;
+    try {
+        await calculatePortfolioFromExchangeData(pid);
+        res.redirect('.');
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }
 
 module.exports.portfolios_assets_create_post = async (req, res) => {

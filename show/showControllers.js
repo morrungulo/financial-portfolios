@@ -1,6 +1,7 @@
 const config = require('config');
 const Portfolio = require('../models/Portfolio');
 const Watchlist = require('../models/Watchlist');
+const { calculatePortfolioFromExchangeData } = require('../portfolios/portfoliosCalculator');
 
 
 const handleErrors = (err) => {
@@ -48,19 +49,16 @@ module.exports.index = async (req, res) => {
 }
 
 module.exports.recalculate = async (req, res) => {
-    res.send('not yet implemented');
-    // const user_id = res.locals.user._id;
-    // try {
-    //     let portfolios = await Portfolio.find({ user_id })
-    //         .sort({ portfolio: 1 });
-    //     let watchlists = await Watchlist.find({ user_id })
-    //         .sort({ watchlist: 1 });
-    //     res.locals.portfolios = portfolios;
-    //     res.locals.watchlists = watchlists;
-    // }
-    // catch (err) {
-    //     const errors = handleErrors(err);
-    //     return res.status(500).json(err);
-    // }
-    // res.render('show', {title: "Portfolios and Watchlists", currencies: config.get('currencies')});
+    const user_id = res.locals.user._id;
+    try {
+        const portfolios = await Portfolio.find({ user_id });
+        portfolios.forEach(async (portfolio) => {
+            await calculatePortfolioFromExchangeData(portfolio._id);
+        });
+        res.redirect('.');
+    }
+    catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
 }

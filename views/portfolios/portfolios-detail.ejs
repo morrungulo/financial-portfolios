@@ -19,19 +19,67 @@
 
 <div class="main-body-extended">
 
-<div class="total-overview">
-    <div class="total-overview-header">
-        <h1><%- portfolio.name %> <span class="emphasize-minusminus">(<%- portfolio.currency %>)</span></h1>
-    </div>
-    <div class="total-overview-row">
-        <h3>
-           <span class="emphasize-plus"><%- portfolio.unrealized_value %></span>
-           <span class="emphasize-minus">(<%- portfolio.realized_value %>)</span>
-        </h3>
-    </div>
-</div>
-
 <div class="panel-container-3c-le">
+    <div class="panel-containee">
+        <div class="title">
+            <h1><%- portfolio.name %> <span class="emphasize-minusminus">(<%- portfolio.currency %>)</span></h1>
+        </div>
+        <% if (hasAssets) { %>
+        <div class="content">
+            <div class="panel-container-2c">
+                <div class="panel-container-2c">
+                    <div class="panel-containee left">
+                        <p class="emphasize-plusplus">
+                            <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.unrealized_value %></span>
+                        </p>
+                        <p class="emphasize-plus">
+                            <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.daily_value %></span>
+                        </p>
+                    </div>
+                    <div class="panel-containee right"></div>
+                </div>
+                <div class="panel-container-2c">
+                    <div class="panel-containee left"></div>
+                    <div class="panel-containee right">
+                        <p class="emphasize-plusplus">
+                            <span class="format-percentage"><%- portfolio.unrealized_value_percentage %></span>
+                        </p>
+                        <p class="emphasize-plus">
+                            <span class="format-percentage"><%- portfolio.daily_value_percentage %></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="panel-container-2c">
+                    <div class="panel-containee left">
+                        <p class="ptitle nowrap">Realized</p>
+                        <p class="ptitle nowrap">Transactions</p>
+                    </div>
+                    <div class="panel-containee right">
+                        <p class="nowrap"><span class="format-currency-<%- portfolio.currency %>"><%- portfolio.realized_value %></span></p>
+                        <p class="nowrap"><span class="format-integer"><%- portfolio.total_transactions %></span</p>
+                    </div>
+                </div>
+                <div class="panel-container-2c">
+                    <div class="panel-containee left">
+                        <p class="ptitle nowrap">Costs</p>
+                        <p class="ptitle nowrap">Value</p>
+                    </div>
+                    <div class="panel-containee right">
+                        <p class="nowrap"><span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_cost %></span></p>
+                        <p class="nowrap"><span class="format-currency-<%- portfolio.currency %>"><%- portfolio.total_value %></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <div class="panel-containee"></div>
+    <div class="panel-containee"></div>
+    
+
+
+
     <div class="panel-containee panel-border">
         <div class="title">
             <div class="mini-nav">
@@ -55,8 +103,9 @@
         
                             <th>Unrealized</th>
                             <th>Realized</th>
+                            <th>Cost</th>
                             <th>Daily</th>
-                            <th>ROI%</th>
+                            <th>ROI (%)</th>
 
                             <th>&nbsp;</th>
                         </tr>
@@ -79,21 +128,18 @@
                             
                             <td sorttable_customkey="<%- asset.unrealized_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span>
-                                <!-- <br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.unrealized_value_percentage %></span> -->
                             </td>
                             <td sorttable_customkey="<%- asset.realized_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.realized_value %></span>
                             </td>
+                            <td sorttable_customkey="<%- asset.total_cost %>">
+                                <span class="format-currency-<%- portfolio.currency %>"><%- asset.total_cost %></span>
+                            </td>
                             <td sorttable_customkey="<%- asset.daily_value %>">
                                 <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span>
-                                <!-- <br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.daily_value_percentage %></span> -->
                             </td>
                             <td sorttable_customkey="<%- asset.unrealized_value_percentage %>">
                                 <span class="format-percentage"><%- asset.unrealized_value_percentage %></span>
-                                <!-- <br/>
-                                <span class="emphasize-minus format-percentage"><%- asset.change_value_percentage %></span> -->
                             </td>
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'kind': 'Stock', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>

@@ -63,7 +63,7 @@ const portfolioSchema = new mongoose.Schema({
     },
 
     // sum(asset.cost)
-    cost_basis: {
+    total_cost: {
         type: Number,
         default: 0
     },
@@ -75,15 +75,20 @@ const portfolioSchema = new mongoose.Schema({
     },
 
     // ((unrealized_value / cost_basis) - 1) * 100
-    total_value_percentage: {
+    // total_value_percentage: {
+    //     type: Number,
+    //     default: 0
+    // },
+
+    total_transactions: {
         type: Number,
         default: 0
     },
     
-    annualized_value: {
-        type: Number,
-        default: 0
-    },
+    // annualized_value: {
+    //     type: Number,
+    //     default: 0
+    // },
     
     daily_value: {
         type: Number,
