@@ -78,8 +78,17 @@
                             <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
                 
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></span></td>
-                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>
-                            <td><span class="format-percentage"><%- entry.exchangeCalculated.Week52RangePercent %></span></td>
+                            <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>                            
+                            <td>
+                                <div class="container-percentage">
+                                    <div class="container-percentage-canvas">
+                                        <canvas data-chart-percentage-bar="<%- entry.exchangeCalculated.Week52RangePercent %>"></canvas>
+                                    </div>
+                                    <div class="container-percentage-value">
+                                        <span class="format-percentage %>"><%- entry.exchangeCalculated.Week52RangePercent %></span>
+                                    </div>
+                                </div>
+                            </td>
                 
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Price %></span></td>
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeQuote.Open %></span></td>
@@ -135,3 +144,4 @@
 <%- include("../modal/entries-add-modal"); %>
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
 <%- include("../modal/modal"); %>
+<%- include("../partials/chart-percentage"); %>

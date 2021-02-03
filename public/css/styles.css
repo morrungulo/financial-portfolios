@@ -9,7 +9,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* border: 1px solid red; */   
+    /* border: 1px solid red; */
 }
 
 body {
@@ -36,7 +36,7 @@ a {
 
 /* header (contains main nav) */
 header {
-    margin-bottom: 90px;
+    margin-bottom: 50px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -148,6 +148,12 @@ header {
     grid-gap: 3%;
     width: 100%;
     margin: 0 auto;
+}
+
+@media (max-width: 576px) {
+    .panel-container-2c {
+        grid-template-columns: minmax(0, 1fr);
+    }    
 }
 
 /* 3-column container 50-25-25 */
@@ -535,4 +541,21 @@ table, th, td {
 .green {
     color: green;
     font-weight: bold;
+}
+
+/* charts */
+.container-percentage {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.container-percentage-canvas {
+    padding-left: 6px;
+    position: relative;
+    width: 120px;
+}
+
+.container-percentage-value {
+    width: 60px;
 }

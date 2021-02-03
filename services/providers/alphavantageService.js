@@ -72,6 +72,7 @@ const buildFromAlphaTimeSeries = (alpha) => {
                     High: daily['2. high'],
                     Low: daily['3. low'],
                     Close: daily['4. close'],
+                    AdjustedClose: daily['5. adjusted close']
                 };
                 exData.push(exEntry);
             }
@@ -82,33 +83,25 @@ const buildFromAlphaTimeSeries = (alpha) => {
 
 async function fetchExchangeOverview(ticker) {
     const data = await alpha.fundamental.company_overview(ticker);
-    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaOverview(data);
-    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeIntraday(ticker) {
-    const data = await alpha.data.intraday(ticker);
-    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const data = await alpha.data.intraday(ticker, 'full', 'json', '5min');
     const result = buildFromAlphaTimeSeries(data);
-    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeQuote(ticker) {
     const data = await alpha.data.quote(ticker);
-    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
     const result = buildFromAlphaQuote(data);
-    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
 async function fetchExchangeDaily(ticker) {
-    const data = await alpha.data.daily_adjusted(ticker);
-    // console.log(chalk.yellow(JSON.stringify(data, null, "  ")));
+    const data = await alpha.data.daily_adjusted(ticker, 'full');
     const result = buildFromAlphaTimeSeries(data);
-    // console.log(chalk.green(JSON.stringify(result, null, "  ")));
     return result;
 }
 
@@ -129,10 +122,8 @@ async function fetchAll(ticker) {
         fetchExchangeQuote(ticker),
         fetchExchangeCalculated(),
         // fetchExchangeIntraday(ticker),
-        // fetchExchangeDaily(ticker)
+        fetchExchangeDaily(ticker)
     ]);
-
-    // console.trace(chalk.red(JSON.stringify(result, null, "  ")));
     return result;
 }
 

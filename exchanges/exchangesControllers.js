@@ -1,6 +1,7 @@
 const config = require('config');
 const chalk = require('chalk');
 const ExchangeStock = require('../models/stock/Exchange');
+const StockService = require('../services/StockService');  
 
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
@@ -20,6 +21,10 @@ module.exports.exchanges_detail = async (req, res) => {
     const eid = req.params.eid;
     try {
         const entry = await ExchangeStock.findById(eid);
+
+        const SS = new StockService();
+        const dd = await SS.retrieveDailyData(entry.name);
+        
         res.render('exchanges/exchanges-detail', { title: entry.name, entry });
     }
     catch (err) {
