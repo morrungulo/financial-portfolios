@@ -26,7 +26,8 @@
         </div>
         <% if (hasAssets) { %>
         <div class="content">
-            <div class="panel-container-2c">
+            <div class="panel-container-3c-404020">
+
                 <div class="panel-container-2c">
                     <div class="panel-containee left">
                         <p class="emphasize-plusplus">
@@ -38,6 +39,7 @@
                     </div>
                     <div class="panel-containee right"></div>
                 </div>
+                
                 <div class="panel-container-2c">
                     <div class="panel-containee left"></div>
                     <div class="panel-containee right">
@@ -49,6 +51,16 @@
                         </p>
                     </div>
                 </div>
+
+                <div class="panel-container" style="grid-column: 3; grid-row: 1 / 4;">
+                    <div style="display: flex; justify-content: flex-end; align-items: center;">
+                        <div style="position: relative; width: 100%; height: 100%">
+                            <canvas data-chart-doughnut="Portfolio Value,<%- portfolio.unrealized_value %>" data-chart-doughnut-data="<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>", data-chart-doughnut-labels="Stocks,Cryptos,Cash"></canvas>
+                        </div>
+                    </div>            
+                </div>
+
+
 
                 <div class="panel-container-2c">
                     <div class="panel-containee left">
@@ -74,7 +86,19 @@
         </div>
         <% } %>
     </div>
-    <div class="panel-containee"></div>
+    <div class="panel-containee">
+<!-- 
+        <div style="display: inline-block;">
+            <div style="position: relative; width: 160px">
+                <canvas data-chart-doughnut="Portfolio Value,<%- portfolio.unrealized_value %>" data-chart-doughnut-data="<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>", data-chart-doughnut-labels="Stocks,Cryptos,Cash"></canvas>
+            </div>
+            <div style="position: relative; width: 160px">
+                <canvas data-chart-doughnut="Stocks" data-chart-doughnut-data="23,112,31,18,34,32,12,12,56", data-chart-doughnut-labels="a,b,c,d,e,f,g,h,i"></canvas>
+            </div>
+        </div>
+ -->
+
+    </div>
     <div class="panel-containee"></div>
     
 
@@ -174,3 +198,4 @@
 <%- include("../modal/assets-add-modal"); %>
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
 <%- include("../modal/modal"); %>
+<%- include("../partials/charts/chart-doughnut"); %>

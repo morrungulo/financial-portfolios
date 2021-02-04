@@ -143,23 +143,27 @@ header {
 /* 2-column container */
 .panel-container-2c {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     justify-content: space-between;
     grid-gap: 3%;
     width: 100%;
     margin: 0 auto;
 }
 
-@media (max-width: 576px) {
-    .panel-container-2c {
-        grid-template-columns: minmax(0, 1fr);
-    }    
-}
-
 /* 3-column container 50-25-25 */
 .panel-container-3c-le {
     display: grid;
     grid-template-columns: 50% auto auto;
+    justify-content: center;
+    grid-gap: 3%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 3-column container 40-40-20 */
+.panel-container-3c-404020 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     justify-content: center;
     grid-gap: 3%;
     width: 100%;
@@ -184,6 +188,16 @@ header {
     grid-gap: 3%;
     width: 100%;
     margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+    .panel-container-2c {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    
+    .panel-container-3c-404020 {
+        grid-template-columns: 40% 40% 20%;
+    }
 }
 
 /* what is inside each container */
