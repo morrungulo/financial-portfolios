@@ -70,6 +70,8 @@
                         <th>Dividend Yield</th>
                         <th>Dividend Payout</th>
 
+                        <th>Last 3 Months</th>
+
                         <th>&nbsp;</th>
                     </thead>
                     <tbody>
@@ -81,7 +83,7 @@
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>                            
                             <td>
                                 <div class="container-percentage">
-                                    <div class="container-percentage-canvas">
+                                    <div class="container-small-canvas">
                                         <canvas data-chart-percentage-bar="<%- entry.exchangeCalculated.Week52RangePercent %>"></canvas>
                                     </div>
                                     <div class="container-percentage-value">
@@ -105,6 +107,13 @@
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Dividend %></span></td>
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></span></td>
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></span></td>
+
+                            <td>
+                                <div class="container-small-canvas"> 
+                                    <canvas data-chart-line-single="[10,20,25,35,45,63,81,22,34,21,16,12,7,15,11,7,8,14,18,22,26,26,27,28]"></canvas>
+                                </div>                        
+                            </td>
+
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.name %>', { 'kind': 'Stock', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                         </tr>
@@ -145,3 +154,4 @@
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
 <%- include("../modal/modal"); %>
 <%- include("../partials/charts/chart-percentage"); %>
+<%- include("../partials/charts/chart-line-single"); %>

@@ -121,38 +121,20 @@ class StockService {
     //     return exData;
     // }
 
-    async retrieveDailyData(ticker) {
+    async buildChartDataFromDailyData(ticker) {
         const criteria = { name: ticker };
-        const group = { $group: { _id: '$name', xdata: { $push: '$x' }, ydata: { $push: '$y' } } };    
-        const project = { $project: { _id: false, xdata: true, ydata: true, name: true } };
         const data = await ExchangeStock.aggregate([
             { $match: criteria },
             { $unwind: '$exchangeDaily' },
             {
                 $project: {
-                    _id: true,
-                    name: true,
+                    _id: false,
                     x: '$exchangeDaily.LastRefreshed',
                     y: '$exchangeDaily.Close',
                 }
             },
-            { $sort: { 'x': 1 } },
-            {
-                $facet: {
-                    "1W": [ { $limit: 5 }, group, project ],
-                    "2W": [ { $limit: 10 }, group, project ],
-                    "1M": [ { $limit: 30*5/7 }, group, project ],
-                    "3M": [ { $limit: 90*5/7 }, group, project ],
-                    "6M": [ { $limit: 180*5/7 }, group, project ],
-                    "1Y": [ { $limit: 365*5/7 }, group, project ],
-                    "2Y": [ { $limit: 365*2*5/7 }, group, project ],
-                    "5Y": [ { $limit: 365*5*5/7 }, group, project ],
-                    "All": [ group, project ],
-                }
-            }
+            { $sort: { 'x': -1 } },
         ]);
-        console.log(chalk.cyan(JSON.stringify(data, null, "  ")));
-
         return data;
     }
 
@@ -180,12 +162,6 @@ class StockService {
                     exchangeDaily: exchangeDailyInst,
                 });
                 await exStock.save();
-
-
-                const [graphData]= await retrieveDailyData(ticker);
-
-
-                // produce graphs
                 return exStock;
             } catch (err) {
                 console.error(err);

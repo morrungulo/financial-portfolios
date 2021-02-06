@@ -564,7 +564,7 @@ table, th, td {
     align-items: center;
 }
 
-.container-percentage-canvas {
+.container-small-canvas {
     padding-left: 6px;
     position: relative;
     width: 120px;
@@ -573,3 +573,32 @@ table, th, td {
 .container-percentage-value {
     width: 60px;
 }
+
+/* Style the tab */
+.tab {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-end;
+    margin-top: 5px;
+}
+  
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px px;
+    transition: 0.3s;
+}
+  
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: rgba(54, 162, 235, 0.3);
+}
+  
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: rgba(54, 162, 235, 0.3);
+}  

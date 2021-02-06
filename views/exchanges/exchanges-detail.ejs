@@ -1,7 +1,8 @@
 <%- include("../partials/header"); %>
 
 <div class="main-body-extended">
-    <div class="panel-container-2c">
+    <div class="panel-container-3c-eq">
+        <%- include("../partials/exchanges-stock-charts", { 'stock': entry, 'data': data }); %>
         <%- include("../partials/exchanges-stock-profile", { 'stock': entry }); %>
         <%- include("../partials/exchanges-stock-summary", { 'stock': entry }); %>
     </div>
@@ -10,3 +11,4 @@
 <%- include("../partials/footer"); %>
 <%- include("../partials/formatters"); %>
 <%- include("../modal/modal"); %>
+<%- include("../partials/charts/chart-line"); %>

@@ -1,22 +1,21 @@
 <script type="text/javascript">
-    const sortDataAndLabels = (keys, values) => {
-        const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-        const rsort = (a, b) => parseFloat(b[1]) - parseFloat(a[1]);
-        const result = zip(keys, values).sort(rsort);
-        var sk=[], sv=[];
-        result.forEach(i => {
-            sk.push(i[0]);
-            sv.push(i[1]);
-        });
-        return [sk, sv];
+    const reverseSortKeyValue = (keys, values) => {
+        const argrsort = a=>a.map(d).sort((a,b)=>b[0]-a[0]).map(u);d=(v,i)=>[v,i];u=i=>i[1];  // get indices of reverse sort, based on https://stackoverflow.com/questions/46622486/what-is-the-javascript-equivalent-of-numpy-argsort
+        const rsindices = argrsort(values);
+        const skeys = rsindices.map(i=>keys[i]);
+        const svalues = rsindices.map(i=>values[i]);
+        return [skeys, svalues];
     };
 
     var canvases = document.querySelectorAll('[data-chart-doughnut]');
     canvases.forEach(canvas => {
         const lines = canvas.getAttribute('data-chart-doughnut').split(',');
-        const data = canvas.getAttribute('data-chart-doughnut-data').split(',');
+        const data = canvas.getAttribute('data-chart-doughnut-data').split(',').map(n=>+n);
         const labels = canvas.getAttribute('data-chart-doughnut-labels').split(',');
-        const [slabels, sdata] = sortDataAndLabels(labels, data);
+        const [slabels, sdata] = reverseSortKeyValue(labels, data);
+        console.log(slabels);
+        console.log(sdata);
+
         const backgroundColor = Array(data.length).fill('rgba(54, 162, 235, 0.4)');
         const borderColor = Array(data.length).fill('rgba(54, 162, 235, 1)');
         var ctx = canvas.getContext('2d');

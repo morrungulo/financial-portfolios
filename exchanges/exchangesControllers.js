@@ -23,9 +23,10 @@ module.exports.exchanges_detail = async (req, res) => {
         const entry = await ExchangeStock.findById(eid);
 
         const SS = new StockService();
-        const dd = await SS.retrieveDailyData(entry.name);
+        const data = await SS.buildChartDataFromDailyData(entry.name);
+        // console.log(chalk.cyan(JSON.stringify(data, null, "  ")));
         
-        res.render('exchanges/exchanges-detail', { title: entry.name, entry });
+        res.render('exchanges/exchanges-detail', { title: entry.name, entry, data });
     }
     catch (err) {
         const errors = handleErrors(err);
