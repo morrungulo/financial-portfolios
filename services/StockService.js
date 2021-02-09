@@ -32,94 +32,69 @@ class StockService {
         return await ExchangeStock.findOne({ name: ticker });
     }
 
-    // /**
-    //  * Returns true if the refresh rate has elapsed since the last update.
-    //  * @param {Date} lastUpdate 
-    //  * @param {Number} refreshRate
-    //  * @returns {Boolean}
-    //  */
-    // #needsUpdate(lastUpdate, refreshRate) {
-    //     const now = mongoose.now();
-    //     return (now.getTime() > (lastUpdate.getTime() + refreshRate));
-    // }
+    /**
+     * Return the ExchangeStock object for the 'ticker' after being updated with the most recent quote.
+     * @param {String} ticker 
+     * @returns {ExchangeStock}
+     */
+    async refreshStockQuote(ticker) {
+        if (! await this.hasStock(ticker)) {
+            throw Error(`Ticker '${ticker}' is not available`);
+        }
 
-    // /**
-    //  * Return the ExchangeStock object for the 'ticker'. Before returning to caller, the ExchangeStock
-    //  * object is refreshed with the latest information based on the refresh rate of each field.
-    //  * @param {String} ticker 
-    //  * @returns {ExchangeStock}
-    //  */
-    // async getAndRefreshStock(ticker) {
-    //     if (! await this.hasStock(ticker)) {
-    //         throw Error(`Ticker '${ticker}' is not available`);
-    //     }
+        // get it
+        let exData = await this.getStock(ticker);
+        let needsSave = false;
+        try {
+            // fetch quote
+            const exchangeQuoteInst = await stockProvider.fetchExchangeQuote(ticker);
+            exData.exchangeQuote = exchangeQuoteInst;
+            needsSave = true;
+        } catch (error) {
+            console.log('Not possible to retrieve ' + ticker);
+        }
 
-    //     // get it
-    //     let exData = await this.getStock(ticker);
-    //     let needsSave = false;
+        // save if 
+        if (needsSave) {
+           exData = await exData.save();
+        }
 
-    //     // check if exchangeOverview needs to be refreshed
-    //     if (this.#needsUpdate(exData.exchangeOverview.updatedAt, exData.exchangeOverviewRefreshRate)) {
-    //         console.info('exchangeOverview needs refreshing');
-    //         try {
-    //             const data = await stockProvider.fetchExchangeOverview(ticker);
-    //             exData.exchangeOverview = data;
-    //             needsSave = true;
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
-
-    //     // check if exchangeQuote needs to be refreshed
-    //     if (this.#needsUpdate(exData.exchangeQuote.updatedAt, exData.exchangeQuoteRefreshRate)) {
-    //         console.info('exchangeQuote needs refreshing');
-    //         try {
-    //             const data = await stockProvider.fetchExchangeQuote(ticker);
-    //             exData.exchangeQuote = data;
-    //             needsSave = true;
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
-
-    //     /*
-        
-    //     Skip these for now!
+        return exData;
+    }
 
 
-    //     // check if exchangeIntraday needs to be refreshed
-    //     if (this.#needsUpdate(exData.exchangeIntraday.updatedAt, exData.exchangeIntradayRefreshRate)) {
-    //         console.log('exchangeIntraday needs refreshing');
-    //         try {
-    //             const data = await stockProvider.fetchExchangeIntraday(ticker);
-    //             exData.exchangeIntraday = [];
-    //             exData.exchangeIntraday.push(data);
-    //             needsSave = true;
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
+    /**
+     * Return the ExchangeStock object for the 'ticker' after being updated with the most recent overview and daily data.
+     * @param {String} ticker 
+     * @returns {ExchangeStock}
+     */
+    async refreshStockOverviewAndDaily(ticker) {
+        if (! await this.hasStock(ticker)) {
+            throw Error(`Ticker '${ticker}' is not available`);
+        }
 
-    //     // check if exchangeDaily needs to be refreshed
-    //     if (this.#needsUpdate(exData.exchangeDaily.updatedAt, exData.exchangeDailyRefreshRate)) {
-    //         console.log('exchangeDaily needs refreshing');
-    //         try {
-    //             const data = await stockProvider.fetchExchangeDaily(ticker);
-    //             exData.exchangeDaily = [];
-    //             exData.exchangeDaily.push(data);
-    //             needsSave = true;
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
-    //     */
+        // get it
+        let exData = await this.getStock(ticker);
+        let needsSave = false;
+        try {
+            // fetch overview
+            const exchangeOverviewInst = await stockProvider.fetchExchangeOverview(ticker);
+            exData.exchangeOverview = exchangeOverviewInst;
+            needsSave = true;
 
-    //     // save before exiting
-    //     if (needsSave) {
-    //         exData = await exData.save();
-    //     }
-    //     return exData;
-    // }
+            // fetch daily
+            const exchangeDailyInst = await stockProvider.fetchExchangeDaily(ticker);
+            exData.exchangeDaily = exchangeDailyInst;
+        } catch (error) {
+            console.log('Not possible to retrieve ' + ticker);
+        }
+
+        // save before exiting
+        if (needsSave) {
+           exData = await exData.save();
+        }
+        return exData;
+    }
 
     async buildChartDataFromDailyData(ticker) {
         const criteria = { name: ticker };

@@ -30,14 +30,16 @@
 
         // restrict graph to show no more than x values
         const max = 160;
-        if (dataLength[text] > max) {
-            const interval = Math.ceil(dataLength[text]/max);
-            for(var i = 0; i < dataLength[text]; i += interval) {
+        const atMost = dataLength[text];
+        if (atMost > max) {
+            const range = Math.min(atMost, chdata.length);
+            const interval = Math.ceil(range/max);
+            for(var i = 0; i < range; i += interval) {
                 result.push(chdata[i]);
             }
         }
         else {
-            result = chdata.slice(0, dataLength[text]);
+            result = chdata.slice(0, atMost);
         }
 
         chart.data.datasets[0].data = result;

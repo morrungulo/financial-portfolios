@@ -65,21 +65,18 @@
                 $(this).html('-');
             } else {
                 let intValue = parseInt($(this).text());
-                if (intValue >= 1000000) {
+                let intSuffix = 'K';
+                if (intValue < 1000000) {
+                    intValue /= 1000;
+                } else {
                     intValue /= 1000000;
-                    let intSuffix = 'M';
+                    intSuffix = 'M';
                     if (intValue >= 1000) {
                         intValue /= 1000;
                         intSuffix = 'B';
                     }
-                    // if (intValue >= 1000) {
-                    //     intValue /= 1000;
-                    //     intSuffix = 'T';
-                    // }
-                    $(this).html(intValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + intSuffix);
-                } else {
-                    $(this).html(intValue.toLocaleString('en-US'));
                 }
+                $(this).html(intValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + intSuffix);
             }
         });
         $(".format-time").each(function() {
