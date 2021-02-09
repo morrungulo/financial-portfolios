@@ -1,6 +1,8 @@
 const ncron = require('node-cron');
 const ExchangeStock = require('../models/stock/Exchange');
+const AssetStock = require('../models/stock/Asset');
 const StockService = require('../services/StockService');
+const Watchlist = require('../models/Watchlist');
 
 /**
  * Return the oldest exchange stock (since the last update).
@@ -33,6 +35,24 @@ const refreshDailyExchangeStock = async () => {
     }
 }
 
+/**
+ * Purge exchange stocks which are unused
+ */
+const removeUnusedStocks = async () => {
+    // get distinct 'used' asset stocks and watchlist stock entries
+    const [assetStocks, watchlistStocks] = await Promise.all([
+        AssetStock.find({}).distinct('exchange_id'),
+        Watchlist.find({}).distinct('stock_entries')
+    ]);
+    
+    // join those two unique lists into one
+    const usedStocks = [...new Set([...assetStocks ,...watchlistStocks])];
+
+    // remove unused stocks
+    await ExchangeStock.deleteMany({'_id': { $nin: usedStocks }});
+    console.log('(cron-remove)');
+}
+
 module.exports = {
     initialize: ((callback) => {
 
@@ -50,6 +70,10 @@ module.exports = {
         // 17:00 until 19:00 (NYT)
         const marketAfterMarket = '* 22,23 * * 1-5';
         ncron.schedule(marketAfterMarket, refreshDailyExchangeStock);
+
+        // purge unused stocks
+        const atMidnight = '0 0 * * *';
+        ncron.schedule(atMidnight, removeUnusedStocks);
 
         callback();
     })
