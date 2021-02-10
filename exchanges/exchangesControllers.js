@@ -1,7 +1,6 @@
 const config = require('config');
 const chalk = require('chalk');
 const ExchangeStock = require('../models/stock/Exchange');
-const StockService = require('../services/StockService');  
 
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
@@ -21,12 +20,7 @@ module.exports.exchanges_detail = async (req, res) => {
     const eid = req.params.eid;
     try {
         const entry = await ExchangeStock.findById(eid);
-
-        const SS = new StockService();
-        const data = await SS.buildChartDataFromDailyData(entry.name);
-        // console.log(chalk.cyan(JSON.stringify(data, null, "  ")));
-        
-        res.render('exchanges/exchanges-detail', { title: entry.name, entry, data });
+        res.render('exchanges/exchanges-detail', { title: entry.name, entry });
     }
     catch (err) {
         const errors = handleErrors(err);

@@ -26,7 +26,7 @@ const exchangeOverviewSchema = new mongoose.Schema({
     PriceToBookRatio: { type: Number, set: convertNoneToZero },
     MarketCapitalization: { type: Number, set: convertNoneToZero },
     EBITDA: { type: Number, set: convertNoneToZero },
-}, { timestamps: true });  
+});  
 
 // quote
 const exchangeQuoteSchema = new mongoose.Schema({
@@ -39,7 +39,7 @@ const exchangeQuoteSchema = new mongoose.Schema({
     PreviousClose: { type: Number, set: convertNoneToZero },
     Change: { type: Number, set: convertNoneToZero },
     ChangePercent: { type: Number, set: convertStringWithPercentSignToNumber },
-}, { timestamps: true });
+});
 
 // time series
 const exchangeTimeSeriesSchema = new mongoose.Schema({
@@ -48,14 +48,20 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
     High: { type: Number, set: convertNoneToZero },
     Low: { type: Number, set: convertNoneToZero },
     Close: { type: Number, set: convertNoneToZero },
-}, { timestamps: true });
+});
 
 // calculated items
 const exchangeCalculatedSchema = new mongoose.Schema({
     DividendYieldPercent: Number,    // 100*(overview.dividend/quote.price)
     DividendPayoutRatioPercent: Number,    // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
     Week52RangePercent: Number,     // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
-}, { timestamps: true });
+});
+
+// x,y coords for charts
+const exchangeXYcoordSchema = new mongoose.Schema({
+    x: Date,
+    y: Number,
+});
 
 // the stock schema (aggregator)
 const exchangeStockSchema = new mongoose.Schema({
@@ -71,7 +77,10 @@ const exchangeStockSchema = new mongoose.Schema({
     exchangeQuote: exchangeQuoteSchema,
     exchangeCalculated: exchangeCalculatedSchema,
     exchangeIntraday: [exchangeTimeSeriesSchema],
-    exchangeDaily: [exchangeTimeSeriesSchema]
+    exchangeDaily: [exchangeTimeSeriesSchema],
+
+    // graph data
+    exchangeXYDaily: [exchangeXYcoordSchema],
 
 }, { timestamps: true});
 

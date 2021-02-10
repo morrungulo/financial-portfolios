@@ -110,10 +110,9 @@
 
                             <td>
                                 <div class="container-small-canvas"> 
-                                    <canvas data-chart-line-single="[10,20,25,35,45,63,81,22,34,21,16,12,7,15,11,7,8,14,18,22,26,26,27,28]"></canvas>
+                                    <canvas data-chart-line-single='<%- JSON.stringify(entry.exchangeXYDaily.slice(0, 64)) %>'></canvas>
                                 </div>                        
                             </td>
-
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.name %>', { 'kind': 'Stock', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                         </tr>

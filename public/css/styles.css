@@ -542,6 +542,13 @@ table, th, td {
     text-align: left;
 }
 
+.standard-list .watchlists-assets-list th:nth-child(4),
+.standard-list .watchlists-assets-list tr td:nth-child(4),
+.standard-list .watchlists-assets-list th:nth-child(18),
+.standard-list .watchlists-assets-list tr td:nth-child(18) {
+    text-align: center;
+}
+
 .standard-list .assets-stocks-list {
     text-align: left;
 }

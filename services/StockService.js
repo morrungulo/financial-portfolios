@@ -1,7 +1,6 @@
-const chalk = require('chalk');
-const Asset = require('../models/stock/Asset');
 const ExchangeStock = require('../models/stock/Exchange');
 const stockProvider = require('./providers/alphavantageService');
+const ExchangeStockEmitter = require('../events/exchangeStockEmitter');
 
 class StockService {
 
@@ -11,7 +10,7 @@ class StockService {
      * @returns {Boolean}
      */
     async isTickerValid(ticker) {
-        return await stockProvider.isTickerValid(ticker);
+        return stockProvider.isTickerValid(ticker);
     }
 
     /**
@@ -20,7 +19,7 @@ class StockService {
      * @returns {Boolean} 
      */
     async hasStock(ticker) {
-        return await ExchangeStock.exists({ name: ticker });
+        return ExchangeStock.exists({ name: ticker });
     }
 
     /**
@@ -29,7 +28,7 @@ class StockService {
      * @returns {ExchangeStock}
      */
     async getStock(ticker) {
-        return await ExchangeStock.findOne({ name: ticker });
+        return ExchangeStock.findOne({ name: ticker });
     }
 
     /**
@@ -43,12 +42,12 @@ class StockService {
         }
 
         // get it
-        let exData = await this.getStock(ticker);
+        let exStock = await this.getStock(ticker);
         let needsSave = false;
         try {
             // fetch quote
             const exchangeQuoteInst = await stockProvider.fetchExchangeQuote(ticker);
-            exData.exchangeQuote = exchangeQuoteInst;
+            exStock.exchangeQuote = exchangeQuoteInst;
             needsSave = true;
         } catch (error) {
             console.log('Not possible to retrieve ' + ticker);
@@ -56,10 +55,11 @@ class StockService {
 
         // save if 
         if (needsSave) {
-           exData = await exData.save();
+           exStock = await exStock.save();
+           ExchangeStockEmitter.emit('update_quote', exStock._id);
         }
 
-        return exData;
+        return exStock;
     }
 
 
@@ -74,44 +74,29 @@ class StockService {
         }
 
         // get it
-        let exData = await this.getStock(ticker);
+        let exStock = await this.getStock(ticker);
         let needsSave = false;
         try {
             // fetch overview
             const exchangeOverviewInst = await stockProvider.fetchExchangeOverview(ticker);
-            exData.exchangeOverview = exchangeOverviewInst;
+            exStock.exchangeOverview = exchangeOverviewInst;
             needsSave = true;
 
             // fetch daily
             const exchangeDailyInst = await stockProvider.fetchExchangeDaily(ticker);
-            exData.exchangeDaily = exchangeDailyInst;
+            exStock.exchangeDaily = exchangeDailyInst;
         } catch (error) {
             console.log('Not possible to retrieve ' + ticker);
         }
 
         // save before exiting
         if (needsSave) {
-           exData = await exData.save();
+           exStock = await exStock.save();
+           ExchangeStockEmitter.emit('update_daily', exStock._id);
         }
-        return exData;
+        return exStock;
     }
 
-    async buildChartDataFromDailyData(ticker) {
-        const criteria = { name: ticker };
-        const data = await ExchangeStock.aggregate([
-            { $match: criteria },
-            { $unwind: '$exchangeDaily' },
-            {
-                $project: {
-                    _id: false,
-                    x: '$exchangeDaily.LastRefreshed',
-                    y: '$exchangeDaily.Close',
-                }
-            },
-            { $sort: { 'x': -1 } },
-        ]);
-        return data;
-    }
 
     /**
      * Create a new ExchangeStock object iff it does not already exist. If it exists, then the existing object is returned.
@@ -137,6 +122,7 @@ class StockService {
                     exchangeDaily: exchangeDailyInst,
                 });
                 await exStock.save();
+                ExchangeStockEmitter.emit('create', exStock._id);
                 return exStock;
             } catch (err) {
                 console.error(err);
