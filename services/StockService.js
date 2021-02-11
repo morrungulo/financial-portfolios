@@ -10,7 +10,7 @@ class StockService {
      * @returns {Boolean}
      */
     async isTickerValid(ticker) {
-        return stockProvider.isTickerValid(ticker);
+        return await stockProvider.isTickerValid(ticker);
     }
 
     /**
@@ -19,7 +19,7 @@ class StockService {
      * @returns {Boolean} 
      */
     async hasStock(ticker) {
-        return ExchangeStock.exists({ name: ticker });
+        return await ExchangeStock.exists({ name: ticker });
     }
 
     /**
@@ -28,7 +28,7 @@ class StockService {
      * @returns {ExchangeStock}
      */
     async getStock(ticker) {
-        return ExchangeStock.findOne({ name: ticker });
+        return await ExchangeStock.findOne({ name: ticker });
     }
 
     /**

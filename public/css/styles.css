@@ -291,7 +291,7 @@ footer {
     top: 35%;
     left: 50%;
     transform: translate(-50%, -35%) scale(0);
-    transition: 200ms ease-in-out;
+    transition: 250ms ease-in-out;
     border-radius: 14px;
     z-index: 100;
     background-color: var(--canvas-content);
@@ -597,7 +597,7 @@ table, th, td {
     outline: none;
     cursor: pointer;
     padding: 12px px;
-    transition: 0.3s;
+    transition: 250ms;
 }
   
 /* Change background color of buttons on hover */

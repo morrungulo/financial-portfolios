@@ -13,11 +13,11 @@
     "mongoose": "^5.11.8",
     "morgan": "^1.10.0",
     "node-cron": "^2.0.3",
-    "polygon.io": "^2.0.2",
     "validator": "^13.5.2"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node ./app.js",
+    "dev": "nodemon ./app.js",
     "stop": "pkill --signal SIGTERM financial-portfolios"
   },
   "name": "financial-portfolios",
