@@ -33,7 +33,7 @@ class ExchangeStockEmitter extends EventEmitter {
      */
     async updateXYDaily(exchange_id) {
         try {
-            const data = await getXYfromDaily(exchange_id);
+            const data = await this.getXYfromDaily(exchange_id);
             await ExchangeStock.findByIdAndUpdate(exchange_id, { $set: {'exchangeXYDaily': data} });
         } catch (err) {
             console.error(err);

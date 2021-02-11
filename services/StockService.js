@@ -55,8 +55,8 @@ class StockService {
 
         // save if 
         if (needsSave) {
-           exStock = await exStock.save();
-           ExchangeStockEmitter.emit('update_quote', exStock._id);
+            exStock = await exStock.save();
+            ExchangeStockEmitter.emit('update_quote', exStock._id);
         }
 
         return exStock;
