@@ -20,13 +20,14 @@
 <div class="main-body-extended">
 
 <div class="panel-container-3c-le">
+    
     <div class="panel-containee">
         <div class="title">
             <h1><%- portfolio.name %> <span class="emphasize-minusminus">(<%- portfolio.currency %>)</span></h1>
         </div>
         <% if (hasAssets) { %>
         <div class="content">
-            <div class="panel-container-3c-404020">
+            <div class="panel-container-2c">
 
                 <div class="panel-container-2c">
                     <div class="panel-containee left">
@@ -52,16 +53,6 @@
                     </div>
                 </div>
 
-                <div class="panel-container" style="grid-column: 3; grid-row: 1 / 4;">
-                    <div style="display: flex; justify-content: flex-end; align-items: center;">
-                        <div style="position: relative; width: 100%; height: 100%">
-                            <canvas data-chart-doughnut="Portfolio Value,<%- portfolio.unrealized_value %>" data-chart-doughnut-data="<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>", data-chart-doughnut-labels="Stocks,Cryptos,Cash"></canvas>
-                        </div>
-                    </div>            
-                </div>
-
-
-
                 <div class="panel-container-2c">
                     <div class="panel-containee left">
                         <p class="ptitle nowrap">Realized</p>
@@ -86,20 +77,29 @@
         </div>
         <% } %>
     </div>
-    <div class="panel-containee">
-<!-- 
-        <div style="display: inline-block;">
-            <div style="position: relative; width: 160px">
-                <canvas data-chart-doughnut="Portfolio Value,<%- portfolio.unrealized_value %>" data-chart-doughnut-data="<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>", data-chart-doughnut-labels="Stocks,Cryptos,Cash"></canvas>
-            </div>
-            <div style="position: relative; width: 160px">
-                <canvas data-chart-doughnut="Stocks" data-chart-doughnut-data="23,112,31,18,34,32,12,12,56", data-chart-doughnut-labels="a,b,c,d,e,f,g,h,i"></canvas>
-            </div>
-        </div>
- -->
 
+    <div class="panel-containee">
+        <div class="title"></div>
+        <div class="content">
+            
+            <div class="panel-container" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: flex-start;">
+                <div class="chart-doughnut-standard" data-chart-doughnut-2='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
+            </div>
+            </div>
+                
+        </div>
     </div>
-    <div class="panel-containee"></div>
+    <!-- <div class="panel-containee">
+        <div class="title"></div>
+        <div class="content">
+            
+            <div class="panel-container" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: flex-start;">
+                <div class="chart-doughnut-standard" data-chart-doughnut-2='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
+            </div>
+            </div>
+                
+        </div>
+    </div> -->
     
 
 
@@ -143,7 +143,7 @@
                             </td>                                    
                             <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
                                 <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
-                                <span class="emphasize-minus format-time"><%- asset.exchange_id.exchangeQuote.updatedAt %></span>
+                                <span class="emphasize-minus format-time"><%- asset.exchange_id.updatedAt %></span>
                             </td>
                             <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
                                 <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
@@ -199,3 +199,5 @@
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
 <%- include("../modal/modal"); %>
 <%- include("../partials/charts/chart-doughnut"); %>
+
+<script src="/scripts/charts.js"></script>

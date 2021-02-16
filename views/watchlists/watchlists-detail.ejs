@@ -40,6 +40,7 @@
                     <li><button data-modal-target="#entries-add-modal">Add Entry</button></li>
                     <li><a href="/show" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
                     <li><a href="/watchlists/<%- watchlist._id %>" title="Refresh" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Refresh" class="button-svg"></a></li>
+                    <li><a href="/watchlists/<%- watchlist._id %>/export2csv" title="Export to CSV" class="icon"><img src="/img/iconmonstr-download-13.svg" alt="Export to CSV" class="button-svg"></a></li>
                 </ul>
             </div>
         </div>
@@ -50,6 +51,7 @@
                 <table class="sortable watchlists-assets-list">
                     <thead>
                         <th>Ticker</th>
+                        <th>Sector</th>
                 
                         <th>52wk High</th>
                         <th>52wk Low</th>
@@ -78,17 +80,14 @@
                     <% watchlist.stock_entries.forEach(entry => { %>
                         <tr class="item" title="<%- entry.exchangeOverview.Name %>">
                             <td sorttable_customkey="<%- entry.name %>"><a href="/exchanges/<%- entry._id %>"><%- entry.name %></a></td>
-                
+                            <td><%- entry.exchangeOverview.Sector %></td>
+
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52High %></span></td>
                             <td><span class="format-currency-<%- entry.exchangeOverview.Currency %>"><%- entry.exchangeOverview.Week52Low %></span></td>                            
                             <td>
                                 <div class="container-percentage">
-                                    <div class="container-small-canvas">
-                                        <canvas data-chart-percentage-bar="<%- entry.exchangeCalculated.Week52RangePercent %>"></canvas>
-                                    </div>
-                                    <div class="container-percentage-value">
-                                        <span class="format-percentage %>"><%- entry.exchangeCalculated.Week52RangePercent %></span>
-                                    </div>
+                                    <div class="chart-sparkline" data-chart-percentage-bar='<%- entry.exchangeCalculated.Week52RangePercent %>'></div>
+                                    <span class="format-percentage %>"><%- entry.exchangeCalculated.Week52RangePercent %></span>
                                 </div>
                             </td>
                 
@@ -108,10 +107,8 @@
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendYieldPercent %></span></td>
                             <td><span class="format-percentage"><%- entry.exchangeCalculated.DividendPayoutRatioPercent %></span></td>
 
-                            <td>
-                                <div class="container-small-canvas"> 
-                                    <canvas data-chart-line-single='<%- JSON.stringify(entry.exchangeXYDaily.slice(0, 64)) %>'></canvas>
-                                </div>                        
+                            <td>                                
+                                <div class="chart-sparkline" data-chart-line-single='<%- JSON.stringify(entry.exchangeXYDaily.slice(0, 64)) %>'></div>
                             </td>
 
                             <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.name %>', { 'kind': 'Stock', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
@@ -152,5 +149,5 @@
 <%- include("../modal/entries-add-modal"); %>
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/watchlists/' + watchlist._id }); %>
 <%- include("../modal/modal"); %>
-<%- include("../partials/charts/chart-percentage"); %>
-<%- include("../partials/charts/chart-line-single"); %>
+
+<script src="/scripts/charts.js"></script>

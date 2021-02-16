@@ -17,7 +17,7 @@ const getOldest = async () => {
 const refreshOftenExchangeStock = async () => {
     const oldestStock = await getOldest();
     if (oldestStock) {
-        console.log('(cron-often) refreshing ' + oldestStock.name);
+        // console.log('(cron-often) refreshing ' + oldestStock.name);
         const SS = new StockService();
         SS.refreshStockQuote(oldestStock.name);
     }
@@ -29,9 +29,21 @@ const refreshOftenExchangeStock = async () => {
 const refreshDailyExchangeStock = async () => {
     const oldestStock = await getOldest();
     if (oldestStock) {
-        console.log('(cron-daily) refreshing ' + oldestStock.name);
+        // console.log('(cron-daily) refreshing ' + oldestStock.name);
         const SS = new StockService();
         SS.refreshStockOverviewAndDaily(oldestStock.name);
+    }
+}
+
+/**
+ * Refresh the exchange stock with both its daily and quote data.
+ */
+const refreshDailyAndOftenExchangeStock = async() => {
+    const oldestStock = await getOldest();
+    if (oldestStock) {
+        const SS = new StockService();
+        SS.refreshStockOverviewAndDaily(oldestStock.name);
+        SS.refreshStockQuote(oldestStock.name);
     }
 }
 
@@ -50,7 +62,7 @@ const removeUnusedStocks = async () => {
 
     // remove unused stocks
     await ExchangeStock.deleteMany({'_id': { $nin: usedStocks }});
-    console.log('(cron-remove)');
+    // console.log('(cron-remove)');
 }
 
 module.exports = {
@@ -64,16 +76,21 @@ module.exports = {
         ncron.schedule(marketFirstHalfHour, refreshOftenExchangeStock);
         
         // 10:00 until 16:00 (NYT)
-        const marketRegularHours = '*/3 15-21 * * 1-5';
+        const marketRegularHours = '*/4 15-21 * * 1-5';
         ncron.schedule(marketRegularHours, refreshOftenExchangeStock);
 
         // 17:00 until 19:00 (NYT)
         const marketAfterMarket = '* 22,23 * * 1-5';
         ncron.schedule(marketAfterMarket, refreshDailyExchangeStock);
 
+        // 5:00 until 10:00 (weekend)
+        // const fromFiveToTenOclock = '*/3 5-10 * * 6-7';
+        const fromFiveToTenOclock = '*/3 19-23 * * 6-7';
+        ncron.schedule(fromFiveToTenOclock, refreshDailyAndOftenExchangeStock);
+
         // purge unused stocks
-        const atMidnight = '0 0 * * *';
-        ncron.schedule(atMidnight, removeUnusedStocks);
+        const atOneOclock = '0 1 * * *';
+        ncron.schedule(atOneOclock, removeUnusedStocks);
 
         callback();
     })

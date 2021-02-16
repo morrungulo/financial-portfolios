@@ -506,7 +506,7 @@ table, th, td {
 
 .standard-list td:first-child,
 .standard-list td:last-child {
-    padding-left: 12px;
+    padding-left: 6px;
 }
 
 .standard-list td.delete-row {
@@ -538,14 +538,16 @@ table, th, td {
 }
 
 .standard-list .watchlists-assets-list th:first-child,
-.standard-list .watchlists-assets-list tr td:first-child {
-    text-align: left;
+.standard-list .watchlists-assets-list tr td:first-child,
+.standard-list .watchlists-assets-list th:nth-child(2),
+.standard-list .watchlists-assets-list tr td:nth-child(2) {
+        text-align: left;
 }
 
-.standard-list .watchlists-assets-list th:nth-child(4),
-.standard-list .watchlists-assets-list tr td:nth-child(4),
-.standard-list .watchlists-assets-list th:nth-child(18),
-.standard-list .watchlists-assets-list tr td:nth-child(18) {
+.standard-list .watchlists-assets-list th:nth-child(5),
+.standard-list .watchlists-assets-list tr td:nth-child(5),
+.standard-list .watchlists-assets-list th:nth-child(19),
+.standard-list .watchlists-assets-list tr td:nth-child(19) {
     text-align: center;
 }
 
@@ -565,20 +567,18 @@ table, th, td {
 }
 
 /* charts */
+.chart-sparkline {
+    padding-left: 2px;
+}
+
+.chart-doughnut-standard {
+    /* empty, for now */
+}
+
 .container-percentage {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-around;
     align-items: center;
-}
-
-.container-small-canvas {
-    padding-left: 6px;
-    position: relative;
-    width: 120px;
-}
-
-.container-percentage-value {
-    width: 60px;
 }
 
 /* Style the tab */
@@ -608,4 +608,4 @@ table, th, td {
 /* Create an active/current tablink class */
 .tab button.active {
     background-color: rgba(54, 162, 235, 0.3);
-}  
+}

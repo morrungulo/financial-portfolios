@@ -13,8 +13,6 @@
         const data = canvas.getAttribute('data-chart-doughnut-data').split(',').map(n=>+n);
         const labels = canvas.getAttribute('data-chart-doughnut-labels').split(',');
         const [slabels, sdata] = reverseSortKeyValue(labels, data);
-        console.log(slabels);
-        console.log(sdata);
 
         const backgroundColor = Array(data.length).fill('rgba(54, 162, 235, 0.4)');
         const borderColor = Array(data.length).fill('rgba(54, 162, 235, 1)');
