@@ -83,7 +83,7 @@
         <div class="content">
             
             <div class="panel-container" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: flex-start;">
-                <div class="chart-doughnut-standard" data-chart-doughnut-2='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
+                <div class="chart-doughnut-standard" data-chart-doughnut='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
             </div>
             </div>
                 
@@ -198,6 +198,5 @@
 <%- include("../modal/assets-add-modal"); %>
 <%- include("../modal/remove-confirm-modal", { 'prefix': 'rc', 'post': '/portfolios/' + portfolio._id }); %>
 <%- include("../modal/modal"); %>
-<%- include("../partials/charts/chart-doughnut"); %>
 
 <script src="/scripts/charts.js"></script>

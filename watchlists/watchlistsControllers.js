@@ -1,9 +1,8 @@
 const config = require('config');
 const chalk = require('chalk');
-const { Parser } = require('json2csv');
-const dateformat = require('dateformat');
 const Watchlist = require('../models/Watchlist');
 const StockService = require('../services/StockService');
+const { getFileName, downloadResource } = require('../util')
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
@@ -78,38 +77,7 @@ module.exports.watchlists_detail = async (req, res) => {
     }
 }
 
-/**
- * Sends the 'data' object filtered with the information in the 'fields' object as a 'csv'
- * file named 'fileName' as a response attachment. 
- * @param {HTTPResponse} res 
- * @param {String} fileName 
- * @param {Object} fields 
- * @param {Object} data 
- */
-const downloadResource = (res, fileName, fields, data) => {
-    const json2csv = new Parser({ fields });
-    const csv = json2csv.parse(data);
-    res.header('Content-Type', 'text/csv');
-    res.header("Content-Disposition", 'attachment; filename=' + fileName);
-    res.attachment(fileName);
-    return res.send(csv);
-}
-
-/**
- * Returns a String with the proposed filename. It appends the date down to the second to the filename.
- * If the parameters are 'text', 'alice' and 'csv' respectively, the return name will be 'text-alice-20210102175534.csv'.
-
- * @param {String} filetype 
- * @param {String} name 
- * @param {String} extension 
- */
-const getFileName = (filetype, name, extension) => {
-    const date = dateformat(Date.now(), "yyyymmddHHMMss");
-    const fileName = [filetype, name, date].join('-').toLowerCase();
-    return fileName + '.' + extension;
-}
-
-module.exports.watchlists_export2csv = async (req, res) => {
+module.exports.watchlists_export = async (req, res) => {
     const wid = req.params.wid;
     try {
         const fields = [
@@ -138,7 +106,7 @@ module.exports.watchlists_export2csv = async (req, res) => {
             .lean()
             .exec()
             .then(entry => {
-                const fileName = getFileName('watchlist', entry.name, 'csv');
+                const fileName = getFileName('watchlist', entry.name);
                 downloadResource(res, fileName, fields, entry.stock_entries);
             })
             .catch(err => res.send(err));

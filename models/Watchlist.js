@@ -14,7 +14,8 @@ const watchlistSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
-        required: true
+        required: true,
+        index: true,
     },
 
     // the list of cash assets

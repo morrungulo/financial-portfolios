@@ -84,8 +84,7 @@ module.exports = {
         ncron.schedule(marketAfterMarket, refreshDailyExchangeStock);
 
         // 5:00 until 10:00 (weekend)
-        // const fromFiveToTenOclock = '*/3 5-10 * * 6-7';
-        const fromFiveToTenOclock = '*/3 19-23 * * 6-7';
+        const fromFiveToTenOclock = '*/3 5-10 * * 6-7';
         ncron.schedule(fromFiveToTenOclock, refreshDailyAndOftenExchangeStock);
 
         // purge unused stocks

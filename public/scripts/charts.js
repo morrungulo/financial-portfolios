@@ -1,7 +1,7 @@
 const allCharts = {};
 
 const percentageCharts = document.querySelectorAll('[data-chart-percentage-bar]');
-percentageCharts.forEach(element=> {
+percentageCharts.forEach(element => {
     const rawdata = element.getAttribute('data-chart-percentage-bar');
     const options = {
         series: [{
@@ -13,7 +13,10 @@ percentageCharts.forEach(element=> {
             height: 30,
             sparkline: {
                 enabled: true
-            }
+            },
+            animations: {
+                enabled: false,
+            },
         },
         colors: ['rgba(54, 162, 235, 0.7)'],
         plotOptions: {
@@ -41,6 +44,9 @@ percentageCharts.forEach(element=> {
 const sparklineCharts = document.querySelectorAll('[data-chart-line-single]');
 sparklineCharts.forEach(element => {
     const rawdata = JSON.parse(element.getAttribute('data-chart-line-single'));
+    const firstValue = rawdata[0];
+    const lastValue = rawdata[rawdata.length - 1];
+    const color = (firstValue.y > lastValue.y) ? 'rgba(0,128,0,0.7)' : 'rgba(255,0,0,0.7)';
     const options = {
         series: [{
             data: rawdata.reverse(),
@@ -52,8 +58,12 @@ sparklineCharts.forEach(element => {
             sparkline: {
                 enabled: true,
             },
+            animations: {
+                enabled: false,
+            },
         },
-        colors: ['rgba(54, 162, 235, 0.7)'],
+        // colors: ['rgba(54, 162, 235, 0.7)'],
+        colors: [color],
         stroke: {
             width: 2,
         },
@@ -77,7 +87,7 @@ function changeButton(buttonElement) {
 
 function applyDecimationAlgorithm(chartId, timeSpan) {
     const element = document.getElementById(chartId);
-    const rawdata = JSON.parse(element.getAttribute('data-chart-line-2'));
+    const rawdata = JSON.parse(element.getAttribute('data-chart-line'));
     const dataLength = {
         '1W': 5,
         '2W': 10,
@@ -95,7 +105,7 @@ function applyDecimationAlgorithm(chartId, timeSpan) {
     const atMost = dataLength[timeSpan];
     if (atMost > max) {
         const range = Math.min(atMost, rawdata.length);
-        const interval = Math.ceil(range/max);
+        const interval = Math.ceil(range / max);
         for (let i = 0; i < range; i += interval) {
             result.push(rawdata[i]);
         }
@@ -110,10 +120,10 @@ function changeChartData(buttonElement, chartId, timeSpan) {
     changeButton(buttonElement);
     const data = applyDecimationAlgorithm(chartId, timeSpan);
     var chart = allCharts[chartId];
-    chart.updateSeries([{data}]);
+    chart.updateSeries([{ data }]);
 }
 
-const lineCharts = document.querySelectorAll('[data-chart-line-2]');
+const lineCharts = document.querySelectorAll('[data-chart-line]');
 lineCharts.forEach(element => {
     const options = {
         noData: {
@@ -147,10 +157,52 @@ lineCharts.forEach(element => {
         },
         xaxis: {
             type: 'datetime',
+            show: false,
+            labels: {
+                show: false,
+            },
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false,
+            },
+            crosshairs: {
+                show: false,
+            },
+            tooltip: {
+                enabled: false,
+            },
         },
-        // yaxis: {
-
-        // },
+        yaxis: {
+            show: false,
+            showAlways: false,
+            labels: {
+                show: false,
+                formatter: function (val) {
+                    return Number(val).toFixed(2);
+                }
+            }
+        },
+        grid: {
+            show: false,
+        },
+        tooltip: {
+            style: {
+                fontSize: '0.9em',
+                fontFamily: 'Manrope, sans-serif',
+            },
+            x: {
+                format: 'yyyy-MM-dd',
+            },
+            y: {
+                title: {
+                    formatter: function () {
+                        return '';
+                    }
+                }
+            },
+        },
     };
     const chart = new ApexCharts(element, options);
     chart.render();
@@ -164,16 +216,16 @@ lineCharts.forEach(element => {
 
 // get indices of reverse sort, based on https://stackoverflow.com/questions/46622486/what-is-the-javascript-equivalent-of-numpy-argsort
 const reverseSortKeysAndValues = (keys, values) => {
-    const argrsort = a=>a.map(d).sort((a,b)=>b[0]-a[0]).map(u);d=(v,i)=>[v,i];u=i=>i[1];
+    const argrsort = a => a.map(d).sort((a, b) => b[0] - a[0]).map(u); d = (v, i) => [v, i]; u = i => i[1];
     const rsindices = argrsort(values);
-    const skeys = rsindices.map(i=>keys[i]);
-    const svalues = rsindices.map(i=>values[i]);
+    const skeys = rsindices.map(i => keys[i]);
+    const svalues = rsindices.map(i => values[i]);
     return [skeys, svalues];
 };
 
-const doughnutCharts = document.querySelectorAll('[data-chart-doughnut-2]');
+const doughnutCharts = document.querySelectorAll('[data-chart-doughnut]');
 doughnutCharts.forEach(element => {
-    const [title, value] = JSON.parse(element.getAttribute('data-chart-doughnut-2'));
+    const [title, value] = JSON.parse(element.getAttribute('data-chart-doughnut'));
     const data = JSON.parse(element.getAttribute('data-chart-doughnut-data'));
     const labels = JSON.parse(element.getAttribute('data-chart-doughnut-labels'));
     const [sortedLabels, sortedData] = reverseSortKeysAndValues(labels, data);
@@ -183,6 +235,9 @@ doughnutCharts.forEach(element => {
         chart: {
             type: 'donut',
             width: 280,
+            animations: {
+                enabled: false,
+            },
         },
         plotOptions: {
             pie: {
@@ -205,7 +260,7 @@ doughnutCharts.forEach(element => {
                             fontFamily: 'Manrope, sans-serif',
                             fontWeight: 700,
                             color: 'black',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return value;
                             }
                         }

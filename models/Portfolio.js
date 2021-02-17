@@ -17,7 +17,8 @@ const portfolioSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
-        required: true
+        required: true,
+        index: true,
     },
 
     // the currency of this portfolio - all values of different currencies shall be converted to this one
