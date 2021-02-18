@@ -1,7 +1,7 @@
 const allCharts = {};
 
-const percentageCharts = document.querySelectorAll('[data-chart-percentage-bar]');
-percentageCharts.forEach(element => {
+const sparklinePercentageCharts = document.querySelectorAll('[data-chart-percentage-bar]');
+sparklinePercentageCharts.forEach(element => {
     const rawdata = element.getAttribute('data-chart-percentage-bar');
     const options = {
         series: [{
@@ -9,7 +9,7 @@ percentageCharts.forEach(element => {
         }],
         chart: {
             type: 'bar',
-            width: 120,
+            width: 100,
             height: 30,
             sparkline: {
                 enabled: true
@@ -41,12 +41,12 @@ percentageCharts.forEach(element => {
     chart.render();
 });
 
-const sparklineCharts = document.querySelectorAll('[data-chart-line-single]');
-sparklineCharts.forEach(element => {
+const sparklineLineCharts = document.querySelectorAll('[data-chart-line-single]');
+sparklineLineCharts.forEach(element => {
     const rawdata = JSON.parse(element.getAttribute('data-chart-line-single'));
     const firstValue = rawdata[0];
     const lastValue = rawdata[rawdata.length - 1];
-    const color = (firstValue.y > lastValue.y) ? 'rgba(0,128,0,0.7)' : 'rgba(255,0,0,0.7)';
+    const color = (firstValue.y > lastValue.y) ? 'rgba(0,128,0,0.5)' : 'rgba(255,0,0,0.5)';
     const options = {
         series: [{
             data: rawdata.reverse(),
@@ -62,7 +62,6 @@ sparklineCharts.forEach(element => {
                 enabled: false,
             },
         },
-        // colors: ['rgba(54, 162, 235, 0.7)'],
         colors: [color],
         stroke: {
             width: 2,
@@ -188,20 +187,12 @@ lineCharts.forEach(element => {
             show: false,
         },
         tooltip: {
-            style: {
-                fontSize: '0.9em',
-                fontFamily: 'Manrope, sans-serif',
-            },
-            x: {
-                format: 'yyyy-MM-dd',
-            },
-            y: {
-                title: {
-                    formatter: function () {
-                        return '';
-                    }
-                }
-            },
+            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                const y = w.globals.series[seriesIndex][dataPointIndex];
+                const x = w.globals.seriesX[seriesIndex][dataPointIndex];
+                const date = new Date(x).toISOString().slice(0, 10);
+                return '<div class="chart-tooltip"><span>' + date + ': ' + y + '</span></div>'
+            },            
         },
     };
     const chart = new ApexCharts(element, options);
@@ -274,6 +265,11 @@ doughnutCharts.forEach(element => {
         },
         legend: {
             show: false,
+        },
+        tooltip: {
+            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                return '<div class="chart-tooltip"><span>' + w.config.labels[seriesIndex] + ': ' + series[seriesIndex] + '</span></div>'
+            },            
         },
     };
     const chart = new ApexCharts(element, options);

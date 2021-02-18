@@ -79,30 +79,23 @@
     </div>
 
     <div class="panel-containee">
-        <div class="title"></div>
-        <div class="content">
-            
-            <div class="panel-container" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: flex-start;">
-                <div class="chart-doughnut-standard" data-chart-doughnut='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
-            </div>
-            </div>
-                
-        </div>
+    <% if (hasAssets && portfolio.stock_assets.length > 0) { %>
+        <div class="chart-doughnut-standard" data-chart-doughnut='["Total Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
+    <% } %>
     </div>
-    <!-- <div class="panel-containee">
-        <div class="title"></div>
-        <div class="content">
-            
-            <div class="panel-container" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: flex-start;">
-                <div class="chart-doughnut-standard" data-chart-doughnut-2='["Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
-            </div>
-            </div>
-                
-        </div>
-    </div> -->
     
-
-
+    <div class="panel-containee">
+    <% if (hasAssets && portfolio.stock_assets.length > 0) { %>
+            
+        <% const values = [], labels = []; %>
+        <% portfolio.stock_assets.filter(a => a.total_quantity > 0).forEach(asset => { %>
+            <% values.push(asset.unrealized_value); %>
+            <% labels.push(asset.exchange_id.name); %>
+        <% }); %>
+        <div class="chart-doughnut-standard" data-chart-doughnut='["Stocks",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='<%- JSON.stringify(values) %>', data-chart-doughnut-labels='<%- JSON.stringify(labels) %>'></div>
+                
+    <% } %>
+    </div>
 
     <div class="panel-containee panel-border">
         <div class="title">

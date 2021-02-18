@@ -71,8 +71,10 @@ const exchangeStockSchema = new mongoose.Schema({
         type: String,
         trim: true,
         uppercase: true,
-        required: [true, 'Please enter a ticker']
+        required: [true, 'Please enter a ticker'],
+        index: true,
     },
+    
     exchangeOverview: exchangeOverviewSchema,
     exchangeQuote: exchangeQuoteSchema,
     exchangeCalculated: exchangeCalculatedSchema,
