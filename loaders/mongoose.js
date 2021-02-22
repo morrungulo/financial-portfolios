@@ -1,8 +1,7 @@
 const config = require('config');
 const mongoose = require('mongoose');
-
 module.exports = {
-    initialize: (callback) => {
+    initialize: async () => {
         // mongodb atlas
         // const dbURI = 'mongodb+srv://morrungulo:EvnrCV76.MB@cluster0.yasie.mongodb.net/financial-portfolios';
         
@@ -14,8 +13,11 @@ module.exports = {
         const dbURI = 'mongodb://172.17.0.2:27017/test';
         
         // database connection
-        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex:true, socketTimeoutMS:15000 })
-            .then((res) => callback())
-            .catch((err) => console.log(err));
+        try {
+            await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex:true, socketTimeoutMS:15000 })
+            console.log('Mongoose loaded!')
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

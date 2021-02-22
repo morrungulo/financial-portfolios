@@ -66,7 +66,7 @@ const removeUnusedStocks = async () => {
 }
 
 module.exports = {
-    initialize: ((callback) => {
+    initialize: async () => {
 
         // initialize cron jobs for when the stock market opens
         // ignore holidays for now
@@ -76,7 +76,7 @@ module.exports = {
         ncron.schedule(marketFirstHalfHour, refreshOftenExchangeStock);
         
         // 10:00 until 16:00 (NYT)
-        const marketRegularHours = '*/4 15-21 * * 1-5';
+        const marketRegularHours = '*/5 15-21 * * 1-5';
         ncron.schedule(marketRegularHours, refreshOftenExchangeStock);
 
         // 17:00 until 19:00 (NYT)
@@ -84,13 +84,14 @@ module.exports = {
         ncron.schedule(marketAfterMarket, refreshDailyExchangeStock);
 
         // 5:00 until 10:00 (weekend)
-        const fromFiveToTenOclock = '*/3 5-10 * * 6-7';
+        const fromFiveToTenOclock = '*/3 5-12 * * 6-7';
         ncron.schedule(fromFiveToTenOclock, refreshDailyAndOftenExchangeStock);
 
         // purge unused stocks
         const atOneOclock = '0 1 * * *';
         ncron.schedule(atOneOclock, removeUnusedStocks);
 
-        callback();
-    })
-}
+        // complete
+        console.log('Scheduler loaded!')
+    }
+};

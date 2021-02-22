@@ -10,7 +10,7 @@ const exchangesRoutes = require('../exchanges/exchangesRoutes');
 const assetsRoutes = require('../assets/assetsRoutes');
 
 module.exports = {
-    initialize: ({ expressApp }, callback) => {
+    initialize: async (expressApp) => {
         
         // register view engine
         expressApp.set('view engine', 'ejs');
@@ -50,7 +50,7 @@ module.exports = {
         // last page to be registered, the 404 page
         expressApp.use((req, res) => res.status(404).render('404', { title: 'Page Not Found', page: req.url }));
 
-        // todo
-        callback();
+        // complete
+        console.log('Express loaded!');
     }
 };
