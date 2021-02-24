@@ -10,7 +10,7 @@ class StockService {
      * @returns {Boolean}
      */
     async isTickerValid(ticker) {
-        return await stockProvider.isTickerValid(ticker);
+        return await this.hasStock(ticker) || await stockProvider.isTickerValid(ticker);
     }
 
     /**
@@ -82,17 +82,23 @@ class StockService {
             exStock.exchangeOverview = exchangeOverviewInst;
             needsSave = true;
 
+            console.log("fetch overview");
+            
             // fetch daily
             const exchangeDailyInst = await stockProvider.fetchExchangeDaily(ticker);
             exStock.exchangeDaily = exchangeDailyInst;
+            
+            console.log("fetch daily");
         } catch (error) {
             console.log('Not possible to retrieve ' + ticker);
         }
 
         // save before exiting
         if (needsSave) {
-           exStock = await exStock.save();
-           ExchangeStockEmitter.emit('update_daily', exStock._id);
+            console.log('saving');
+            
+            exStock = await exStock.save();
+            ExchangeStockEmitter.emit('update_daily', exStock._id);
         }
         return exStock;
     }

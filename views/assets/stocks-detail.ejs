@@ -1,13 +1,30 @@
 <%- include("../partials/header"); %>
 
+<% var hasTransactions = (asset.transactions.length > 0); %>
+
 <div class="main-body-extended">
+    
     <div class="panel-container-3c-eq">
 
-        <div class="panel-containee">
+        <div class="panel-header" style="grid-area: header">
             <div class="title">
                 <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.exchangeOverview.Name %>)</span></h1>
             </div>
-            <% if (asset.transactions.length > 0) { %>
+            <div class="title">
+                <div class="mini-nav">
+                    <ul>
+                        <li><button data-modal-target="#transactions-stocks-add-modal">Add Transaction</button></li>
+                        <li><a href="/portfolios/<%- asset.portfolio_id._id %>" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
+                        <li><a href="/assets/stocks/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="panel-containee"></div>
+        <div class="panel-containee"></div> -->
+
+        <% if (hasTransactions) { %>
+        <div class="panel-containee" style="grid-area: subheader">
             <div class="content">
                 <div class="panel-container-2c">
                     <div class="panel-container-2c">
@@ -59,27 +76,15 @@
                     </div>
                 </div>
             </div>
-            <% } %>
         </div>          
-        <div class="panel-containee"></div>
-        <div class="panel-containee"></div>
-
+        <% } %>
+        
         <!-- transactions -->
-        <div class="panel-containee panel-border">
+        <div class="panel-containee panel-border" style="grid-area: main1">
             <div class="title">
                 <h2>Transactions</h2>
             </div>
-            <div class="title">
-                <div class="mini-nav">
-                    <ul>
-                        <li><button data-modal-target="#transactions-stocks-add-modal">Add Transaction</button></li>
-                        <li><a href="/portfolios/<%- asset.portfolio_id._id %>" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
-                        <li><a href="/assets/stocks/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="content">
-                <% if (asset.transactions.length > 0) { %>
+            <div class="content">            
                 <div class="standard-list">
                     <table class="assets-stocks-list">
                         <thead>
@@ -124,8 +129,8 @@
                         </tbody>
                     </table>
                 </div>
-                <% } else { %>
-                <div class="error">There are no transactions!</div>
+                <% if (!hasTransactions) { %>
+                    <div class="error">There are no transactions!</div>
                 <% } %>
             </div>
         </div>
