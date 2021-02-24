@@ -16,14 +16,14 @@ const requireAuth = (req, res, next) => {
         jwt.verify(token, config.get('auth.secret'), (err, decodedToken) => {
             if (err) {
                 console.log(err.message);
-                res.redirect('/auth/login');
+                res.redirect('/');
             } else {
                 console.log(decodedToken);
                 next();
             }
         });
     } else {
-        res.redirect('/auth/login');
+        res.redirect('/');
     }
 };
 
