@@ -118,8 +118,12 @@ function applyDecimationAlgorithm(chartId, timeSpan) {
 function changeChartData(buttonElement, chartId, timeSpan) {
     changeButton(buttonElement);
     const data = applyDecimationAlgorithm(chartId, timeSpan);
+    const change = (data[0].y - data[data.length-1].y) / (data[data.length-1].y);
+    const text = Number(change * 100).toFixed(1) + '%';
+    const color = (change > 0) ? 'green' : 'red';
     var chart = allCharts[chartId];
     chart.updateSeries([{ data }]);
+    chart.updateOptions({ title: { text, style: { color } }});
 }
 
 const lineCharts = document.querySelectorAll('[data-chart-line]');
@@ -129,6 +133,15 @@ lineCharts.forEach(element => {
             text: 'Loading...'
         },
         series: [],
+        title: {
+            align: 'center',
+            offsetY: 40,
+            style: {
+                fontSize: '1em',
+                fontFamily: 'Manrope, sans-serif',
+                fontWeight: 700,
+            }
+        },
         chart: {
             type: 'line',
             id: element.id,
@@ -225,7 +238,8 @@ doughnutCharts.forEach(element => {
         labels: sortedLabels,
         chart: {
             type: 'donut',
-            width: 280,
+            width: 230,
+            height: 230,
             animations: {
                 enabled: false,
             },
@@ -259,6 +273,33 @@ doughnutCharts.forEach(element => {
                 }
             }
         },
+        responsive: [
+            {
+                breakpoint: 1023,
+                options: {
+                    chart: {
+                        width: 180,
+                        height: 180,
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '86%',
+                                labels: {
+                                    value: {
+                                        fontSize: '0.7em',
+                                    },
+                                    total: {
+                                        fontSize: '0.7em',
+                                    }
+                                }
+                            }
+    
+                        }
+                    }
+                }
+            }
+        ],
         colors: ['rgba(54, 162, 235, 0.5)'],
         dataLabels: {
             enabled: false,
