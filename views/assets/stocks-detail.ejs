@@ -6,10 +6,13 @@
     
     <div class="panel-container-3c-eq">
 
-        <div class="panel-header" style="grid-area: header">
+        <div class="panel-header">
             <div class="title">
                 <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.exchangeOverview.Name %>)</span></h1>
             </div>
+        </div>
+
+        <div class="panel-header">
             <div class="title">
                 <div class="mini-nav">
                     <ul>
@@ -20,13 +23,13 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="panel-containee"></div>
-        <div class="panel-containee"></div> -->
+
+        <div class="panel-containee empty"></div>
 
         <% if (hasTransactions) { %>
-        <div class="panel-containee" style="grid-area: subheader">
+        <div class="panel-containee">
             <div class="content">
-                <div class="panel-container-2c">
+                <div class="panel-container-2c-immutable">
                     <div class="panel-container-2c">
                         <div class="panel-containee left">
                             <p class="emphasize-plusplus">
@@ -38,7 +41,7 @@
                         </div>
                         <div class="panel-containee right"></div>
                     </div>
-                    <div class="panel-container-2c">
+                    <div class="panel-container-2c-immutable">
                         <div class="panel-containee left"></div>
                         <div class="panel-containee right">
                             <p class="emphasize-plusplus">
@@ -50,7 +53,7 @@
                         </div>
                     </div>
 
-                    <div class="panel-container-2c">
+                    <div class="panel-container-2c-immutable">
                         <div class="panel-containee left">
                             <p class="ptitle nowrap">Realized</p>
                             <p class="ptitle nowrap">Unrealized</p>
@@ -62,7 +65,7 @@
                             <p class="nowrap"><span class="format-integer"><%- asset.total_transactions %></span</p>
                         </div>
                     </div>
-                    <div class="panel-container-2c">
+                    <div class="panel-container-2c-immutable">
                         <div class="panel-containee left">
                             <p class="ptitle nowrap">Costs</p>
                             <p class="ptitle nowrap">Dividends</p>
@@ -80,7 +83,7 @@
         <% } %>
         
         <!-- transactions -->
-        <div class="panel-containee panel-border" style="grid-area: main1">
+        <div class="panel-containee panel-border>
             <div class="title">
                 <h2>Transactions</h2>
             </div>
