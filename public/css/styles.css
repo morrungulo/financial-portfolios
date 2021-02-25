@@ -221,10 +221,10 @@ header {
 
 .panel-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
-    height: 100px;
+    align-items: center;
+    height: 50px;
 }
 
 .panel-containee {
@@ -590,9 +590,8 @@ table, th, td {
     padding-left: 2px;
 }
 
-.chart-doughnut-standard {
-    /* empty, for now */
-}
+/* .chart-doughnut-standard {
+} */
 
 .container-percentage {
     display: flex;
