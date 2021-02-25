@@ -238,8 +238,8 @@ doughnutCharts.forEach(element => {
         labels: sortedLabels,
         chart: {
             type: 'donut',
-            width: 230,
-            height: 230,
+            width: 220,
+            height: 220,
             animations: {
                 enabled: false,
             },
@@ -251,7 +251,7 @@ doughnutCharts.forEach(element => {
                     labels: {
                         show: true,
                         value: {
-                            fontSize: '1em',
+                            fontSize: '0.9em',
                             fontFamily: 'Manrope, sans-serif',
                             fontWeight: 700,
                             color: 'black',
@@ -261,7 +261,7 @@ doughnutCharts.forEach(element => {
                             show: true,
                             showAlways: true,
                             label: title,
-                            fontSize: '1em',
+                            fontSize: '0.9em',
                             fontFamily: 'Manrope, sans-serif',
                             fontWeight: 700,
                             color: 'black',
@@ -278,19 +278,18 @@ doughnutCharts.forEach(element => {
                 breakpoint: 1023,
                 options: {
                     chart: {
-                        width: 180,
-                        height: 180,
+                        width: 185,
+                        height: 185,
                     },
                     plotOptions: {
                         pie: {
                             donut: {
-                                size: '86%',
                                 labels: {
                                     value: {
-                                        fontSize: '0.7em',
+                                        fontSize: '0.8em',
                                     },
                                     total: {
-                                        fontSize: '0.7em',
+                                        fontSize: '0.8em',
                                     }
                                 }
                             }

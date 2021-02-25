@@ -223,8 +223,9 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    height: 50px;
+    align-items: flex-start;
+    max-height: 100px;
+    min-height: 60px;
 }
 
 .panel-containee {
