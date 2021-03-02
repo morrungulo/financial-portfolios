@@ -1,11 +1,11 @@
 const EventEmitter = require('events');
 const mongoose = require('mongoose');
-const ExchangeStock = require('../models/stock/Exchange');
+const ExchangeForex = require('../models/cash/Exchange');
 const decimation = require('../util/decimation');
 
 
 // create emitter object
-class ExchangeStockEmitter extends EventEmitter {
+class ExchangeCashEmitter extends EventEmitter {
 
     /**
      * Returns a list of {x,y} coordinate objects based on the exchangeDaily field.
@@ -14,19 +14,18 @@ class ExchangeStockEmitter extends EventEmitter {
     async getXYfromDaily(exchange_id) {
         const ObjectId = mongoose.Types.ObjectId;
         const criteria = { _id: ObjectId(exchange_id) };
-        const data = await ExchangeStock.aggregate([
+        const data = await ExchangeForex.aggregate([
             { $match: criteria },
             { $unwind: '$exchangeDaily' },
             {
                 $project: {
                     _id: false,
                     x: '$exchangeDaily.LastRefreshed',
-                    y: '$exchangeDaily.AdjustedClose',
+                    y: '$exchangeDaily.Close',
                     o: '$exchangeDaily.Open',
                     h: '$exchangeDaily.High',
-                    l: '$exchangeDaily.low',
+                    l: '$exchangeDaily.Low',
                     c: '$exchangeDaily.Close',
-                    v: '$exchangeDaily.Volume',
                 }
             },
             { $sort: { 'x': -1 } },
@@ -35,34 +34,27 @@ class ExchangeStockEmitter extends EventEmitter {
     }
 
     /**
-     * Updates the exchange stock with id 'exchange_id' with the X,Y coordinates from exchangeDaily time series.
+     * Updates the exchange cash with id 'exchange_id' with the X,Y coordinates from exchangeDaily time series.
      * @param {ObjectId} exchange_id 
      */
     async updateXYDaily(exchange_id) {
         try {
             const data = await this.getXYfromDaily(exchange_id);
-            const decimatedData = decimation.applyDecimation(data);
-            await ExchangeStock.findByIdAndUpdate(exchange_id, { $set: {'exchangeGraphData': decimatedData} });
+            const decimatedData = decimation.applyDecimation(data, false);
+            await ExchangeForex.findByIdAndUpdate(exchange_id, { $set: {'exchangeGraphData': decimatedData} });
         } catch (err) {
             console.error(err);
         }    
     }
 
 }
-const emitter = new ExchangeStockEmitter();
+const emitter = new ExchangeCashEmitter();
 
 /**
  * Register for event 'create'
  */
 emitter.on('create', async (exchange_id) => {
     await emitter.updateXYDaily(exchange_id);
-});
-
-/**
- * Register for event 'update_quote'
- */
-emitter.on('update_quote', async (exchange_id) => {
-    // do nothing
 });
 
 /**

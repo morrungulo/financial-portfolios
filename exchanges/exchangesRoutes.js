@@ -4,6 +4,8 @@ const exchangesController = require('./exchangesControllers');
 
 const router = Router();
 
-router.get('/:eid', authMiddleware.requireAuth, exchangesController.exchanges_detail);
+router.get('/stock/:eid', authMiddleware.requireAuth, exchangesController.exchanges_stock_detail);
+router.get('/crypto/:eid', authMiddleware.requireAuth, exchangesController.exchanges_crypto_detail);
+router.get('/cash/:eid', authMiddleware.requireAuth, exchangesController.exchanges_cash_detail);
 
 module.exports = router;

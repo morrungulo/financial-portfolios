@@ -1,0 +1,25 @@
+<%- include("../../partials/header"); %>
+
+<div class="main-body-extended">
+    <div class="panel-container-3c-eq">
+
+        <div class="panel-header">
+            <div class="title">
+                <h1><%- entry.exchangeOverview.Name %></h1>
+            </div>
+        </div>
+
+        <div class="panel-containee empty"></div>
+        <div class="panel-containee empty-first"></div>
+
+        <%- include("../../partials/exchanges-exchange-charts", { 'exItem': entry }); %>
+        <%- include("../../partials/exchanges-stock-profile", { 'stock': entry }); %>
+        <%- include("../../partials/exchanges-stock-summary", { 'stock': entry }); %>
+    </div>
+</div>
+
+<%- include("../../partials/footer"); %>
+<%- include("../../partials/formatters"); %>
+<%- include("../../modal/modal"); %>
+
+<script src="/scripts/charts.js"></script>

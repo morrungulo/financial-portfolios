@@ -1,5 +1,29 @@
 const allCharts = {};
 
+const getFormatter = (formatType, locale=undefined) => {
+    switch(formatType) {
+        case 'currency':
+            return new Intl.NumberFormat(locale, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        case 'percentage':
+            return new Intl.NumberFormat(locale, {
+                style: 'percent',
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+            });
+        case 'date':
+            return new Intl.DateTimeFormat(locale, {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+            });
+        default:
+            return new Intl.NumberFormat(locale);
+    }
+}
+
 const sparklinePercentageCharts = document.querySelectorAll('[data-chart-percentage-bar]');
 sparklinePercentageCharts.forEach(element => {
     const rawdata = element.getAttribute('data-chart-percentage-bar');
@@ -84,46 +108,16 @@ function changeButton(buttonElement) {
     }
 }
 
-function applyDecimationAlgorithm(chartId, timeSpan) {
-    const element = document.getElementById(chartId);
-    const rawdata = JSON.parse(element.getAttribute('data-chart-line'));
-    const dataLength = {
-        '1W': 5,
-        '2W': 10,
-        '1M': 21,   //30*5/7,
-        '3M': 64,   //90*5/7,
-        '6M': 128,  //180*5/7,
-        '1Y': 260,  //365*5/7,
-        '2Y': 521,  //365*2*5/7,
-        '5Y': 1303, //365*5*5/7,
-        '10Y': 2607,    //365*10*5/7
-        'All': 9999999, // very large number
-    };
-    let result = [];
-    const max = 160;
-    const atMost = dataLength[timeSpan];
-    if (atMost > max) {
-        const range = Math.min(atMost, rawdata.length);
-        const interval = Math.ceil(range / max);
-        for (let i = 0; i < range; i += interval) {
-            result.push(rawdata[i]);
-        }
-    }
-    else {
-        result = rawdata.slice(0, atMost);
-    }
-    return result;
-}
-
 function changeChartData(buttonElement, chartId, timeSpan) {
     changeButton(buttonElement);
-    const data = applyDecimationAlgorithm(chartId, timeSpan);
+    const element = document.getElementById(chartId);
+    const data = JSON.parse(element.getAttribute('data-' + timeSpan));
     const change = (data[0].y - data[data.length-1].y) / (data[data.length-1].y);
-    const text = Number(change * 100).toFixed(1) + '%';
+    const changeFormatted = getFormatter('percentage').format(change);
     const color = (change > 0) ? 'green' : 'red';
     var chart = allCharts[chartId];
     chart.updateSeries([{ data }]);
-    chart.updateOptions({ title: { text, style: { color } }});
+    chart.updateOptions({ title: { text: changeFormatted, style: { color } }});
 }
 
 const lineCharts = document.querySelectorAll('[data-chart-line]');
@@ -189,22 +183,15 @@ lineCharts.forEach(element => {
         yaxis: {
             show: false,
             showAlways: false,
-            labels: {
-                show: false,
-                formatter: function (val) {
-                    return Number(val).toFixed(2);
-                }
-            }
         },
         grid: {
             show: false,
         },
         tooltip: {
             custom: function({series, seriesIndex, dataPointIndex, w}) {
-                const y = w.globals.series[seriesIndex][dataPointIndex];
-                const x = w.globals.seriesX[seriesIndex][dataPointIndex];
-                const date = new Date(x).toISOString().slice(0, 10);
-                return '<div class="chart-tooltip"><span>' + date + ': ' + y + '</span></div>'
+                const y = getFormatter('currency').format(w.globals.series[seriesIndex][dataPointIndex]);
+                const x = getFormatter('date').format(w.globals.seriesX[seriesIndex][dataPointIndex]);
+                return '<div class="chart-tooltip"><span>' + x + ': ' + y + '</span></div>'
             },            
         },
     };
@@ -215,7 +202,7 @@ lineCharts.forEach(element => {
     allCharts[element.id] = chart;
 
     // set chart data to 1M
-    changeChartData(null, element.id, '1M');
+    changeChartData(null, element.id, 'M1');
 });
 
 // get indices of reverse sort, based on https://stackoverflow.com/questions/46622486/what-is-the-javascript-equivalent-of-numpy-argsort
@@ -230,8 +217,12 @@ const reverseSortKeysAndValues = (keys, values) => {
 const doughnutCharts = document.querySelectorAll('[data-chart-doughnut]');
 doughnutCharts.forEach(element => {
     const [title, value] = JSON.parse(element.getAttribute('data-chart-doughnut'));
-    const data = JSON.parse(element.getAttribute('data-chart-doughnut-data'));
-    const labels = JSON.parse(element.getAttribute('data-chart-doughnut-labels'));
+    const valueType = element.getAttribute('data-chart-doughnut-type');
+    const valueFormatted = getFormatter(valueType).format(value)
+    const data = JSON.parse(element.getAttribute('data-data'));
+    const labels = JSON.parse(element.getAttribute('data-labels'));
+    const dataType = element.getAttribute('data-data-type');
+    const dataFormatter = getFormatter(dataType);
     const [sortedLabels, sortedData] = reverseSortKeysAndValues(labels, data);
     const options = {
         series: sortedData,
@@ -266,7 +257,7 @@ doughnutCharts.forEach(element => {
                             fontWeight: 700,
                             color: 'black',
                             formatter: function (w) {
-                                return value;
+                                return valueFormatted;
                             }
                         }
                     }
@@ -308,7 +299,7 @@ doughnutCharts.forEach(element => {
         },
         tooltip: {
             custom: function({series, seriesIndex, dataPointIndex, w}) {
-                return '<div class="chart-tooltip"><span>' + w.config.labels[seriesIndex] + ': ' + series[seriesIndex] + '</span></div>'
+                return '<div class="chart-tooltip"><span>' + w.config.labels[seriesIndex] + ': ' + dataFormatter.format(series[seriesIndex]) + '</span></div>'
             },            
         },
     };

@@ -1,0 +1,47 @@
+<!-- requires exchanges item (crypto) -->
+<div class="panel-containee panel-border">
+    <div class="title">
+        <h2>Summary</h2>
+    </div>
+    <div class="content">
+        <div class="panel-container-2c">
+            <div class="panel-container-2c-immutable highlight" style="grid-column: 1 / -1">
+                <div class="panel-containee left">
+                    <p class="emphasize-plusplus"><span class="format-currency"><%- crypto.exchangeRate.Rate %></span></p>
+                    <p>Last update: <span class="format-date"><%- crypto.exchangeQuote.LastRefreshed %></span></p>
+                </div>
+                <div class="panel-containee right">
+                    <p class="emphasize-plusplus"><span class="format-currency"><%- crypto.exchangeCalculated.Change %></span></p>
+                    <p><span class="format-percentage"><%- crypto.exchangeCalculated.ChangePercent %></span></p>
+                </div>
+            </div>
+            <div class="panel-container-2c-immutable">
+                <div class="panel-containee left">
+                    <p class="ptitle nowrap">Open</p>
+                    <p class="ptitle nowrap">High</p>
+                    <p class="ptitle nowrap">Low</p>
+                    <p class="ptitle nowrap">Close</p>
+
+                </div>
+                <div class="panel-containee right">
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeQuote.Open %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeQuote.High %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeQuote.Low %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeQuote.Close %></span></p>
+                </div>
+            </div>
+            <div class="panel-container-2c-immutable">
+                <div class="panel-containee left">
+                    <p class="ptitle nowrap">Bid Price</p>
+                    <p class="ptitle nowrap">Ask Price</p>
+                    <p class="ptitle nowrap">Volume</p>
+                </div>
+                <div class="panel-containee right">
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeRate.BidPrice %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- crypto.exchangeRate.AskPrice %></span></p>
+                    <p class="nowrap"><span class="format-integer-short"><%- crypto.exchangeQuote.Volume %></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

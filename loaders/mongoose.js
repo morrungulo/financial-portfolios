@@ -1,5 +1,36 @@
 const config = require('config');
 const mongoose = require('mongoose');
+const ValidStock = require('../models/stock/Valid');
+const ValidCrypto = require('../models/crypto/Valid');
+const ValidForex = require('../models/cash/Valid');
+const StockService = require('../services/StockService');
+const CryptoService = require('../services/CryptoService');
+const ForexService = require('../services/ForexService');
+
+mongoose.connection.on('connected', async function () {
+    const count = await ValidStock.estimatedDocumentCount();
+    if (count === 0) {
+        const service = new StockService();
+        await service.updateValidStockListing();
+    }
+});
+
+mongoose.connection.on('connected', async function () { 
+    const count = await ValidCrypto.estimatedDocumentCount();
+    if (count === 0) {
+        const service = new CryptoService();
+        await service.updateValidCryptoListing();
+    }
+});
+
+mongoose.connection.on('connected', async function () {
+    const count = await ValidForex.estimatedDocumentCount();
+    if (count === 0) {
+        const service = new ForexService();
+        await service.updateValidForexListing();
+    }
+});
+
 module.exports = {
     initialize: async () => {
         // mongodb atlas

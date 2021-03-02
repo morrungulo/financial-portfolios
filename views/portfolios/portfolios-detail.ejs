@@ -87,7 +87,7 @@
         </div>
     </div>
     <div class="panel-containee">
-        <div class="chart-doughnut-standard" data-chart-doughnut='["Total Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-chart-doughnut-labels='["Stocks","Cryptos","Cash"]'></div>
+        <div class="chart-doughnut-standard" data-chart-doughnut='["Total Portfolio Value",<%- portfolio.unrealized_value %>]' data-chart-doughnut-type="currency" data-data='[<%- portfolio.stock_assets.length %>,<%- portfolio.crypto_assets.length %>,<%- portfolio.cash_assets.length %>]', data-labels='["Stocks","Cryptos","Cash"]'></div>
     </div>
     <% } else { %>
     <div class="error">There are no assets!</div>
@@ -165,7 +165,7 @@
         </div>
 
         <div class="panel-containee">
-            <div class="chart-doughnut-standard" data-chart-doughnut='["Stocks",<%- portfolio.unrealized_value %>]' data-chart-doughnut-data='<%- JSON.stringify(values) %>', data-chart-doughnut-labels='<%- JSON.stringify(labels) %>'></div>
+            <div class="chart-doughnut-standard" data-chart-doughnut='["Stocks",<%- portfolio.unrealized_value %>]' data-chart-doughnut-type="currency" data-data='<%- JSON.stringify(values) %>' data-data-type="currency" data-labels='<%- JSON.stringify(labels) %>'></div>
         </div>
     <% } %>
 

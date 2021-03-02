@@ -1,5 +1,6 @@
 const ExchangeStock = require('../models/stock/Exchange');
-const stockProvider = require('./providers/alphavantageService');
+const ValidStock = require('../models/stock/Valid');
+const stockProvider = require('./providers/alphavantageStockService');
 const ExchangeStockEmitter = require('../events/exchangeStockEmitter');
 
 class StockService {
@@ -10,7 +11,24 @@ class StockService {
      * @returns {Boolean}
      */
     async isTickerValid(ticker) {
-        return await this.hasStock(ticker) || await stockProvider.isTickerValid(ticker);
+        return await ValidStock.exists({ code: ticker });
+    }
+
+    /**
+     * Update the valid stock listings.
+     */
+    async updateValidStockListing() {
+        try {
+            const result = await stockProvider.fetchValidListing();
+            console.log(JSON.stringify(result));
+            const mapped = result.map(entry => {
+                return { code: entry.symbol, name: entry.name };
+            });
+            await ValidStock.deleteMany({});
+            await ValidStock.insertMany(mapped);
+        } catch (err) {
+            console.error('Unable to update valid stock listing');
+        }
     }
 
     /**
@@ -85,8 +103,8 @@ class StockService {
             // fetch daily
             const exchangeDailyInst = await stockProvider.fetchExchangeDaily(ticker);
             exStock.exchangeDaily = exchangeDailyInst;
-        } catch (error) {
-            console.log('Not possible to retrieve ' + ticker);
+        } catch (err) {
+            console.log(`Not possible to retrieve ${ticker} due to ${err}!`);
         }
 
         // save before exiting

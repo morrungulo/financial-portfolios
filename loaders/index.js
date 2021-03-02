@@ -6,6 +6,8 @@ module.exports = {
         await Promise.all([
             mongooseLoader.initialize(),
             expressLoader.initialize(expressApp),
+        ]);
+        await Promise.all([
             schedulerLoader.initialize(),
         ]);
         console.log('Initialization complete!');

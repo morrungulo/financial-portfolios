@@ -48,6 +48,8 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
     High: { type: Number, set: convertNoneToZero },
     Low: { type: Number, set: convertNoneToZero },
     Close: { type: Number, set: convertNoneToZero },
+    AdjustedClose: { type: Number, set: convertNoneToZero },
+    Volume: { type: Number, set: convertNoneToZero },
 });
 
 // calculated items
@@ -61,6 +63,21 @@ const exchangeCalculatedSchema = new mongoose.Schema({
 const exchangeXYcoordSchema = new mongoose.Schema({
     x: Date,
     y: Number,
+    o: Number,
+    h: Number,
+    l: Number,
+    c: Number,
+    v: Number,
+});
+
+// aggregator of all x,y coords for charts
+const exchangeXYDailySchema = new mongoose.Schema({
+    W1: [exchangeXYcoordSchema],
+    M1: [exchangeXYcoordSchema],
+    M3: [exchangeXYcoordSchema],
+    M6: [exchangeXYcoordSchema],
+    Y1: [exchangeXYcoordSchema],
+    Y5: [exchangeXYcoordSchema],
 });
 
 // the stock schema (aggregator)
@@ -78,11 +95,10 @@ const exchangeStockSchema = new mongoose.Schema({
     exchangeOverview: exchangeOverviewSchema,
     exchangeQuote: exchangeQuoteSchema,
     exchangeCalculated: exchangeCalculatedSchema,
-    exchangeIntraday: [exchangeTimeSeriesSchema],
+    // exchangeIntraday: [exchangeTimeSeriesSchema],
     exchangeDaily: [exchangeTimeSeriesSchema],
 
-    // graph data
-    exchangeXYDaily: [exchangeXYcoordSchema],
+    exchangeGraphData: exchangeXYDailySchema,
 
 }, { timestamps: true});
 

@@ -135,7 +135,10 @@ header {
 }
 
 .panel-container-1c-fullwidth {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: space-between;
+    grid-gap: 45px;
     width: 100%;
     margin: 0 auto;
 }
@@ -219,9 +222,10 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     /* max-height: 100px; */
     height: 60px;
+    max-width: 800px;
 }
 
 .panel-containee {
@@ -553,17 +557,29 @@ table, th, td {
     text-align: left;
 }
 
-.standard-list .watchlists-assets-list th:first-child,
-.standard-list .watchlists-assets-list tr td:first-child,
-.standard-list .watchlists-assets-list th:nth-child(2),
-.standard-list .watchlists-assets-list tr td:nth-child(2) {
-        text-align: left;
+.standard-list .watchlists-stocks-list th:first-child,
+.standard-list .watchlists-stocks-list tr td:first-child,
+.standard-list .watchlists-stocks-list th:nth-child(2),
+.standard-list .watchlists-stocks-list tr td:nth-child(2) {
+    text-align: left;
 }
 
-.standard-list .watchlists-assets-list th:nth-child(5),
-.standard-list .watchlists-assets-list tr td:nth-child(5),
-.standard-list .watchlists-assets-list th:nth-child(19),
-.standard-list .watchlists-assets-list tr td:nth-child(19) {
+.standard-list .watchlists-stocks-list th:nth-child(5),
+.standard-list .watchlists-stocks-list tr td:nth-child(5),
+.standard-list .watchlists-stocks-list th:nth-child(19),
+.standard-list .watchlists-stocks-list tr td:nth-child(19) {
+    text-align: center;
+}
+
+.standard-list .watchlists-cryptos-list th:first-child,
+.standard-list .watchlists-cryptos-list tr td:first-child,
+.standard-list .watchlists-cryptos-list th:nth-child(2),
+.standard-list .watchlists-cryptos-list tr td:nth-child(2) {
+    text-align: left;
+}
+
+.standard-list .watchlists-cryptos-list th:nth-child(13),
+.standard-list .watchlists-cryptos-list tr td:nth-child(13) {
     text-align: center;
 }
 

@@ -10,6 +10,22 @@
     }
 
     $(document).ready( function() {
+
+
+        $(".format-currency").each(function() {
+            const value = parseFloat($(this).text());
+            if (value == 0) {
+                $(this).html('-');
+            } else {
+                const formatter = Intl.NumberFormat(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+                $(this).html(formatter.format(value));
+            }
+        });
+
+
         $(".format-pos-neg-color").each(function() {
             const value = parseFloat($(this).text());
             if (value < 0) {

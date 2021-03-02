@@ -2,22 +2,31 @@ const config = require('config');
 const chalk = require('chalk');
 const Watchlist = require('../models/Watchlist');
 const StockService = require('../services/StockService');
+const CryptoService = require('../services/CryptoService');
+const ForexService = require('../services/ForexService');
 const { getFileName, downloadResource } = require('../util')
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
-    return [first, second, rest.length > 0? rest.join(on) : null]
+    return [first, second, rest.length > 0 ? rest.join(on) : null]
 }
 
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
-    let errors = { watchlist: '', exchangestock: '' };
+    let errors = { watchlist: '', exchangestock: '', exchangecrypto: '', exchangeforex: '' };
 
     if (err.message.startsWith("controller")) {
         const [ctrl, code, message] = splitOnce(err.message, ':');
         errors[code] = message;
     }
 
+    // validation errors
+    if (err.message.includes('watchlist validation failed')) {
+        Object.values(err.errors).map(properties => {
+            errors.watchlist = properties.message;
+        });
+    }    
+    
     // validation errors
     if (err.message.includes('exchangestock validation failed')) {
         Object.values(err.errors).map(properties => {
@@ -26,12 +35,19 @@ const handleErrors = (err) => {
     }
     
     // validation errors
-    if (err.message.includes('watchlist validation failed')) {
+    if (err.message.includes('exchangecrypto validation failed')) {
         Object.values(err.errors).map(properties => {
-            errors.watchlist = properties.message;
+            errors.exchangecrypto = properties.message;
         });
     }
-
+    
+    // validation errors
+    if (err.message.includes('exchangeforex validation failed')) {
+        Object.values(err.errors).map(properties => {
+            errors.exchangeforex = properties.message;
+        });
+    }
+    
     return errors;
 }
 
@@ -66,7 +82,7 @@ module.exports.watchlists_detail = async (req, res) => {
         let watchlist = await Watchlist.findById(wid);
         await watchlist
             .populate({path: 'stock_entries'})
-            // .populate({path: 'crypto_entries'})
+            .populate({path: 'crypto_entries'})
             // .populate({path: 'cash_entries'})
             .execPopulate();
         res.render('watchlists/watchlists-detail', { title: watchlist.name, watchlist });
@@ -129,7 +145,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
         let entry = null;
         if (kind === 'Stock') {
             
-            // get the stock
+            // get the stock service
             const SS = new StockService();
             const isValid = await SS.isTickerValid(ticker);
             if (!isValid) {
@@ -141,7 +157,7 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             } else {
                 entry = await SS.createStock(ticker);
                 if (!entry) {
-                    throw Error('controller:ticker:Could not satisfy request - please try later');
+                    throw Error('controller:kind:Could not satisfy request - please try later');
                 }
             }
 
@@ -156,8 +172,38 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
 
         } else if (kind === 'Crypto') {
 
-        } else if (kind === 'Cash') {
+            // get the crypto and forex services
+            const CS = new CryptoService();
+            const FS = new ForexService();
+            const isValid = await Promise.all([CS.isCryptoValid(fromCrypto), FS.isCurrencyValid(toCrypto)]);
+            if (!isValid[0]) {
+                throw Error('controller:fromCrypto:Crypto is not supported');
+            }
+            if (!isValid[1]) {
+                throw Error('controller:toCrypto:Currency is not supported');
+            }
 
+            const hasCrypto = await CS.hasCrypto(fromCrypto, toCrypto);
+            if (hasCrypto) {
+                entry = await CS.getCrypto(fromCrypto, toCrypto);
+            } else {
+                entry = await CS.createCrypto(fromCrypto, toCrypto);
+                if (!entry) {
+                    throw Error('controller:kind:Could not satisfy request - please try later');
+                }
+            }
+
+            // is it already in watchlist?
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'crypto_entries': { $in: [entry._id] }});
+            if (alreadyInWatchlist) {
+                throw Error(`controller:fromCrypto:The crypto ${fromCrypto}-${toCrypto} is already in the watchlist!`);
+            }
+
+            // add to watchlist
+            watchlist.crypto_entries.push(entry._id);
+
+        } else if (kind === 'Cash') {
+            throw Error('controller:kind:Cash is not supported');
         }
 
         // save portfolio

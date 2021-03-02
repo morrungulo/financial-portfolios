@@ -24,10 +24,10 @@
             </div>
         </div>
 
-        <div class="panel-containee empty"></div>
+        <div class="panel-containee empty-first"></div>
 
-        <% if (hasTransactions) { %>
         <div class="panel-containee">
+        <% if (hasTransactions) { %>
             <div class="content">
                 <div class="panel-container-2c-immutable">
                     <div class="panel-container-2c">
@@ -79,11 +79,14 @@
                     </div>
                 </div>
             </div>
-        </div>          
         <% } %>
+        </div>          
         
+        <div class="panel-containee empty"></div>
+        <div class="panel-containee empty-first"></div>
+
         <!-- transactions -->
-        <div class="panel-containee panel-border>
+        <div class="panel-containee panel-border">
             <div class="title">
                 <h2>Transactions</h2>
             </div>

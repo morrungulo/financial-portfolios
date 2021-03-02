@@ -1,5 +1,6 @@
-const chalk = require('chalk');
+const { default: chalk } = require('chalk');
 const config = require('config');
+const { fetchAndParseCsvFile } = require('../../util/fetchCsv');
 const alpha = require('alphavantage')({ key: config.get('alphavantage.apikey') });
 
 /**
@@ -64,6 +65,7 @@ const buildFromAlphaTimeSeries = (alpha) => {
     let exData = [];
     for (var k1 in alpha) {
         if (k1.startsWith('Time Series')) {
+            const adjustedCoefficient = 1;
             for (var k2 in alpha[k1]) {
                 const daily = alpha[k1][k2];
                 const exEntry = {
@@ -72,7 +74,8 @@ const buildFromAlphaTimeSeries = (alpha) => {
                     High: daily['2. high'],
                     Low: daily['3. low'],
                     Close: daily['4. close'],
-                    AdjustedClose: daily['5. adjusted close']
+                    AdjustedClose: daily['5. adjusted close'],
+                    Volume: daily['6. volume'],
                 };
                 exData.push(exEntry);
             }
@@ -87,11 +90,11 @@ async function fetchExchangeOverview(ticker) {
     return result;
 }
 
-async function fetchExchangeIntraday(ticker) {
-    const data = await alpha.data.intraday(ticker, 'full', 'json', '5min');
-    const result = buildFromAlphaTimeSeries(data);
-    return result;
-}
+// async function fetchExchangeIntraday(ticker) {
+//     const data = await alpha.data.intraday(ticker, 'full', 'json', '5min');
+//     const result = buildFromAlphaTimeSeries(data);
+//     return result;
+// }
 
 async function fetchExchangeQuote(ticker) {
     const data = await alpha.data.quote(ticker);
@@ -121,28 +124,24 @@ async function fetchAll(ticker) {
         fetchExchangeOverview(ticker),
         fetchExchangeQuote(ticker),
         fetchExchangeCalculated(),
-        // fetchExchangeIntraday(ticker),
         fetchExchangeDaily(ticker)
     ]);
     return result;
 }
 
-async function isTickerValid(ticker) {
-    try {
-        const data = await alpha.data.quote(ticker);
-        return (Object.keys(data['Global Quote']).length > 0);
-    } catch (err) {
-        console.error(`Could not guarantee validity of '${ticker}`);
-        return false;
-    }
+async function fetchValidListing() {
+    const url = new URL('https://www.alphavantage.co/query/');
+    url.searchParams.append('function', 'LISTING_STATUS');
+    url.searchParams.append('apikey', config.get('alphavantage.apikey'));
+    const result = await fetchAndParseCsvFile(url.href);
+    return result;
 }
 
 module.exports = {
     fetchAll,
     fetchExchangeOverview,
     fetchExchangeQuote,
-    fetchExchangeIntraday,
     fetchExchangeDaily,
     fetchExchangeCalculated,
-    isTickerValid,
+    fetchValidListing,
 }
