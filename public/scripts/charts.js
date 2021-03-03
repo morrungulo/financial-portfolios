@@ -19,6 +19,11 @@ const getFormatter = (formatType, locale=undefined) => {
                 month: 'numeric',
                 day: 'numeric',
             });
+        case '3-digit-float':
+            return new Intl.NumberFormat(locale, {
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3,
+            });
         default:
             return new Intl.NumberFormat(locale);
     }
@@ -68,6 +73,7 @@ sparklinePercentageCharts.forEach(element => {
 const sparklineLineCharts = document.querySelectorAll('[data-chart-line-single]');
 sparklineLineCharts.forEach(element => {
     const rawdata = JSON.parse(element.getAttribute('data-chart-line-single'));
+    if (rawdata.length === 0) {return;}
     const firstValue = rawdata[0];
     const lastValue = rawdata[rawdata.length - 1];
     const color = (firstValue.y > lastValue.y) ? 'rgba(0,128,0,0.5)' : 'rgba(255,0,0,0.5)';
@@ -122,6 +128,8 @@ function changeChartData(buttonElement, chartId, timeSpan) {
 
 const lineCharts = document.querySelectorAll('[data-chart-line]');
 lineCharts.forEach(element => {
+    const currencyFormatter = getFormatter('currency');
+    const dateFormatter = getFormatter('date');
     const options = {
         noData: {
             text: 'Loading...'
@@ -189,8 +197,8 @@ lineCharts.forEach(element => {
         },
         tooltip: {
             custom: function({series, seriesIndex, dataPointIndex, w}) {
-                const y = getFormatter('currency').format(w.globals.series[seriesIndex][dataPointIndex]);
-                const x = getFormatter('date').format(w.globals.seriesX[seriesIndex][dataPointIndex]);
+                const y = currencyFormatter.format(w.globals.series[seriesIndex][dataPointIndex]);
+                const x = dateFormatter.format(w.globals.seriesX[seriesIndex][dataPointIndex]);
                 return '<div class="chart-tooltip"><span>' + x + ': ' + y + '</span></div>'
             },            
         },
@@ -284,7 +292,6 @@ doughnutCharts.forEach(element => {
                                     }
                                 }
                             }
-    
                         }
                     }
                 }
