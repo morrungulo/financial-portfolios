@@ -3,9 +3,21 @@ const { convertNoneToZero } = require('../utils');
 
 // error messages
 const errorMessages = {
-    from: "'From' must be a 3-letter currency code (e.g. EUR)",
-    to: "'To' must be a 3-letter currency code (e.g. EUR)"
+    message: "The currency must be a 3-letter currency code (e.g. EUR)",
+    missingFrom: "Please enter the 3-letter currency code for the 'from' currency",
+    missingTo: "Please enter the 3-letter currency code for the 'to' currency",
+    missingName: "Please enter a name",
+    missingLongname: "Please enter a long name",
+    missingQuote: "Please enter the quote",
+    missingRate: "Please enter the rate",
 }
+
+// exchange rate
+const exchangeRateSchema = new mongoose.Schema({
+    Rate: { type: Number, set: convertNoneToZero },
+    BidPrice: { type: Number, set: convertNoneToZero },
+    AskPrice: { type: Number, set: convertNoneToZero },
+});
 
 // time series
 const exchangeTimeSeriesSchema = new mongoose.Schema({
@@ -14,7 +26,6 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
     High: { type: Number, set: convertNoneToZero },
     Low: { type: Number, set: convertNoneToZero },
     Close: { type: Number, set: convertNoneToZero },
-    Volume: { type: Number, set: convertNoneToZero },
 });
 
 // x,y coords for charts
@@ -37,6 +48,12 @@ const exchangeXYDailySchema = new mongoose.Schema({
     Y5: [exchangeXYcoordSchema],
 });
 
+// calculated items
+const exchangeCalculatedSchema = new mongoose.Schema({
+    Change: Number,    // exchangeDaily[0].Rate - exchangeDaily[1].Rate
+    ChangePercent: Number,    // Change/exchangeDaily[0].Rate
+});
+
 // the schema
 const exchangeForexSchema = new mongoose.Schema({
     
@@ -44,10 +61,10 @@ const exchangeForexSchema = new mongoose.Schema({
     from: {
         type: String,
         trim: true,
-        minlength: [3, errorMessages.from],
-        maxlength: [3, errorMessages.from],
+        minlength: [3, errorMessages.message],
+        maxlength: [3, errorMessages.message],
         uppercase: true,
-        required: [true, "Please enter a 'from' currency"],
+        required: [true, errorMessages.missingFrom],
         index: true,
     },
 
@@ -55,23 +72,51 @@ const exchangeForexSchema = new mongoose.Schema({
     to: {
         type: String,
         trim: true,
-        minlength: [3, errorMessages.to],
-        maxlength: [3, errorMessages.to],
+        minlength: [3, errorMessages.message],
+        maxlength: [3, errorMessages.message],
         uppercase: true,
-        required: [true, "Please enter a 'to' currency"],
+        required: [true, errorMessages.missingTo],
         index: true,
     },
 
-    rate: {
-        type: Number,
-        required: [true, "Please enter a 'conversion rate' for this currency"]
+    name: {
+        type: String,
+        trim: true,
+        uppercase: true,
+        required: [true, errorMessages.missingName],
+    },
+
+    longName: {
+        type: String,
+        trim: true,
+        required: [true, errorMessages.missingLongname],
+    },
+
+    exchangeQuote: {
+        type: exchangeTimeSeriesSchema,
+        required: [true, errorMessages.missingQuote],
+    },
+
+    exchangeCalculated: exchangeCalculatedSchema,
+
+    exchangeRate: {
+        type: exchangeRateSchema,
+        required: [true, errorMessages.missingRate],
     },
 
     exchangeDaily: [exchangeTimeSeriesSchema],
-
     exchangeGraphData: exchangeXYDailySchema,
 
 }, { timestamps: true});
+
+// listeners
+exchangeForexSchema.pre('save', function(next) {
+    if (this.exchangeDaily.length >= 2) {
+        this.exchangeCalculated.Change = this.exchangeDaily[0].Close - this.exchangeDaily[1].Close;
+        this.exchangeCalculated.ChangePercent = (this.exchangeCalculated.Change / this.exchangeDaily[1].Close) * 100;
+    }
+    next();
+});
 
 // the model
 const ExchangeForex = mongoose.model('exchangeforex', exchangeForexSchema);

@@ -96,8 +96,8 @@
     
     <% if (portfolio.stock_assets.length > 0) { %>
         <% const values = [], labels = []; %>
-        <% portfolio.stock_assets.filter(a => a.total_quantity > 0).forEach(asset => { %>
-            <% values.push(asset.unrealized_value); %>
+        <% portfolio.stock_assets.filter(a => a.common.total_quantity > 0).forEach(asset => { %>
+            <% values.push(asset.common.unrealized_value); %>
             <% labels.push(asset.exchange_id.name); %>
         <% }); %>
 
@@ -131,28 +131,28 @@
                                     <span class="emphasize-minus"><a href="/assets/stocks/<%- asset._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
                                 </td>                                    
                                 <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
-                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
+                                    <span class="format-currency"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
                                     <span class="emphasize-minus format-time"><%- asset.exchange_id.updatedAt %></span>
                                 </td>
                                 <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Change %>">
-                                    <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
+                                    <span class="format-currency format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.Change %></span><br/>
                                     <span class="emphasize-minus format-percentage format-pos-neg-color"><%- asset.exchange_id.exchangeQuote.ChangePercent %></span>
                                 </td>
                                 
                                 <td sorttable_customkey="<%- asset.unrealized_value %>">
-                                    <span class="format-currency-<%- portfolio.currency %>"><%- asset.unrealized_value %></span>
+                                    <span class="format-currency"><%- asset.common.unrealized_value %></span>
                                 </td>
                                 <td sorttable_customkey="<%- asset.realized_value %>">
-                                    <span class="format-currency-<%- portfolio.currency %>"><%- asset.realized_value %></span>
+                                    <span class="format-currency"><%- asset.common.realized_value %></span>
                                 </td>
                                 <td sorttable_customkey="<%- asset.total_cost %>">
-                                    <span class="format-currency-<%- portfolio.currency %>"><%- asset.total_cost %></span>
+                                    <span class="format-currency"><%- asset.common.total_cost %></span>
                                 </td>
                                 <td sorttable_customkey="<%- asset.daily_value %>">
-                                    <span class="format-currency-<%- portfolio.currency %>"><%- asset.daily_value %></span>
+                                    <span class="format-currency"><%- asset.common.daily_value %></span>
                                 </td>
                                 <td sorttable_customkey="<%- asset.unrealized_value_percentage %>">
-                                    <span class="format-percentage"><%- asset.unrealized_value_percentage %></span>
+                                    <span class="format-percentage"><%- asset.common.unrealized_value_percentage %></span>
                                 </td>
 
                                 <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.name %>', { 'kind': 'Stock', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
@@ -165,13 +165,83 @@
         </div>
 
         <div class="panel-containee">
-            <div class="chart-doughnut-standard" data-chart-doughnut='["Stocks",<%- portfolio.unrealized_value %>]' data-chart-doughnut-type="currency" data-data='<%- JSON.stringify(values) %>' data-data-type="currency" data-labels='<%- JSON.stringify(labels) %>'></div>
+            <div class="chart-doughnut-standard" data-chart-doughnut='["Stocks",<%- portfolio.stock_unrealized_value %>]' data-chart-doughnut-type="currency" data-data='<%- JSON.stringify(values) %>' data-data-type="currency" data-labels='<%- JSON.stringify(labels) %>'></div>
         </div>
     <% } %>
 
     <% if (portfolio.crypto_assets.length > 0) { %>
-    <div class="panel-containee">
-    </div>
+        <% const values = [], labels = []; %>
+        <% portfolio.crypto_assets.filter(asset => asset.common.status === 'open').forEach(asset => { %>
+            <% values.push(asset.common.unrealized_value); %>
+            <% labels.push(asset.exchange_id.name); %>
+        <% }); %>
+
+        <div class="panel-containee panel-border">
+            <div class="title">
+                <h2>Cryptos</h2>
+            </div>
+            <div class="content">
+                <div class="standard-list">
+                    <table class="sortable portfolios-assets-list">
+                        <thead>
+                            <tr>
+                                <th>Crypto</th>
+                                <th>Price</th>
+                                <th>Change</th>
+            
+                                <th>Unrealized</th>
+                                <th>Realized</th>
+                                <th>Cost</th>
+                                <th>Daily</th>
+                                <th>ROI (%)</th>
+
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% portfolio.crypto_assets.forEach(asset => { %>
+                            <tr class="item">
+                                <td sorttable_customkey="<%- asset.exchange_id.name %>">
+                                    <a href="/assets/cryptos/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
+                                    <span class="emphasize-minus"><a href="/assets/cryptos/<%- asset._id %>"><%- asset.exchange_id.longName %></a></span>
+                                </td>                                    
+                                <td sorttable_customkey="<%- asset.exchange_id.exchangeRate.Rate %>">
+                                    <span class="format-currency"><%- asset.exchange_id.exchangeRate.Rate %></span><br/>
+                                    <span class="emphasize-minus format-time"><%- asset.exchange_id.updatedAt %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.exchange_id.exchangeCalculated.Change %>">
+                                    <span class="format-currency format-pos-neg-color"><%- asset.exchange_id.exchangeCalculated.Change %></span><br/>
+                                    <span class="emphasize-minus format-percentage format-pos-neg-color"><%- asset.exchange_id.exchangeCalculated.ChangePercent %></span>
+                                </td>
+
+                                <td sorttable_customkey="<%- asset.common.unrealized_value %>">
+                                    <span class="format-currency"><%- asset.common.unrealized_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.realized_value %>">
+                                    <span class="format-currency"><%- asset.common.realized_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.total_cost %>">
+                                    <span class="format-currency"><%- asset.common.total_cost %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.daily_value %>">
+                                    <span class="format-currency"><%- asset.common.daily_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.unrealized_value_percentage %>">
+                                    <span class="format-percentage"><%- asset.common.unrealized_value_percentage %></span>
+                                </td>
+
+                                <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.shortName %>', { 'kind': 'Crypto', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
+                            </tr>
+                        <% }); %>        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-containee">
+            <div class="chart-doughnut-standard" data-chart-doughnut='["Cryptos",<%- portfolio.crypto_unrealized_value %>]' data-chart-doughnut-type="currency" data-data='<%- JSON.stringify(values) %>' data-data-type="currency" data-labels='<%- JSON.stringify(labels) %>'></div>
+        </div>
     <% } %>
 
     <% if (portfolio.cash_assets.length > 0) { %>

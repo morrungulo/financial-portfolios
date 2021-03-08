@@ -1,4 +1,5 @@
 const expressLoader = require('./express');
+// const migrate = require('./migrate');
 const mongooseLoader = require('./mongoose');
 const schedulerLoader = require('./scheduler')
 module.exports = {

@@ -1,4 +1,4 @@
-const ExchangeCash = require('../models/cash/Exchange');
+const ExchangeForex = require('../models/cash/Exchange');
 const ValidForex = require('../models/cash/Valid');
 const forexProvider = require('./providers/alphavantageForexService');
 const ExchangeCashEmitter = require('../events/exchangeCashEmitter');
@@ -37,24 +37,24 @@ class ForexService {
      * @returns {Boolean}
      */
     async hasForex(from, to) {
-        return await ExchangeCash.exists({ from, to });
+        return await ExchangeForex.exists({ from, to });
     }
 
     /**
-      * Return the ExchangeCash object for the forex exchange from/to.
+      * Return the ExchangeForex object for the forex exchange from/to.
       * @param {String} from 
       * @param {String} to
       * @returns {ExchangeCash}
       */
     async getForex(from, to) {
-        return await ExchangeCash.findOne({ from, to });
+        return await ExchangeForex.findOne({ from, to });
     }
 
     /**
-     * Return the ExchangeCash object for the forex exchange from/to after being updated with the most recent data.
+     * Return the ExchangeForex object for the forex exchange from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
-     * @returns {ExchangeCash}
+     * @returns {ExchangeForex}
      */
     async refreshForex(from, to, updateRateOnly=true) {
         if (! await this.hasForex(from, to)) {
@@ -68,11 +68,12 @@ class ForexService {
             // fetch rate
             if (updateRateOnly) {
                 const exchangeRateInst = await forexProvider.fetchExchangeRate(from, to);
-                needsSave = (exForex.rate != exchangeRateInst.Rate);
-                exForex.rate = exchangeRateInst.Rate;
+                exForex.exchangeRate = exchangeRateInst;
+                needsSave = true;
             } else {
                 const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
-                exForex.rate = exchangeRateInst.Rate;
+                exForex.exchangeRate = exchangeRateInst;
+                exForex.exchangeQuote = exchangeDailyInst[0];
                 exForex.exchangeDaily = exchangeDailyInst;
                 needsSave = true;
             }
@@ -101,11 +102,15 @@ class ForexService {
             return this.getForex(from, to);
         } else {
             try {
-                const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
-                const exForex = new ExchangeCash({
+                const [exchangeRateInst, exchangeCalculatedInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
+                const exForex = new ExchangeForex({
                     from,
                     to,
-                    rate: exchangeRateInst.Rate,
+                    shortName: [from, to].join(' - '),
+                    name: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+                    exchangeRate: exchangeRateInst,
+                    exchangeQuote: exchangeDailyInst[0],
+                    exchangeCalculated: exchangeCalculatedInst,
                     exchangeDaily: exchangeDailyInst,
                 });
                 await exForex.save();

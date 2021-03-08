@@ -55,7 +55,7 @@ module.exports.watchlists_create_post = async (req, res) => {
     const { name } = req.body;
     const user_id = res.locals.user._id;
     try {
-        let watchlist = await Watchlist.create({ name, user_id });
+        const watchlist = await Watchlist.create({ name, user_id });
         res.status(201).json({ watchlist });
     }
     catch (err) {
@@ -67,8 +67,8 @@ module.exports.watchlists_create_post = async (req, res) => {
 module.exports.watchlists_remove_post = async (req, res) => {
     const { id } = req.body;
     try {
-        let removed = await Watchlist.findByIdAndDelete(id);
-        res.status(201).json({ removed });
+        const watchlist = await Watchlist.findByIdAndDelete(id);
+        res.status(201).json({ watchlist });
     }
     catch (err) {
         const errors = handleErrors(err);
@@ -79,12 +79,10 @@ module.exports.watchlists_remove_post = async (req, res) => {
 module.exports.watchlists_detail = async (req, res) => {
     const wid = req.params.wid;
     try {
-        let watchlist = await Watchlist.findById(wid);
-        await watchlist
+        const watchlist = await Watchlist.findById(wid)
             .populate({path: 'stock_entries'})
             .populate({path: 'crypto_entries'})
-            // .populate({path: 'cash_entries'})
-            .execPopulate();
+            .populate({path: 'cash_entries'});
         res.render('watchlists/watchlists-detail', { title: watchlist.name, watchlist });
     }
     catch (err) {
@@ -196,14 +194,42 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
             // is it already in watchlist?
             const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'crypto_entries': { $in: [entry._id] }});
             if (alreadyInWatchlist) {
-                throw Error(`controller:fromCrypto:The crypto ${fromCrypto}-${toCrypto} is already in the watchlist!`);
+                throw Error(`controller:kind:The crypto combination ${fromCrypto}-${toCrypto} is already in the watchlist!`);
             }
 
             // add to watchlist
             watchlist.crypto_entries.push(entry._id);
 
         } else if (kind === 'Cash') {
-            throw Error('controller:kind:Cash is not supported');
+
+            // get the forex services
+            const FS = new ForexService();
+            const isValid = await Promise.all([FS.isCurrencyValid(fromCurrency), FS.isCurrencyValid(toCurrency)]);
+            if (!isValid[0]) {
+                throw Error('controller:fromCurrency:Currency is not supported');
+            }
+            if (!isValid[1]) {
+                throw Error('controller:toCurrency:Currency is not supported');
+            }
+
+            const hasForex = await FS.hasForex(fromCurrency, toCurrency);
+            if (hasForex) {
+                entry = await FS.getForex(fromCurrency, toCurrency);
+            } else {
+                entry = await FS.createForex(fromCurrency, toCurrency);
+                if (!entry) {
+                    throw Error('controller:kind:Could not satisfy request - please try later');
+                }
+            }
+
+            // is it already in watchlist?
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'cash_entries': { $in: [entry._id] }});
+            if (alreadyInWatchlist) {
+                throw Error(`controller:kind:The currency combination ${fromCurrency}-${toCurrency} is already in the watchlist!`);
+            }
+
+            // add to watchlist
+            watchlist.cash_entries.push(entry._id);
         }
 
         // save portfolio
@@ -225,7 +251,6 @@ module.exports.watchlists_entries_create_post = async (req, res) => {
 module.exports.watchlists_entries_remove_post = async (req, res) => {
     const { kind, id } = req.body;
     const wid = req.params.wid;
-
     const mapp = { 'Stock': 'stock_entries', 'Crypto': 'crypto_entries', 'Cash': 'cash_entries' };
     if (mapp[kind]) {
         let ssobj = {};

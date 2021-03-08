@@ -1,22 +1,22 @@
 const EventEmitter = require('events');
-const { calculateAssetStockFieldsFromTransactions } = require('../assets/assetsStocksCalculator');
+const { calculateAssetCryptoFieldsFromTransactions } = require('../assets/assetsCurrenciesCalculator');
 
 // create emitter object
-class TransactionStockEmitter extends EventEmitter {}
-const emitter = new TransactionStockEmitter();
+class TransactionCryptoEmitter extends EventEmitter {}
+const emitter = new TransactionCryptoEmitter();
 
 /**
  * Register for event 'create'
  */
 emitter.on('create', async (transaction) => {
-    await calculateAssetStockFieldsFromTransactions(transaction.asset_id);
+    await calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
 });
 
 /**
  * Register for event 'delete'
  */
 emitter.on('delete', async (transaction) => {
-    await calculateAssetStockFieldsFromTransactions(transaction.asset_id);
+    await calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
 });
 
 /**

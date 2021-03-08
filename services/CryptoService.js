@@ -1,8 +1,8 @@
 const ExchangeCrypto = require('../models/crypto/Exchange');
 const ValidCrypto = require('../models/crypto/Valid');
+const ValidForex = require('../models/cash/Valid');
 const cryptoProvider = require('./providers/alphavantageCryptoService');
 const ExchangeCryptoEmitter = require('../events/exchangeCryptoEmitter');
-const ValidForex = require('../models/cash/Valid');
 
 class CryptoService {
 
@@ -69,7 +69,7 @@ class CryptoService {
             // fetch rate
             if (updateRateOnly) {
                 const exchangeRateInst = await cryptoProvider.fetchExchangeRate(from, to);
-                exCrypto.rate = exchangeRateInst;
+                exCrypto.exchangeRate = exchangeRateInst;
                 needsSave = true;
             } else {
                 const [exchangeRateInst, exchangeDailyInst] = await cryptoProvider.fetchAll(from, to);
@@ -107,7 +107,7 @@ class CryptoService {
                 const exCrypto = new ExchangeCrypto({
                     from,
                     to,
-                    shortName: [from, to].join(' - '),
+                    name: [from, to].join(' - '),
                     longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
                     exchangeRate: exchangeRateInst,
                     exchangeQuote: exchangeDailyInst[0],

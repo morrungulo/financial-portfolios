@@ -1,0 +1,45 @@
+<!-- requires exchanges item (exItem) -->
+<div class="panel-containee panel-border">
+    <div class="title">
+        <h2>Summary</h2>
+    </div>
+    <div class="content">
+        <div class="panel-container-2c">
+            <div class="panel-container-2c-immutable highlight" style="grid-column: 1 / -1">
+                <div class="panel-containee left">
+                    <p class="emphasize-plusplus"><span class="format-currency"><%- exItem.exchangeRate.Rate %></span></p>
+                    <p>Last update: <span class="format-date"><%- exItem.exchangeQuote.LastRefreshed %></span></p>
+                </div>
+                <div class="panel-containee right">
+                    <p class="emphasize-plusplus"><span class="format-currency"><%- exItem.exchangeCalculated.Change %></span></p>
+                    <p><span class="format-percentage"><%- exItem.exchangeCalculated.ChangePercent %></span></p>
+                </div>
+            </div>
+            <div class="panel-container-2c-immutable">
+                <div class="panel-containee left">
+                    <p class="ptitle nowrap">Open</p>
+                    <p class="ptitle nowrap">High</p>
+                    <p class="ptitle nowrap">Low</p>
+                    <p class="ptitle nowrap">Close</p>
+
+                </div>
+                <div class="panel-containee right">
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeQuote.Open %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeQuote.High %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeQuote.Low %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeQuote.Close %></span></p>
+                </div>
+            </div>
+            <div class="panel-container-2c-immutable">
+                <div class="panel-containee left">
+                    <p class="ptitle nowrap">Bid Price</p>
+                    <p class="ptitle nowrap">Ask Price</p>
+                </div>
+                <div class="panel-containee right">
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeRate.BidPrice %></span></p>
+                    <p class="nowrap"><span class="format-currency"><%- exItem.exchangeRate.AskPrice %></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

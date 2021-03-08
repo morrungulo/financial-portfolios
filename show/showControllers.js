@@ -34,27 +34,26 @@ const handleErrors = (err) => {
 module.exports.index = async (req, res) => {
     const user_id = res.locals.user._id;
     try {
-        let portfolios = await Portfolio.find({ user_id })
-            .sort({ portfolio: 1 });
-        let watchlists = await Watchlist.find({ user_id })
-            .sort({ watchlist: 1 });
+        const [portfolios, watchlists] = await Promise.all([
+            Portfolio.find({ user_id }).sort({ portfolio: 1 }),
+            Watchlist.find({ user_id }).sort({ watchlist: 1 })
+        ]);
         res.locals.portfolios = portfolios;
         res.locals.watchlists = watchlists;
+        res.render('show', {title: "Portfolios and Watchlists", currencies: config.get('currencies')});
     }
     catch (err) {
         const errors = handleErrors(err);
         return res.status(500).json(err);
     }
-    res.render('show', {title: "Portfolios and Watchlists", currencies: config.get('currencies')});
 }
 
 module.exports.recalculate = async (req, res) => {
     const user_id = res.locals.user._id;
     try {
         const portfolios = await Portfolio.find({ user_id });
-        portfolios.forEach(async (portfolio) => {
-            await calculatePortfolioFromExchangeData(portfolio._id);
-        });
+        const portfolioActions = portfolios.map(portfolio => calculatePortfolioFromExchangeData(portfolio._id));
+        await Promise.all(portfolioActions);
         res.redirect('.');
     }
     catch (err) {

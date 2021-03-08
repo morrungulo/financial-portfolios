@@ -1,58 +1,28 @@
 const mongoose = require('mongoose');
-const transactionCashSchema = require('./Transaction');
+const ExchangeForex = require('./Exchange');
+const Portfolio = require('../../models/Portfolio');
+const commonAssetSchema = require('../common/assetSchema');
 
 // the schema
 const assetCashSchema = new mongoose.Schema({  
+
     kind: {
         type: String,
         default: 'Cash',
         immutable: true
     },
     
-    currency : {
-        type: String,
-        trim: true,
-        uppercase: true,
-        required: [true, "Please enter a currency"]
+    common: {
+        type: commonAssetSchema.commonSchema,
+        default: {},
     },
 
-    // deposits, withdrawls, etc.
-    transactions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'transactioncash',
-    }],
-
-    // commissions on deposits, withdrawls, etc.
-    total_commissions: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-
-    // interest on having the cash
-    total_interest: {
-        type: Number,
-        min: 0,
-        default: 0
-    },
-
-    // tags (categories)
-    tags: [{
-        type: String,
-        trim: true,
-        lowercase: true,
-    }],
-
-    // notes
-    notes: {
-        type: Buffer
-    },
-    
     // portfolio data
     portfolio_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'portfolio',
-        required: true
+        required: true,
+        index: true,
     },
 
     // exchange data
@@ -61,6 +31,32 @@ const assetCashSchema = new mongoose.Schema({
         ref: 'exchangeforex',
         required: true
     }
+
+}, { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true });
+
+// virtuals (child to parent referencing)
+assetCashSchema.virtual('transactions', {
+    ref: 'transactioncash',
+    foreignField: 'asset_id',
+    localField: '_id',
+});
+
+assetCashSchema.virtual('isOpen').get(function() {
+    return commonAssetSchema.isOpen(this.common);
+});
+
+assetCashSchema.virtual('isError').get(function() {
+    return commonAssetSchema.isError(this.common);
+});
+
+assetCashSchema.virtual('displayName').get(function() {
+    return this.exchange_id.shortName;
+});
+
+// preSave trigger
+assetCashSchema.pre('save', function(next) {
+    commonAssetSchema.preSaveTrigger(this.common);
+    next();
 });
 
 // the model

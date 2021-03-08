@@ -60,7 +60,7 @@ module.exports.exchanges_cash_detail = async (req, res) => {
     const eid = req.params.eid;
     try {
         const entry = await ExchangeForex.findById(eid);
-        res.render('exchanges/cash/exchanges-detail', { title: entry.name, entry });
+        res.render('exchanges/cash/exchanges-detail', { title: entry.shortName, entry });
     }
     catch (err) {
         const errors = handleErrors(err);

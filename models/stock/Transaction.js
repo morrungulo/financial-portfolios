@@ -6,7 +6,7 @@ const transactionStockSchema = new mongoose.Schema({
         type: String,
         required: true,
         lowercase: true,
-        enum: ['buy', 'sell', 'dividend', 'split']
+        enum: ['buy', 'sell', 'dividend', 'split', 'units']
     },
 
     date: {
@@ -76,7 +76,8 @@ const transactionStockSchema = new mongoose.Schema({
     asset_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'assetstock',
-        required: [true, 'An asset is required']
+        required: [true, 'An asset is required'],
+        index: true,
     }
 
 }, { timestamps: true });
@@ -89,6 +90,9 @@ transactionStockSchema.pre('save', function(next) {
     else if (this.kind == 'sell') {
         this.cost = this.commission;
         this.realized = (this.price * -this.quantity) - this.commission;
+    }
+    else if (this.kind === 'units') {
+        this.cost = this.commission;
     }
     else if (this.kind == 'split') {
         this.split_ratio = (this.split_before / this.split_after);

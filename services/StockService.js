@@ -20,7 +20,6 @@ class StockService {
     async updateValidStockListing() {
         try {
             const result = await stockProvider.fetchValidListing();
-            console.log(JSON.stringify(result));
             const mapped = result.map(entry => {
                 return { code: entry.symbol, name: entry.name };
             });

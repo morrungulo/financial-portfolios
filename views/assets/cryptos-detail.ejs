@@ -1,5 +1,5 @@
 <% if (typeof asset !== 'undefined') { %>
-    <% const hasTransactions = (asset.transactions.length > 0); %>
+    <% const hasTransactions = (asset.common.total_transactions > 0); %>
     <% const kind = asset.kind; %>
     <% const kind2lc = kind.toLowerCase(); %>
     <% const kindurl = `${kind2lc}s`; %>
@@ -11,7 +11,7 @@
 
             <div class="panel-header">
                 <div class="title">
-                    <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.exchangeOverview.Name %>)</span></h1>
+                    <h1><%- asset.exchange_id.name %> <span class="emphasize-minus">(<%- asset.exchange_id.longName %>)</span></h1>
                 </div>
             </div>
 
@@ -21,7 +21,7 @@
                         <ul>
                             <li><button data-modal-target="#transactions-add-modal">Add Transaction</button></li>
                             <li><a href="/portfolios/<%- asset.portfolio_id._id %>" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
-                            <li><a href="/assets/stocks/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
+                            <li><a href="/assets/<%- kindurl %>/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -71,12 +71,10 @@
                         <div class="panel-container-2c-immutable">
                             <div class="panel-containee left">
                                 <p class="ptitle nowrap">Costs</p>
-                                <p class="ptitle nowrap">Dividends</p>
                                 <p class="ptitle nowrap">Commissions</p>
                             </div>
                             <div class="panel-containee right">
                                 <p class="nowrap"><span class="format-currency"><%- asset.common.total_cost %></span></p>
-                                <p class="nowrap"><span class="format-currency"><%- asset.common.total_dividends %></span></p>
                                 <p class="nowrap"><span class="format-currency"><%- asset.common.total_commissions %></span></p>
                             </div>
                         </div>
@@ -112,14 +110,12 @@
                                     <td>
                                     <% if(transaction.kind == 'buy') { %>
                                         <span class="format-3-fraction-digits"><%- transaction.quantity %></span> shares @
-                                        <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span><br>
-                                        <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> emphasize-minus"><%- transaction.cost %></span>
+                                        <span class="format-currency"><%- transaction.price %></span><br>
+                                        <span class="format-currency emphasize-minus"><%- transaction.cost %></span>
                                     <% } else if(transaction.kind == 'sell') { %>
                                         <span class="format-3-fraction-digits"><%- -transaction.quantity %></span> shares @
-                                        <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.price %></span><br>
-                                        <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %> emphasize-minus"><%- transaction.realized %></span>
-                                    <% } else if(transaction.kind == 'dividend') { %>
-                                        <span class="format-currency-<%- asset.exchange_id.exchangeOverview.Currency %>"><%- transaction.dividend %></span>
+                                        <span class="format-currency"><%- transaction.price %></span><br>
+                                        <span class="format-currency emphasize-minus"><%- transaction.realized %></span>
                                     <% } else if(transaction.kind == 'split') { %>
                                         <span class="format-integer"><%- transaction.split_before %></span> for 
                                         <span class="format-integer"><%- transaction.split_after %></span>
@@ -131,7 +127,7 @@
 
                                     <td>
                                         <% var fdate = transaction.date.toLocaleDateString([], {month: 'short', day: 'numeric'}); %>
-                                        <button onclick="transactionsStocksRemoveConfirmButton('the <%- transaction.kind %> transaction on <%- fdate %>', { 'id': '<%- transaction._id %>' })" class="icon">
+                                        <button onclick="transactionsCryptosRemoveConfirmButton('the <%- transaction.kind %> transaction on <%- fdate %>', { 'id': '<%- transaction._id %>' })" class="icon">
                                             <img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink">
                                         </button>
                                     </td>
@@ -147,8 +143,7 @@
                 </div>
             </div>
 
-            <%- include("../partials/exchanges-stock-profile", { 'stock': asset.exchange_id }); %>
-            <%- include("../partials/exchanges-stock-summary", { 'stock': asset.exchange_id }); %>
+            <%- include("../partials/exchanges-crypto-summary", { 'crypto': asset.exchange_id }); %>
             
         </div>
     </div>
@@ -156,7 +151,6 @@
     <%- include("../partials/footer"); %>
     <%- include("../partials/formatters"); %>
     <%- include("../modal/transactions-add-modal"); %>
-    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsStocks', 'post': '/assets/stocks/' + asset._id }); %>
+    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsCryptos', 'post': '/assets/' + kindurl + '/' + asset._id }); %>
     <%- include("../modal/modal"); %>
-
 <% } %>

@@ -144,9 +144,9 @@
                 </thead>
                 <tbody>
                 <% watchlist.crypto_entries.forEach(entry => { %>
-                    <tr class="item" title="<%- entry.displayName %>">
-                        <td sorttable_customkey="<%- entry.shortName %>">
-                            <a href="/exchanges/crypto/<%- entry._id %>"><%- entry.shortName %></a>
+                    <tr class="item" title="<%- entry.name %>">
+                        <td sorttable_customkey="<%- entry.name %>">
+                            <a href="/exchanges/crypto/<%- entry._id %>"><%- entry.name %></a>
                         </td>
                         <td sorttable_customkey="<%- entry.longName %>">
                             <a href="/exchanges/crypto/<%- entry._id %>"><%- entry.longName %></a>
@@ -185,7 +185,7 @@
                             <div class="chart-sparkline" data-chart-line-single='<%- JSON.stringify(entry.exchangeGraphData.M3.map(ts=>{ return {x:ts.x,y:ts.y}; }) ) %>'></div>
                         </td>
 
-                        <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- [entry.from,entry.to].join('-') %>', { 'kind': 'Crypto', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
+                        <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.shortName %>', { 'kind': 'Crypto', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                     </tr>
                 <% }); %>
                 </tbody>
@@ -197,9 +197,77 @@
 
 <% if (hasCash) { %>
 <div class="panel-containee panel-border">
+    <div class="title">
+        <h2>Currencies</h2>
+    </div>
+    <div class="content">
+        <div class="standard-list">
+            <table class="sortable watchlists-cryptos-list">
+                <thead>
+                    <th>Currency Code</th>
+                    <th>Currency Name</th>
+                    <th>Price</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Close</th>
+                    <th>Change</th>
+                    <th>Change%</th>
+                    <th>Bid Price</th>
+                    <th>Ask Price</th>
+                    <th>Last 3 Months</th>
+                    <th>&nbsp;</th>
+                </thead>
+                <tbody>
+                <% watchlist.cash_entries.forEach(entry => { %>
+                    <tr class="item" title="<%- entry.name %>">
+                        <td sorttable_customkey="<%- entry.name %>">
+                            <a href="/exchanges/cash/<%- entry._id %>"><%- entry.name %></a>
+                        </td>
+                        <td sorttable_customkey="<%- entry.longName %>">
+                            <a href="/exchanges/cash/<%- entry._id %>"><%- entry.longName %></a>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeRate.Rate %>">
+                            <span class="format-currency"><%- entry.exchangeRate.Rate %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeQuote.Open %>">
+                            <span class="format-currency"><%- entry.exchangeQuote.Open %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeQuote.High %>">
+                            <span class="format-currency"><%- entry.exchangeQuote.High %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeQuote.Low %>">
+                            <span class="format-currency"><%- entry.exchangeQuote.Low %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeQuote.Close %>">
+                            <span class="format-currency"><%- entry.exchangeQuote.Close %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeCalculated.Change %>">
+                            <span class="format-currency format-pos-neg-color"><%- entry.exchangeCalculated.Change %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeCalculated.ChangePercent %>">
+                            <span class="format-percentage format-pos-neg-color"><%- entry.exchangeCalculated.ChangePercent %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeRate.BidPrice %>">
+                            <span class="format-currency"><%- entry.exchangeRate.BidPrice %></span>
+                        </td>
+                        <td sortable_customkey="<%- entry.exchangeRate.AskPrice %>">
+                            <span class="format-currency"><%- entry.exchangeRate.AskPrice %></span>
+                        </td>
+                        <td>                                
+                            <div class="chart-sparkline" data-chart-line-single='<%- JSON.stringify(entry.exchangeGraphData.M3.map(ts=>{ return {x:ts.x,y:ts.y}; }) ) %>'></div>
+                        </td>
+
+                        <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- entry.shortName %>', { 'kind': 'Cash', 'id': '<%- entry._id %>'})" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
+                    </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <% } %>
-
+    
 </div>
 </div>
 

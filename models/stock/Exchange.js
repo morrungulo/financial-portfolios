@@ -95,9 +95,8 @@ const exchangeStockSchema = new mongoose.Schema({
     exchangeOverview: exchangeOverviewSchema,
     exchangeQuote: exchangeQuoteSchema,
     exchangeCalculated: exchangeCalculatedSchema,
-    // exchangeIntraday: [exchangeTimeSeriesSchema],
+    
     exchangeDaily: [exchangeTimeSeriesSchema],
-
     exchangeGraphData: exchangeXYDailySchema,
 
 }, { timestamps: true});

@@ -35,11 +35,23 @@ const portfolioSchema = new mongoose.Schema({
         ref: 'assetcash'
     }],
 
+    // calculated value
+    cash_unrealized_value: {
+        type: Number,
+        default: 0
+    },
+
     // the list of crypto assets
     crypto_assets: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'assetcrypto'
     }],
+
+    // calculated value
+    crypto_unrealized_value: {
+        type: Number,
+        default: 0
+    },
 
     // the list of stock assets
     stock_assets: [{
@@ -47,6 +59,12 @@ const portfolioSchema = new mongoose.Schema({
         ref: 'assetstock'
     }],
 
+    // calculated value
+    stock_unrealized_value: {
+        type: Number,
+        default: 0
+    },
+    
     // calculated value
     unrealized_value: {
         type: Number,

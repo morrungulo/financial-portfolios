@@ -1,119 +1,28 @@
 const mongoose = require('mongoose');
-// const ExchangeStock = require('./Exchange');
-// const TransactionStock = require('./Transaction');
+const ExchangeStock = require('./Exchange');
+const Portfolio = require('../../models/Portfolio');
+const commonAssetSchema = require('../common/assetSchema');
 
 // the schema
 const assetStockSchema = new mongoose.Schema({
+
     kind: {
         type: String,
         default: 'Stock',
         immutable: true
     },
 
-    // what is the current status of this stock
-    // open - has open position, namely positive stocks
-    // close - does not have open position, zero stocks
-    // error - invalid status (most likely caused by invalid transactions)
-    status: {
-        type: String,
-        required: true,
-        lowercase: true,
-        default: 'close',
-        enum: ['open', 'close', 'error']
-    },
-    
-    total_quantity: {
-        type: Number,
-        default: 0
-    },
-    total_cost: {
-        type: Number,
-        min: 0,
-        default: 0
-    },
-
-    // price*total_quantity
-    unrealized_value: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-    unrealized_value_percentage: {
-        type: Number,
-        default: 0
-    },
-
-    // weighted average of the share price
-    avg_cost_per_share: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-
-    // sum(sell transactions + total_dividends)
-    realized_value: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-
-    // sum(dividend transactions)
-    total_dividends: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-
-    // sum(buy.commission + sell.commission)
-    total_commissions: {
-        type: Number,
-        min: 0,
-        default: 0,
-    },
-
-    // change*total_quantity
-    daily_value: {
-        type: Number,
-        default: 0
-    },
-    daily_value_percentage: {
-        type: Number,
-        default: 0
-    },
-
-    // are these needed?
-    change_value: {
-        type: Number,
-        default: 0
-    },
-    change_value_percentage: {
-        type: Number,
-        default: 0
-    },
-
-    // tags (categories)
-    tags: [{
-        type: String,
-        trim: true,
-        lowercase: true,
-    }],
-
-    total_transactions: {
-        type: Number,
-        min: 0,
-        default: 0
-    },
-
-    // notes
-    notes: {
-        type: String,
+    common: {
+        type: commonAssetSchema.commonSchema,
+        default: {},
     },
 
     // portfolio data
     portfolio_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'portfolio',
-        required: true
+        required: true,
+        index: true,
     },
 
     // exchange data
@@ -132,10 +41,21 @@ assetStockSchema.virtual('transactions', {
     localField: '_id',
 });
 
-// calculate some fields
+assetStockSchema.virtual('isOpen').get(function() {
+    return commonAssetSchema.isOpen(this.common);
+});
+
+assetStockSchema.virtual('isError').get(function() {
+    return commonAssetSchema.isError(this.common);
+});
+
+assetStockSchema.virtual('displayName').get(function() {
+    return this.exchange_id.name;
+});
+
+// preSave trigger
 assetStockSchema.pre('save', function(next) {
-    const hasShares = (this.total_quantity != 0);
-    this.status = hasShares ? 'open' : 'close';
+    commonAssetSchema.preSaveTrigger(this.common);
     next();
 });
 

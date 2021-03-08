@@ -3,8 +3,12 @@ const { convertNoneToZero } = require('../utils');
 
 // error messages
 const errorMessages = {
-    from: "'From' must be a digital currency code (e.g. BTC)",
-    to: "'To' must be a 3-letter currency code (e.g. EUR)"
+    missingFrom: "Please enter the digital currency code for the 'from' currency (e.g. BTC)",
+    missingTo: "Please enter the 3-letter currency code for the 'to' currency (e.g. EUR)",
+    missingName: "Please enter a name",
+    missingLongname: "Please enter a long name",
+    missingQuote: "Please enter the quote",
+    missingRate: "Please enter the rate",
 }
 
 // exchange rate
@@ -59,7 +63,7 @@ const exchangeCryptoSchema = new mongoose.Schema({
         type: String,
         trim: true,
         uppercase: true,
-        required: [true, "Please enter a 'from' digital currency"],
+        required: [true, errorMessages.missingFrom],
         index: true,
     },
 
@@ -67,36 +71,36 @@ const exchangeCryptoSchema = new mongoose.Schema({
     to: {
         type: String,
         trim: true,
-        minlength: [3, errorMessages.to],
-        maxlength: [3, errorMessages.to],
+        minlength: [3, errorMessages.missingTo],
+        maxlength: [3, errorMessages.missingTo],
         uppercase: true,
-        required: [true, "Please enter a 'to' currency"],
+        required: [true, errorMessages.missingTo],
         index: true,
     },
 
-    shortName: {
+    name: {
         type: String,
         trim: true,
         uppercase: true,
-        required: [true, "Please enter a short name"],
+        required: [true, errorMessages.missingName],
     },
 
     longName: {
         type: String,
         trim: true,
-        required: [true, "Please enter a long name"],
+        required: [true, errorMessages.missingLongname],
     },
 
     exchangeQuote: {
         type: exchangeTimeSeriesSchema,
-        required: [true, "Please enter a quote"],
+        required: [true, errorMessages.missingQuote],
     },
 
     exchangeCalculated: exchangeCalculatedSchema,
 
     exchangeRate: {
         type: exchangeRateSchema,
-        required: [true, "Please enter a rate"]
+        required: [true, errorMessages.missingRate]
     },
 
     exchangeDaily: [exchangeTimeSeriesSchema],
