@@ -8,24 +8,6 @@ const errorMessages = {
 };
 
 /**
- * recalculate the status based on instance.
- */
-const preSaveTrigger = (instance) => {
-    const hasErrors = (instance.total_quantity < 0);
-    if (hasErrors) {
-        instance.status = 'error';
-    } else {
-        const hasZeroTransactions = (instance.total_transactions === 0);
-        if (hasZeroTransactions) {
-            instance.status = 'new';
-        } else {
-            const hasUnits = (instance.total_quantity > 0);
-            instance.status = (hasUnits) ? 'open' : 'close';
-        }
-    }
-}
-
-/**
  * returns true if asset is in status 'open'
  */
 const isOpen = (instance) => {
@@ -139,7 +121,6 @@ const commonSchema = new mongoose.Schema({
 
 module.exports = {
     commonSchema,
-    preSaveTrigger,
     isOpen,
     isError,
 }

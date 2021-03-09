@@ -1,8 +1,11 @@
 <% if (typeof asset !== 'undefined') { %>
-    <% const hasTransactions = (asset.transactions.length > 0); %>
     <% const kind = asset.kind; %>
     <% const kind2lc = kind.toLowerCase(); %>
     <% const kindurl = `${kind2lc}s`; %>
+    <% const isError = (asset.common.status === 'error'); %>
+    <% const isClose = (asset.common.status === 'close'); %>
+    <% const isOpen = (asset.common.status === 'open'); %>
+    <% const isNew = (asset.common.status === 'new'); %>
 
     <%- include("../partials/header"); %>
 
@@ -30,9 +33,16 @@
             <div class="panel-containee empty-first"></div>
 
             <div class="panel-containee">
-            <% if (hasTransactions) { %>
+                <% if (isError) { %>
                 <div class="content">
+                    <div class="emphasize-plus error">Double check your transactions as they are incoherent!</div>
+                </div>
+                <% } else if (!isNew) { %>
+                <div class="content">
+
                     <div class="panel-container-2c-immutable">
+
+                        <% if (isOpen) { %>
                         <div class="panel-container-2c">
                             <div class="panel-containee left">
                                 <p class="emphasize-plusplus">
@@ -55,16 +65,21 @@
                                 </p>
                             </div>
                         </div>
-
+                        <% } %>
+                    
                         <div class="panel-container-2c-immutable">
                             <div class="panel-containee left">
                                 <p class="ptitle nowrap">Realized</p>
-                                <p class="ptitle nowrap">Unrealized</p>
+                                <% if (isOpen) { %>
+                                    <p class="ptitle nowrap">Unrealized</p>
+                                <% } %>
                                 <p class="ptitle nowrap">Transactions</p>
                             </div>
                             <div class="panel-containee right">
                                 <p class="nowrap"><span class="format-currency"><%- asset.common.realized_value %></span></p>
-                                <p class="nowrap"><span class="format-integer"><%- asset.common.total_quantity %></span> @ <span class="format-currency"><%- asset.common.average_cost_per_unit %></span></p>
+                                <% if (isOpen) { %>
+                                    <p class="nowrap"><span class="format-integer"><%- asset.common.total_quantity %></span> @ <span class="format-currency"><%- asset.common.average_cost_per_unit %></span></p>
+                                <% } %>
                                 <p class="nowrap"><span class="format-integer"><%- asset.common.total_transactions %></span</p>
                             </div>
                         </div>
@@ -82,7 +97,7 @@
                         </div>
                     </div>
                 </div>
-            <% } %>
+                <% } %>
             </div>          
             
             <div class="panel-containee empty"></div>
@@ -141,7 +156,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <% if (!hasTransactions) { %>
+                    <% if (isNew) { %>
                         <div class="error">There are no transactions!</div>
                     <% } %>
                 </div>

@@ -13,53 +13,20 @@ const ForexService = require('../services/ForexService');
 /**
  * Return the oldest exchange stock (since the last update).
  */
-const getOldestStock = async () => {
-    const oldest = await ExchangeStock.findOne({}, {'name': 1}, {sort: { 'updatedAt': 1 } }).lean();
+const getOldest = async (exchangeModel) => {
+    const oldest = await exchangeModel.findOne({}, 'name from to', {sort: { 'updatedAt': 1 } }).lean();
     return oldest;
 }
 
 /**
- * Return the oldest exchange crypto (since the last update).
+ * Refresh the exchange stock with its data.
  */
-const getOldestCrypto = async () => {
-    const oldest = await ExchangeCrypto.findOne({}, {'from': 1, 'to': 1}, {sort: { 'updatedAt': 1 } }).lean();
-    return oldest;
-}
-
-/**
- * Refresh the exchange stock with its often data, data which changes throughout the day.
- */
-const refreshOftenExchangeStock = async () => {
-    const oldestStock = await getOldestStock();
-    if (oldestStock) {
-        console.log('(cron-often) refreshing', oldestStock.name);
-        const SS = new StockService();
-        await SS.refreshStockQuote(oldestStock.name);
-    }
-}
-
-/**
- * Refresh the exchange stock with its daily data, data which changes once per day.
- */
-const refreshDailyExchangeStock = async () => {
-    const oldestStock = await getOldestStock();
+const refreshExchangeStock = async () => {
+    const oldestStock = await getOldest(ExchangeStock);
     if (oldestStock) {
         console.log('(cron-daily) refreshing', oldestStock.name);
         const SS = new StockService();
-        await SS.refreshStockOverviewAndDaily(oldestStock.name);
-    }
-}
-
-/**
- * Refresh the exchange stock with both its daily and quote data.
- */
-const refreshDailyAndOftenExchangeStock = async() => {
-    const oldestStock = await getOldestStock();
-    if (oldestStock) {
-        console.log('(cron-daily-often) refreshing', oldestStock.name);
-        const SS = new StockService();
-        await SS.refreshStockOverviewAndDaily(oldestStock.name);
-        await SS.refreshStockQuote(oldestStock.name);
+        await SS.refreshStock(oldestStock.name);
     }
 }
 
@@ -104,6 +71,31 @@ const updateValidListings = async () => {
     ]);
 }
 
+/**
+ * Refresh the exchange crypto with its data.
+ */
+const refreshExchangeCrypto = async () => {
+    const oldestCrypto = await getOldest(ExchangeCrypto);
+    if (oldestCrypto) {
+        console.log('(cron-crypto) refreshing', oldestCrypto.name);
+        const service = new CryptoService();
+        await service.refreshCrypto(oldestCrypto.from, oldestCrypto.to);
+    }
+}
+
+/**
+ * Refresh the exchange forex with its data.
+ */
+const refreshExchangeCash = async () => {
+    const oldestForex = await getOldest(ExchangeForex);
+    if (oldestForex) {
+        console.log('(cron-forex) refreshing', oldestForex.name);
+        const service = new ForexService();
+        await service.refreshForex(oldestForex.from, oldestForex.to);
+    }
+}
+
+
 module.exports = {
     initialize: async () => {
 
@@ -112,21 +104,27 @@ module.exports = {
         
         // 9:30 until 10:00 (NYT)
         const marketFirstHalfHour = '30-59/5 14 * * Mon-Fri';
-        ncron.schedule(marketFirstHalfHour, refreshOftenExchangeStock);
+        ncron.schedule(marketFirstHalfHour, refreshExchangeStock);
         
         // 10:00 until 16:00 (NYT)
         const marketRegularHours = '*/5 15-21 * * Mon-Fri';
-        ncron.schedule(marketRegularHours, refreshOftenExchangeStock);
+        ncron.schedule(marketRegularHours, refreshExchangeStock);
 
         // 17:00 until 19:00 (NYT)
-        const marketAfterMarket = '*/2 22,23 * * Mon-Fri';
-        ncron.schedule(marketAfterMarket, refreshDailyExchangeStock);
+        const marketAfterMarket = '*/5 22,23 * * Mon-Fri';
+        ncron.schedule(marketAfterMarket, refreshExchangeStock);
+
+        const startOfDay = '*/5 0 * * Mon-Sat';
+        ncron.schedule(startOfDay, refreshExchangeCrypto);
+        
+        const startOfDayPlusOne = '*/5 1 * * Mon-Sat';
+        ncron.schedule(marketRegularHours, refreshExchangeCash);
 
         // 5:00 until 10:00 (weekends)
         const fromFiveToTenOclock = '*/5 5-12 * * Sat,Sun';
-        ncron.schedule(fromFiveToTenOclock, refreshDailyAndOftenExchangeStock);
+        ncron.schedule(fromFiveToTenOclock, refreshExchangeStock);
 
-        // purge unused stocks
+        // purge unused exchange items
         const atOneOclock = '0 1 * * *';
         ncron.schedule(atOneOclock, removeUnusedExchangeItems);
 

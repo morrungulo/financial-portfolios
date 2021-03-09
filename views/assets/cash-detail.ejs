@@ -1,7 +1,7 @@
 <% if (typeof asset !== 'undefined') { %>
     <% const kind = asset.kind; %>
     <% const kind2lc = kind.toLowerCase(); %>
-    <% const kindurl = `${kind2lc}s`; %>
+    <% const kindurl = kind2lc; %>
     <% const isError = (asset.common.status === 'error'); %>
     <% const isClose = (asset.common.status === 'close'); %>
     <% const isOpen = (asset.common.status === 'open'); %>
@@ -77,7 +77,7 @@
                             <div class="panel-containee right">
                                 <p class="nowrap"><span class="format-currency"><%- asset.common.realized_value %></span></p>
                                 <% if (isOpen) { %>
-                                    <p class="nowrap"><span class="format-integer"><%- asset.common.total_quantity %></span> @ <span class="format-currency"><%- asset.common.average_cost_per_unit %></span></p>
+                                    <p class="nowrap"><span class="format-1-fraction-digit"><%- asset.common.total_quantity %></span> @ <span class="format-currency"><%- asset.common.average_cost_per_unit %></span></p>
                                 <% } %>
                                 <p class="nowrap"><span class="format-integer"><%- asset.common.total_transactions %></span</p>
                             </div>
@@ -141,7 +141,7 @@
                                     
                                     <td>
                                         <% var fdate = transaction.date.toLocaleDateString([], {month: 'short', day: 'numeric'}); %>
-                                        <button onclick="transactionsCryptosRemoveConfirmButton('the <%- transaction.kind %> transaction on <%- fdate %>', { 'id': '<%- transaction._id %>' })" class="icon">
+                                        <button onclick="transactionsCashRemoveConfirmButton('the <%- transaction.kind %> transaction on <%- fdate %>', { 'id': '<%- transaction._id %>' })" class="icon">
                                             <img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink">
                                         </button>
                                     </td>
@@ -157,7 +157,7 @@
                 </div>
             </div>
 
-            <%- include("../partials/exchanges-crypto-summary", { 'crypto': asset.exchange_id }); %>
+            <%- include("../partials/exchanges-forex-summary", { 'exItem': asset.exchange_id }); %>
             
         </div>
     </div>
@@ -165,6 +165,6 @@
     <%- include("../partials/footer"); %>
     <%- include("../partials/formatters"); %>
     <%- include("../modal/transactions-add-modal"); %>
-    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsCryptos', 'post': '/assets/' + kindurl + '/' + asset._id }); %>
+    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsCash', 'post': '/assets/' + kindurl + '/' + asset._id }); %>
     <%- include("../modal/modal"); %>
 <% } %>

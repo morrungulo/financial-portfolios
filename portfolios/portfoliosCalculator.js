@@ -59,7 +59,7 @@ const updatePercentageValues = (portfolio) => {
 }
 
 const updateFieldsDependentOnExchangeData = async (portfolio) => {
-    const assetAggregatorActions = [AssetStock, AssetCrypto, AssetCash].map(asset => assetAggregator(asset, portfolio._id));
+    const assetAggregatorActions = [AssetStock, AssetCrypto, AssetCash].map(assetModel => assetAggregator(assetModel, portfolio._id));
     const [stockData, cryptoData, cashData] = await Promise.all(assetAggregatorActions);
 
     // add to portfolio data

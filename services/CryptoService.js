@@ -52,43 +52,38 @@ class CryptoService {
     }
 
     /**
+     * Calculate the change and change percentage from daily
+     * @param {exchangeDailyInst} daily 
+     */
+    exchangeCalculated(daily) {
+        const result = { Change: 0, ChangePercent: 0 };
+        if (daily.length >= 2) {
+            result.Change = daily[0].Close - daily[1].Close;
+            result.ChangePercent = (result.Change / daily[1].Close) * 100;
+        }
+        return result;
+    }
+
+    /**
      * Return the ExchangeCrypto object for the digital exchange from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
      * @returns {ExchangeCrypto}
      */
-    async refreshCrypto(from, to, updateRateOnly=true) {
+    async refreshCrypto(from, to) {
         if (! await this.hasCrypto(from, to)) {
             throw Error(`Digital exchange ${from}-${to} is not available`);
         }
-
-        // get it
-        let exCrypto = await this.getCrypto(from, to);
-        let needsSave = false;
-        try {
-            // fetch rate
-            if (updateRateOnly) {
-                const exchangeRateInst = await cryptoProvider.fetchExchangeRate(from, to);
-                exCrypto.exchangeRate = exchangeRateInst;
-                needsSave = true;
-            } else {
-                const [exchangeRateInst, exchangeDailyInst] = await cryptoProvider.fetchAll(from, to);
-                exCrypto.exchangeRate = exchangeRateInst;
-                exCrypto.exchangeQuote = exchangeDailyInst[0];
-                exCrypto.exchangeDaily = exchangeDailyInst;
-                needsSave = true;
+        const [exchangeRateInst, exchangeDailyInst] = await cryptoProvider.fetchAll(from, to);
+        const exCrypto = await ExchangeCrypto.findOneAndUpdate({ from, to }, {
+            $set: {
+                exchangeRate: exchangeRateInst,
+                exchangeQuote: exchangeDailyInst[0],
+                exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
+                exchangeDaily: exchangeDailyInst,
             }
-        } catch (err) {
-            console.log(`Not possible to retrieve crypto ${from}-${to} due to ${err}!`);
-        }
-
-        if (needsSave) {
-            exCrypto = await exCrypto.save();
-            if (!updateRateOnly) {
-                ExchangeCryptoEmitter.emit('update_daily', exCrypto._id);
-            }
-        }
-
+        });
+        ExchangeCryptoEmitter.emit('update_daily', exCrypto._id);
         return exCrypto;
     }
 
@@ -103,18 +98,17 @@ class CryptoService {
             return this.getCrypto(from, to);
         } else {
             try {
-                const [exchangeRateInst, exchangeCalculatedInst, exchangeDailyInst] = await cryptoProvider.fetchAll(from, to);
-                const exCrypto = new ExchangeCrypto({
+                const [exchangeRateInst, exchangeDailyInst] = await cryptoProvider.fetchAll(from, to);
+                const exCrypto = await ExchangeCrypto.create({
                     from,
                     to,
                     name: [from, to].join(' - '),
                     longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
                     exchangeRate: exchangeRateInst,
                     exchangeQuote: exchangeDailyInst[0],
-                    exchangeCalculated: exchangeCalculatedInst,
+                    exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
                     exchangeDaily: exchangeDailyInst,
                 });
-                await exCrypto.save();
                 ExchangeCryptoEmitter.emit('create', exCrypto._id);
                 return exCrypto;
             } catch (err) {

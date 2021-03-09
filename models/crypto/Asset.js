@@ -53,12 +53,6 @@ assetCryptoSchema.virtual('displayName').get(function() {
     return this.exchange_id.shortName;
 });
 
-// preSave trigger
-assetCryptoSchema.pre('save', function(next) {
-    commonAssetSchema.preSaveTrigger(this.common);
-    next();
-});
-
 // the model
 const AssetCrypto = mongoose.model('assetcrypto', assetCryptoSchema);
 

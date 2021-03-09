@@ -29,6 +29,7 @@ const provideAssetCrypto = (req, res, next) => {
 
 const provideAssetCash = (req, res, next) => {
     res.locals.asset = defineCommonLocals(AssetCash, 'cash');
+    res.locals.asset.url = 'cash';
     next();
 };
 

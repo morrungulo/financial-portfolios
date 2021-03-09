@@ -1,15 +1,9 @@
 <%- include("../partials/header"); %>
 
-<% var hasAssets = true; %>
-<% var nPanels = 0; %>
-<% if (portfolio.stock_assets.length > 0) { %>
-<%     nPanels += 1; %>
-<% } else if (portfolio.crypto_assets.length > 0) { %>
-<%     nPanels += 1; %>
-<% } else if (portfolio.cash_assets.length > 0) { %>
-<%     nPanels += 1; %>
-<% } %>
-<% if (nPanels == 0) { nPanels = 1; hasAssets = false; } %>
+<% const hasStocks = (portfolio.stock_assets.length > 0); %>
+<% const hasCryptos = (portfolio.crypto_assets.length > 0); %>
+<% const hasCash = (portfolio.cash_assets.length > 0); %>
+<% const hasAssets = (hasStocks || hasCryptos || hasCash); %>
 
 <div class="main-body">
 
@@ -94,7 +88,7 @@
     <% } %>
 
     
-    <% if (portfolio.stock_assets.length > 0) { %>
+    <% if (hasStocks) { %>
         <% const values = [], labels = []; %>
         <% portfolio.stock_assets.filter(a => a.common.total_quantity > 0).forEach(asset => { %>
             <% values.push(asset.common.unrealized_value); %>
@@ -127,8 +121,8 @@
                         <% portfolio.stock_assets.forEach(asset => { %>
                             <tr class="item">
                                 <td sorttable_customkey="<%- asset.exchange_id.name %>">
-                                    <a href="/assets/stocks/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
-                                    <span class="emphasize-minus"><a href="/assets/stocks/<%- asset._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
+                                    <a href="/assets/stock/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
+                                    <span class="emphasize-minus"><a href="/assets/stock/<%- asset._id %>"><%- asset.exchange_id.exchangeOverview.Name %></a></span>
                                 </td>                                    
                                 <td sorttable_customkey="<%- asset.exchange_id.exchangeQuote.Price %>">
                                     <span class="format-currency"><%- asset.exchange_id.exchangeQuote.Price %></span><br/>
@@ -169,11 +163,11 @@
         </div>
     <% } %>
 
-    <% if (portfolio.crypto_assets.length > 0) { %>
+    <% if (hasCryptos) { %>
         <% const values = [], labels = []; %>
         <% portfolio.crypto_assets.filter(asset => asset.common.status === 'open').forEach(asset => { %>
             <% values.push(asset.common.unrealized_value); %>
-            <% labels.push(asset.exchange_id.name); %>
+            <% labels.push(asset.exchange_id.from); %>
         <% }); %>
 
         <div class="panel-containee panel-border">
@@ -202,8 +196,8 @@
                         <% portfolio.crypto_assets.forEach(asset => { %>
                             <tr class="item">
                                 <td sorttable_customkey="<%- asset.exchange_id.name %>">
-                                    <a href="/assets/cryptos/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
-                                    <span class="emphasize-minus"><a href="/assets/cryptos/<%- asset._id %>"><%- asset.exchange_id.longName %></a></span>
+                                    <a href="/assets/crypto/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
+                                    <span class="emphasize-minus"><a href="/assets/crypto/<%- asset._id %>"><%- asset.exchange_id.longName %></a></span>
                                 </td>                                    
                                 <td sorttable_customkey="<%- asset.exchange_id.exchangeRate.Rate %>">
                                     <span class="format-currency"><%- asset.exchange_id.exchangeRate.Rate %></span><br/>
@@ -244,9 +238,79 @@
         </div>
     <% } %>
 
-    <% if (portfolio.cash_assets.length > 0) { %>
-    <div class="panel-containee">
-    </div>
+    <% if (hasCash) { %>
+        <% const values = [], labels = []; %>
+        <% portfolio.cash_assets.filter(asset => asset.common.status === 'open').forEach(asset => { %>
+            <% values.push(asset.common.unrealized_value); %>
+            <% labels.push(asset.exchange_id.from); %>
+        <% }); %>
+
+        <div class="panel-containee panel-border">
+            <div class="title">
+                <h2>Currencies</h2>
+            </div>
+            <div class="content">
+                <div class="standard-list">
+                    <table class="sortable portfolios-assets-list">
+                        <thead>
+                            <tr>
+                                <th>Currency</th>
+                                <th>Price</th>
+                                <th>Change</th>
+            
+                                <th>Unrealized</th>
+                                <th>Realized</th>
+                                <th>Cost</th>
+                                <th>Daily</th>
+                                <th>ROI (%)</th>
+
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% portfolio.cash_assets.forEach(asset => { %>
+                            <tr class="item">
+                                <td sorttable_customkey="<%- asset.exchange_id.name %>">
+                                    <a href="/assets/cash/<%- asset._id %>"><%- asset.exchange_id.name %></a><br/>
+                                    <span class="emphasize-minus"><a href="/assets/cash/<%- asset._id %>"><%- asset.exchange_id.longName %></a></span>
+                                </td>                                    
+                                <td sorttable_customkey="<%- asset.exchange_id.exchangeRate.Rate %>">
+                                    <span class="format-currency"><%- asset.exchange_id.exchangeRate.Rate %></span><br/>
+                                    <span class="emphasize-minus format-time"><%- asset.exchange_id.updatedAt %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.exchange_id.exchangeCalculated.Change %>">
+                                    <span class="format-currency format-pos-neg-color"><%- asset.exchange_id.exchangeCalculated.Change %></span><br/>
+                                    <span class="emphasize-minus format-percentage format-pos-neg-color"><%- asset.exchange_id.exchangeCalculated.ChangePercent %></span>
+                                </td>
+
+                                <td sorttable_customkey="<%- asset.common.unrealized_value %>">
+                                    <span class="format-currency"><%- asset.common.unrealized_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.realized_value %>">
+                                    <span class="format-currency"><%- asset.common.realized_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.total_cost %>">
+                                    <span class="format-currency"><%- asset.common.total_cost %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.daily_value %>">
+                                    <span class="format-currency"><%- asset.common.daily_value %></span>
+                                </td>
+                                <td sorttable_customkey="<%- asset.common.unrealized_value_percentage %>">
+                                    <span class="format-percentage"><%- asset.common.unrealized_value_percentage %></span>
+                                </td>
+
+                                <td class="delete-row"><button onclick="rcRemoveConfirmButton('<%- asset.exchange_id.shortName %>', { 'kind': 'Cash', 'id': '<%- asset._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
+                            </tr>
+                        <% }); %>        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-containee">
+            <div class="chart-doughnut-standard" data-chart-doughnut='["Cash",<%- portfolio.cash_unrealized_value %>]' data-chart-doughnut-type="currency" data-data='<%- JSON.stringify(values) %>' data-data-type="currency" data-labels='<%- JSON.stringify(labels) %>'></div>
+        </div>
     <% } %>
 
 </div>

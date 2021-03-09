@@ -1,7 +1,7 @@
 const AssetStock = require('../models/stock/Asset');
 const TransactionStock = require('../models/stock/Transaction');
-const {prepareCommonDataForUpdate} = require('./utils')
 const ExchangeStock = require('../models/stock/Exchange');
+const { prepareCommonDataForUpdate, calculateNewStateFromTransactionData } = require('./utils')
 
 /**
  * Calculate unrealized_value (and percentage).
@@ -138,9 +138,9 @@ const transactionAggregator = async (asset_id) => {
             average_cost_per_unit: 0,
         };
     }
-    return tdata;
-}
 
+    return calculateNewStateFromTransactionData(tdata);
+}
 
 /**
  * Calculates the asset fields which depend on exchange data.

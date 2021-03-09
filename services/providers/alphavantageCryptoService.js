@@ -73,20 +73,9 @@ async function fetchExchangeDaily(from, to) {
     return result;
 }
 
-function fetchExchangeCalculated() {
-    return new Promise((res, rej) => {
-        const result = {
-            Change: 0,
-            ChangePercent: 0,
-        };
-        res(result);
-    });
-}
-
 async function fetchAll(from, to) {
     const result = await Promise.all([
         fetchExchangeRate(from, to),
-        fetchExchangeCalculated(),
         fetchExchangeDaily(from, to)
     ]);
     return result;
@@ -102,6 +91,5 @@ module.exports = {
     fetchAll,
     fetchExchangeRate,
     fetchExchangeDaily,
-    fetchExchangeCalculated,
     fetchValidListing,
 }

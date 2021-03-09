@@ -11,7 +11,8 @@
                     <option value="Stock">Stock</option>
                     <option value="Crypto">Crypto</option>
                     <option value="Cash">Cash</option>
-                </select>  
+                </select>
+                <div class="kind error"></div>
             </div>
             <div id="entry-stock-div">
                 <label for="ticker">Ticker</label>
@@ -26,7 +27,7 @@
             <div id="entry-cash-div">
                 <label for="currency">Currency</label>
                 <select id="currency">
-                <% currencies.forEach((currency) => { %>
+                <% currencies.forEach(currency => { %>
                     <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
                 <% }); %>
                 </select>
@@ -78,11 +79,13 @@
         e.preventDefault();
 
         // get elements
+        const kindError = document.querySelector('#assets-add-form .kind.error');
         const tickerError = document.querySelector('#assets-add-form .ticker.error');
         const cryptoError = document.querySelector('#assets-add-form .crypto.error');
         const currencyError = document.querySelector('#assets-add-form .currency.error');
         
         // reset errors
+        kindError.textContent = '';
         tickerError.textContent = '';
         cryptoError.textContent = '';
         currencyError.textContent = '';
@@ -102,6 +105,7 @@
             const data = await res.json();
             console.log(data);
             if (data.errors) {
+                kindError.textContent = data.errors.ticker;
                 tickerError.textContent = data.errors.ticker;
                 cryptoError.textContent = data.errors.crypto;
                 currencyError.textContent = data.errors.currency;

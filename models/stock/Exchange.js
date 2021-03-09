@@ -101,18 +101,6 @@ const exchangeStockSchema = new mongoose.Schema({
 
 }, { timestamps: true});
 
-// listeners
-exchangeStockSchema.pre('save', function(next) {
-    this.exchangeCalculated.DividendYieldPercent = 100 * (this.exchangeOverview.Dividend / this.exchangeQuote.Price);
-    if (this.exchangeOverview.EPS != 0) {
-        this.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (this.exchangeOverview.EPS - this.exchangeOverview.Dividend) / this.exchangeOverview.EPS);
-    } else {
-        this.exchangeCalculated.DividendPayoutRatioPercent = 0;
-    }
-    this.exchangeCalculated.Week52RangePercent = 100 * ((this.exchangeQuote.Price - this.exchangeOverview.Week52Low) / (this.exchangeOverview.Week52High - this.exchangeOverview.Week52Low));
-    next();
-});
-
 // the model
 const ExchangeStock = mongoose.model('exchangestock', exchangeStockSchema);
 

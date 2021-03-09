@@ -381,3 +381,94 @@ module.exports.transactions_cryptos_remove_post = async (req, res) => {
         res.status(400).json({ errors });
     }
 }
+
+const validateOnlyValidTransactionsCash = (obj) => {
+    if (!(['buy', 'sell', 'units'].includes(obj.kind))) {
+        throw Error('controller:kind:This type of transaction is not supported!');
+    }
+}
+
+const validateBuyTransactionCash = (obj) => {
+    if (obj.kind === 'buy') {
+        if (parseFloat(obj.quantity) == 0) {
+            throw Error("controller:quantity:This value cannot be zero");
+        }
+    }
+}
+
+const validateSellTransactionCash = (obj) => {
+    if (obj.kind === 'sell') {
+        if (parseFloat(obj.quantity) == 0) {
+            throw Error("controller:quantity:This value cannot be zero");
+        }
+        // change sign of quantity
+        obj.quantity = -obj.quantity;
+    }
+}
+
+const validateUnitsTransactionCash = (obj) => {
+    if (obj.kind === 'units') {
+        if (parseFloat(obj.sadquantity) == 0) {
+            throw Error("controller:sadquantity:This value cannot be zero");
+        } else {
+            obj.quantity = obj.sadquantity;
+            obj.commission = obj.sadcommission;
+        }
+        // reset other values
+        obj.price = 0;
+    }
+}
+
+module.exports.transactions_cash_create_post = async (req, res) => {
+    const params = req.body;
+    // { kind, date, quantity, price, commission, splitbefore, splitafter, dividend, notes }
+    const aid = req.params.aid;
+
+    try {
+        // data is valid
+        let asset = await AssetCash.findById(aid).lean();
+        if (!asset) {
+            throw Error('404');
+        }
+
+        // validate data
+        validateOnlyValidTransactionsCash(params);
+        validateBuyTransactionCash(params);
+        validateSellTransactionCash(params);
+        validateUnitsTransactionCash(params);
+
+        // create transaction
+        let transaction = await TransactionCash.create({
+            kind: params.kind,
+            date: params.date,
+            quantity: params.quantity,
+            price: params.price,
+            commission: params.commission,
+            notes: params.notes,
+            asset_id: asset._id,
+        });
+        TransactionCashEmitter.emit('create', transaction);
+        res.status(201).json({ transaction });
+    }
+    catch (err) {
+        if (err.message === '404') {
+            res.status(404).render('404', { title: 'Page Not Found', page: req.url });
+        } else {
+            const errors = handleErrors(err);
+            res.status(400).json({ errors });
+        }
+    }
+}
+
+module.exports.transactions_cash_remove_post = async (req, res) => {
+    const { id } = req.body;
+    const aid = req.params.aid;
+    try {
+        const transaction = await TransactionCash.findByIdAndDelete(id);
+        TransactionCashEmitter.emit('delete', transaction);
+        res.status(201).json({});
+    } catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+    }
+}

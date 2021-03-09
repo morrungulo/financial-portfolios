@@ -109,15 +109,6 @@ const exchangeForexSchema = new mongoose.Schema({
 
 }, { timestamps: true});
 
-// listeners
-exchangeForexSchema.pre('save', function(next) {
-    if (this.exchangeDaily.length >= 2) {
-        this.exchangeCalculated.Change = this.exchangeDaily[0].Close - this.exchangeDaily[1].Close;
-        this.exchangeCalculated.ChangePercent = (this.exchangeCalculated.Change / this.exchangeDaily[1].Close) * 100;
-    }
-    next();
-});
-
 // the model
 const ExchangeForex = mongoose.model('exchangeforex', exchangeForexSchema);
 

@@ -10,8 +10,6 @@
     }
 
     $(document).ready( function() {
-
-
         $(".format-currency").each(function() {
             const value = parseFloat($(this).text());
             if (value == 0) {
@@ -24,8 +22,30 @@
                 $(this).html(formatter.format(value));
             }
         });
-
-
+        $(".format-currency-long").each(function() {
+            const value = parseFloat($(this).text());
+            if (value == 0) {
+                $(this).html('-');
+            } else {
+                const formatter = Intl.NumberFormat(undefined, {
+                    minimumFractionDigits: 4,
+                    maximumFractionDigits: 4,
+                });
+                $(this).html(formatter.format(value));
+            }
+        });
+        $(".format-1-fraction-digit").each(function() {
+            const value = parseFloat($(this).text());
+            if (value == 0) {
+                $(this).html('-');
+            } else {
+                const formatter = Intl.NumberFormat(undefined, {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                });
+                $(this).html(formatter.format(value));
+            }
+        });
         $(".format-pos-neg-color").each(function() {
             const value = parseFloat($(this).text());
             if (value < 0) {

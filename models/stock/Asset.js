@@ -53,12 +53,6 @@ assetStockSchema.virtual('displayName').get(function() {
     return this.exchange_id.name;
 });
 
-// preSave trigger
-assetStockSchema.pre('save', function(next) {
-    commonAssetSchema.preSaveTrigger(this.common);
-    next();
-});
-
 // the model
 const AssetStock = mongoose.model('assetstock', assetStockSchema);
 

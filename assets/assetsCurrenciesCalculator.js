@@ -2,8 +2,7 @@ const AssetCrypto = require('../models/crypto/Asset');
 const TransactionCrypto = require('../models/crypto/Transaction');
 const AssetCash = require('../models/cash/Asset');
 const TransactionCash = require('../models/cash/Transaction');
-const {prepareCommonDataForUpdate} = require('./utils')
-const chalk = require('chalk');
+const { prepareCommonDataForUpdate, calculateNewStateFromTransactionData } = require('./utils')
 
 /**
  * Calculate unrealized_value (and percentage).
@@ -126,8 +125,8 @@ const transactionAggregator = async (transactionModel, asset_id) => {
             },
         },
     ]);
-    console.log(chalk.cyan(JSON.stringify(data)));
 
+    // prepare to return data
     let [tdata] = data;
     if (tdata === undefined) {
         tdata = {
@@ -140,7 +139,31 @@ const transactionAggregator = async (transactionModel, asset_id) => {
             average_cost_per_unit: 0,
         };
     }
-    return tdata;
+
+    // calculate state after all is done
+    return calculateNewStateFromTransactionData(tdata);
+}
+
+/**
+ * Base function for currencies to calculate their value based on exchange data.
+ * @param {MongooseModel} assetModel 
+ * @param {ObjectId} asset_id 
+ */
+const calculateAssetCurrencyFromExchangeData = async (assetModel, asset_id) => {
+    const asset = await assetModel.findById(asset_id).populate({ path: 'exchange_id' });
+    updateFieldsDependentOnExchangeData(asset);
+    await asset.save();
+}
+
+/**
+ * Base function for currencies to calculate their value based on transaction data.
+ * @param {MongooseModel} assetModel 
+ * @param {MongooseModel} transactionModel 
+ * @param {ObjectId} asset_id 
+ */
+const calculateAssetCurrencyFieldsFromTransactions = async (assetModel, transactionModel, asset_id) => {
+    const tdata = await transactionAggregator(transactionModel, asset_id);
+    await assetModel.findByIdAndUpdate(asset_id, {$set: prepareCommonDataForUpdate(tdata)});
 }
 
 /**
@@ -148,18 +171,7 @@ const transactionAggregator = async (transactionModel, asset_id) => {
  * @param {ObjectId} asset_id 
  */
 const calculateAssetCryptoFromExchangeData = async (asset_id) => {
-    const asset = await AssetCrypto.findById(asset_id).populate({ path: 'exchange_id' });
-    updateFieldsDependentOnExchangeData(asset);
-    await asset.save();
-}
-
-/**
- * Calculates the asset crypto fields dependent on transaction data.
- * @param {ObjectId} asset_id 
- */
-const calculateAssetCryptoFieldsFromTransactions = async (asset_id) => {
-    const tdata = await transactionAggregator(TransactionCrypto, asset_id);
-    await AssetCrypto.findByIdAndUpdate(asset_id, {$set: prepareCommonDataForUpdate(tdata)});
+    await calculateAssetCurrencyFromExchangeData(AssetCrypto, asset_id);
 }
 
 /**
@@ -167,9 +179,15 @@ const calculateAssetCryptoFieldsFromTransactions = async (asset_id) => {
  * @param {ObjectId} asset_id 
  */
 const calculateAssetCashFromExchangeData = async (asset_id) => {
-    const asset = await AssetCash.findById(asset_id).populate({ path: 'exchange_id' });
-    updateFieldsDependentOnExchangeData(asset);
-    await asset.save();
+    await calculateAssetCurrencyFromExchangeData(AssetCash, asset_id);
+}
+
+/**
+ * Calculates the asset crypto fields dependent on transaction data.
+ * @param {ObjectId} asset_id 
+ */
+const calculateAssetCryptoFieldsFromTransactions = async (asset_id) => {
+    await calculateAssetCurrencyFieldsFromTransactions(AssetCrypto, TransactionCrypto, asset_id);
 }
 
 /**
@@ -177,8 +195,7 @@ const calculateAssetCashFromExchangeData = async (asset_id) => {
  * @param {ObjectId} asset_id 
  */
 const calculateAssetCashFieldsFromTransactions = async (asset_id) => {
-    const tdata = await transactionAggregator(TransactionCash, asset_id);
-    await AssetCash.findByIdAndUpdate(asset_id, {$set: prepareCommonDataForUpdate(tdata)});
+    await calculateAssetCurrencyFieldsFromTransactions(AssetCash, TransactionCash, asset_id);
 }
 
 module.exports = {

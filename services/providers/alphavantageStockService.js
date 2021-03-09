@@ -108,22 +108,10 @@ async function fetchExchangeDaily(ticker) {
     return result;
 }
 
-function fetchExchangeCalculated() {
-    return new Promise((res, rej) => {
-        const result = {
-            DividendYieldPercent: 0,
-            DividendPayoutRatioPercent: 0,
-            Week52RangePercent: 0,
-        };
-        res(result);
-    });
-}
-
 async function fetchAll(ticker) {
     const result = await Promise.all([
         fetchExchangeOverview(ticker),
         fetchExchangeQuote(ticker),
-        fetchExchangeCalculated(),
         fetchExchangeDaily(ticker)
     ]);
     return result;
@@ -142,6 +130,5 @@ module.exports = {
     fetchExchangeOverview,
     fetchExchangeQuote,
     fetchExchangeDaily,
-    fetchExchangeCalculated,
     fetchValidListing,
 }

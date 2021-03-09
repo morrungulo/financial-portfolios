@@ -583,6 +583,18 @@ table, th, td {
     text-align: center;
 }
 
+.standard-list .watchlists-cash-list th:first-child,
+.standard-list .watchlists-cash-list tr td:first-child,
+.standard-list .watchlists-cash-list th:nth-child(2),
+.standard-list .watchlists-cash-list tr td:nth-child(2) {
+    text-align: left;
+}
+
+.standard-list .watchlists-cash-list th:nth-child(12),
+.standard-list .watchlists-cash-list tr td:nth-child(12) {
+    text-align: center;
+}
+
 .standard-list .assets-stocks-list {
     text-align: left;
 }

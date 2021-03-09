@@ -51,6 +51,19 @@ class ForexService {
     }
 
     /**
+     * Calculate the change and change percentage from daily
+     * @param {exchangeDailyInst} daily 
+     */
+    exchangeCalculated(daily) {
+        const result = { Change: 0, ChangePercent: 0 };
+        if (daily.length >= 2) {
+            result.Change = daily[0].Close - daily[1].Close;
+            result.ChangePercent = (result.Change / daily[1].Close) * 100;
+        }
+        return result;
+    }
+
+    /**
      * Return the ExchangeForex object for the forex exchange from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
@@ -60,34 +73,16 @@ class ForexService {
         if (! await this.hasForex(from, to)) {
             throw Error(`Forex exchange ${from}-${to} is not available`);
         }
-
-        // get it
-        let exForex = await this.getForex(from, to);
-        let needsSave = false;
-        try {
-            // fetch rate
-            if (updateRateOnly) {
-                const exchangeRateInst = await forexProvider.fetchExchangeRate(from, to);
-                exForex.exchangeRate = exchangeRateInst;
-                needsSave = true;
-            } else {
-                const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
-                exForex.exchangeRate = exchangeRateInst;
-                exForex.exchangeQuote = exchangeDailyInst[0];
-                exForex.exchangeDaily = exchangeDailyInst;
-                needsSave = true;
+        const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
+        const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
+            $set: {
+                exchangeRate: exchangeRateInst,
+                exchangeQuote: exchangeDailyInst[0],
+                exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
+                exchangeDaily: exchangeDailyInst,
             }
-        } catch (err) {
-            console.log(`Not possible to retrieve forex ${from}-${to} due to ${err}!`);
-        }
-
-        if (needsSave) {
-            exForex = await exForex.save();
-            if (!updateRateOnly) {
-                ExchangeCashEmitter.emit('update_daily', exForex._id);
-            }
-        }
-
+        });
+        ExchangeCashEmitter.emit('update_daily', exForex._id);
         return exForex;
     }
 
@@ -102,18 +97,17 @@ class ForexService {
             return this.getForex(from, to);
         } else {
             try {
-                const [exchangeRateInst, exchangeCalculatedInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
-                const exForex = new ExchangeForex({
+                const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
+                const exForex = ExchangeForex.create({
                     from,
                     to,
-                    shortName: [from, to].join(' - '),
-                    name: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+                    name: [from, to].join(' - '),
+                    longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
                     exchangeRate: exchangeRateInst,
                     exchangeQuote: exchangeDailyInst[0],
-                    exchangeCalculated: exchangeCalculatedInst,
+                    exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
                     exchangeDaily: exchangeDailyInst,
                 });
-                await exForex.save();
                 ExchangeCashEmitter.emit('create', exForex._id);
                 return exForex;
             } catch (err) {
