@@ -118,7 +118,7 @@ module.exports = {
         ncron.schedule(startOfDay, refreshExchangeCrypto);
         
         const startOfDayPlusOne = '*/5 1 * * Mon-Sat';
-        ncron.schedule(marketRegularHours, refreshExchangeCash);
+        ncron.schedule(startOfDayPlusOne, refreshExchangeCash);
 
         // 5:00 until 10:00 (weekends)
         const fromFiveToTenOclock = '*/5 5-12 * * Sat,Sun';
