@@ -55,8 +55,8 @@ class ExchangeCryptoEmitter extends EventEmitter {
             if (exItem.exchangeDaily.length >= 2) {
                 exItem.exchangeCalculated.Change = exItem.exchangeDaily[0].Close - exItem.exchangeDaily[1].Close;
                 exItem.exchangeCalculated.ChangePercent = 100 * (exItem.exchangeCalculated.Change / exItem.exchangeDaily[1].Close);
+                await exItem.save();
             }
-            await exItem.save();
         } catch (err) {
             console.error(err);
         }
@@ -68,8 +68,8 @@ const emitter = new ExchangeCryptoEmitter();
 /**
  * Register for event 'create'
  */
-emitter.on('create', async (exchange_id) => {
-    await Promise.all([
+emitter.on('create', (exchange_id) => {
+    Promise.all([
         emitter.updateXYDaily(exchange_id),
         emitter.updateCalculatedItems(exchange_id),
     ]);
@@ -78,8 +78,8 @@ emitter.on('create', async (exchange_id) => {
 /**
  * Register for event 'refresh'
  */
-emitter.on('refresh', async (exchange_id) => {
-    await Promise.all([
+emitter.on('refresh', (exchange_id) => {
+    Promise.all([
         emitter.updateXYDaily(exchange_id),
         emitter.updateCalculatedItems(exchange_id),
     ]);
@@ -88,7 +88,7 @@ emitter.on('refresh', async (exchange_id) => {
 /**
  * Register for event 'delete'
  */
-emitter.on('delete', async (exchange_id) => {
+emitter.on('delete', (exchange_id) => {
     // do nothing
 });
 

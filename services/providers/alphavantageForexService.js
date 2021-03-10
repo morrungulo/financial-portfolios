@@ -28,7 +28,7 @@ const buildFromAlphaRate = (alpha) => {
  * @returns mongodb schema data
  */
 const buildFromAlphaTimeSeries = (alpha) => {
-    let timeSeries = [];
+    const timeSeries = [];
     for (var k1 in alpha) {
         if (k1.startsWith('Time Series')) {
             for (var k2 in alpha[k1]) {

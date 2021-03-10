@@ -2,17 +2,9 @@ const ExchangeCrypto = require('../models/crypto/Exchange');
 const ValidCrypto = require('../models/crypto/Valid');
 const cryptoProvider = require('./providers/alphavantageCryptoService');
 const ExchangeCryptoEmitter = require('../events/exchangeCryptoEmitter');
+const ForexService = require('./ForexService');
 
 class CryptoService {
-
-    /**
-     * Return true if 'currency' is a valid digital currency code.
-     * @param {String} currency
-     * @returns {Boolean}
-     */
-    async isCryptoValid(currency) {
-        return await ValidCrypto.exists({ code: currency });
-    }
 
     /**
      * Update the valid crypto listing.
@@ -28,6 +20,15 @@ class CryptoService {
         } catch (err) {
             console.error('Unable to update valid crypto listing');
         }
+    }
+
+    /**
+     * Return true if 'currency' is a valid digital currency code.
+     * @param {String} currency
+     * @returns {Boolean}
+     */
+    async isCryptoValid(currency) {
+        return await ValidCrypto.exists({ code: currency });
     }
 
     /**
@@ -105,6 +106,41 @@ class CryptoService {
             }
         }
     }
+
+    /**
+     * Create an existing or a newly created exchange crypto document.
+     * @param {String} from 
+     * @param {String} to
+     * @returns {Document}
+     */
+    async retrieveOrUpsert(from, to) {
+        const forexService = new ForexService();
+        if (! await this.isCryptoValid(from)) {
+            throw Error("controller:fromCrypto:That crypto is invalid!");
+        }
+        else if (! await forexService.isCurrencyValid(to)) {
+            throw Error("controller:toCrypto:That currency is invalid!");
+        }
+        else if (await this.hasCrypto(from, to)) {
+            return await this.getCrypto(from, to);
+        }
+        else {
+            const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(from, to);
+            const exCrypto = await ExchangeCrypto.create({
+                from,
+                to,
+                name: [from, to].join(' - '),
+                longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+                exchangeRate: exchangeRateInst,
+                exchangeQuote: exchangeDailyInst[0],
+                exchangeDaily: exchangeDailyInst,
+                exchangeCalculated: exchangeCalculatedInst,
+            });
+            ExchangeCryptoEmitter.emit('create', exCrypto._id);
+            return exCrypto;
+        }
+    }
+    
 }
 
 module.exports = CryptoService

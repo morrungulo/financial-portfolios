@@ -6,15 +6,6 @@ const ExchangeStockEmitter = require('../events/exchangeStockEmitter');
 class StockService {
 
     /**
-     * Return true if 'ticker' is valid.
-     * @param {String} ticker
-     * @returns {Boolean}
-     */
-    async isTickerValid(ticker) {
-        return await ValidStock.exists({ code: ticker });
-    }
-
-    /**
      * Update the valid stock listings.
      */
     async updateValidStockListing() {
@@ -28,6 +19,15 @@ class StockService {
         } catch (err) {
             console.error('Unable to update valid stock listing');
         }
+    }
+
+    /**
+     * Return true if 'ticker' is valid.
+     * @param {String} ticker
+     * @returns {Boolean}
+     */
+    async isTickerValid(ticker) {
+        return await ValidStock.exists({ code: ticker });
     }
 
     /**
@@ -74,33 +74,31 @@ class StockService {
     }
 
     /**
-     * Create a new ExchangeStock object iff it does not already exist. If it exists, then the existing object is returned.
-     * @param {String} ticker
-     * @returns {ExchangeStock}
+     * Create an existing or a newly created exchange stock document.
+     * @param {String} ticker 
+     * @returns {Document}
      */
-    async createStock(ticker) {
-        if (await this.hasStock(ticker)) {
-            console.warn(`Ticker '${ticker}' already exists - no need to create!`);
-            return this.getStock(ticker);
-        } else {
-            try {
-                // for now
-                const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
-                const exStock = await ExchangeStock.create({
-                    name: ticker,
-                    exchangeOverview: exchangeOverviewInst,
-                    exchangeQuote: exchangeQuoteInst,
-                    exchangeDaily: exchangeDailyInst,
-                    exchangeCalculated: exchangeCalculatedInst,
-                });
-                ExchangeStockEmitter.emit('create', exStock._id);
-                return exStock;
-            } catch (err) {
-                console.error(err);
-                return null;
-            }
+    async retrieveOrUpsert(ticker) {
+        if (! await this.isTickerValid(ticker)) {
+            throw Error("controller:ticker:That ticker is invalid!");
+        }
+        else if (await this.hasStock(ticker)) {
+            return await this.getStock(ticker);
+        }
+        else {
+            const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
+            const exStock = await ExchangeStock.create({
+                name: ticker,
+                exchangeOverview: exchangeOverviewInst,
+                exchangeQuote: exchangeQuoteInst,
+                exchangeDaily: exchangeDailyInst,
+                exchangeCalculated: exchangeCalculatedInst,
+            });
+            ExchangeStockEmitter.emit('create', exStock._id);
+            return exStock;
         }
     }
+
 }
 
 module.exports = StockService

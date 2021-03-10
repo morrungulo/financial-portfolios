@@ -8,15 +8,15 @@ const emitter = new TransactionStockEmitter();
 /**
  * Register for event 'create'
  */
-emitter.on('create', async (transaction) => {
-    await calculateAssetStockFieldsFromTransactions(transaction.asset_id);
+emitter.on('create', (transaction) => {
+    calculateAssetStockFieldsFromTransactions(transaction.asset_id);
 });
 
 /**
  * Register for event 'delete'
  */
-emitter.on('delete', async (transaction) => {
-    await calculateAssetStockFieldsFromTransactions(transaction.asset_id);
+emitter.on('delete', (transaction) => {
+    calculateAssetStockFieldsFromTransactions(transaction.asset_id);
 });
 
 /**

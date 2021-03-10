@@ -106,6 +106,21 @@ module.exports.portfolios_recalculate = async (req, res) => {
     }
 }
 
+const throwIfInPortfolio = async (assetModel, portfolio_id, exchange_id) => {
+    if (await assetModel.exists({ 'portfolio_id': portfolio_id, 'exchange_id': exchange_id })) {
+        throw Error('controller:kind:Already in portfolio');
+    }
+}
+
+const createNewDocument = async (assetModel, portfolio_id, exchange_id) => {
+    return await assetModel.create({ 'portfolio_id': portfolio_id, 'exchange_id': exchange_id });
+}
+
+const pushToListAndSave = async (pdoc, plist, asset_id) => {
+    plist.push(asset_id);
+    await pdoc.save();
+}
+
 module.exports.portfolios_assets_create_post = async (req, res) => {
     const { kind, ticker, crypto, currency } = req.body;
     const pid = req.params.pid;
@@ -114,113 +129,33 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
         // get the portfolio
         const portfolio = await Portfolio.findById(pid);
         const toCurrency = portfolio.currency;
-        
-        // create asset
         let asset = null;
         if (kind == 'Stock') {
 
-            // get the stock 
-            let entry = null;
             const service = new StockService();
-            const isValid = await service.isTickerValid(ticker);
-            if (!isValid) {
-                throw Error('controller:ticker:That ticker could not be found');
-            }
-            const hasStock = await service.hasStock(ticker);
-            if (hasStock) {
-                entry = await service.getStock(ticker);
-            } else {
-                entry = await service.createStock(ticker);
-                if (!entry) {
-                    throw Error('controller:ticker:Could not satisfy request - please try later');
-                }
-            }
+            const exItem = await service.retrieveOrUpsert(ticker);
+            await throwIfInPortfolio(AssetStock, portfolio._id, exItem._id);
+            asset = await createNewDocument(AssetStock, portfolio._id, exItem._id);
+            await pushToListAndSave(portfolio, portfolio.stock_assets, asset._id);
 
-            // is it already in portfolio?
-            const alreadyInPortfolio = await AssetStock.findOne({ 'portfolio_id': portfolio._id, 'exchange_id': entry._id });
-            if (alreadyInPortfolio) {
-                throw Error('controller:ticker:That ticker is already in the portfolio');
-            }
-
-            // create asset and add to portfolio
-            asset = await AssetStock.create({ portfolio_id: portfolio._id, exchange_id: entry._id });
-            
-            // push to list but sort list
-            portfolio.stock_assets.push(asset._id);
-            
         } else if (kind == 'Crypto') {
 
-            // get the crypto 
-            let entry = null;
             const service = new CryptoService();
-            const isValid = await service.isCryptoValid(crypto);
-            if (!isValid) {
-                throw Error('controller:crypto:That crypto could not be found');
-            }
-            const hasCrypto = await service.hasCrypto(crypto, toCurrency);
-            if (hasCrypto) {
-                entry = await service.getCrypto(crypto, toCurrency);
-            } else {
-                entry = await service.createCrypto(crypto, toCurrency);
-                if (!entry) {
-                    throw Error('controller:crypto:Could not satisfy request - please try later');
-                }
-            }
+            const exItem = await service.retrieveOrUpsert(crypto, toCurrency);
+            await throwIfInPortfolio(AssetCrypto, portfolio._id, exItem._id);
+            asset = await createNewDocument(AssetCrypto, portfolio._id, exItem._id);
+            await pushToListAndSave(portfolio, portfolio.crypto_assets, asset._id);
 
-            // is it already in portfolio?
-            const alreadyInPortfolio = await AssetCrypto.findOne({ 'portfolio_id': portfolio._id, 'exchange_id': entry._id });
-            if (alreadyInPortfolio) {
-                throw Error('controller:crypto:That crypto is already in the portfolio');
-            }
-
-            // create asset and add to portfolio
-            asset = await AssetCrypto.create({ portfolio_id: portfolio._id, exchange_id: entry._id });
-            
-            // push to list but sort list
-            portfolio.crypto_assets.push(asset._id);
-            
         } else if (kind == 'Cash') {
 
-            // get the forex 
-            let entry = null;
             const service = new ForexService();
-            const isValid = await service.isCurrencyValid(currency);
-            if (!isValid) {
-                throw Error('controller:currency:That currency could not be found');
-            }
-            const hasForex = await service.hasForex(currency, toCurrency);
-            if (hasForex) {
-                entry = await service.getForex(currency, toCurrency);
-            } else {
-                entry = await service.createForex(currency, toCurrency);
-                if (!entry) {
-                    throw Error('controller:currency:Could not satisfy request - please try later');
-                }
-            }
-
-            // is it already in portfolio?
-            const alreadyInPortfolio = await AssetCash.findOne({ 'portfolio_id': portfolio._id, 'exchange_id': entry._id });
-            if (alreadyInPortfolio) {
-                throw Error('controller:currency:That currency is already in the portfolio');
-            }
-
-            // create asset and add to portfolio
-            asset = await AssetCash.create({ portfolio_id: portfolio._id, exchange_id: entry._id });
-            
-            // push to list but sort list
-            portfolio.cash_assets.push(asset._id);
-            
+            const exItem = await service.retrieveOrUpsert(currency, toCurrency);
+            await throwIfInPortfolio(AssetCash, portfolio._id, exItem._id);
+            asset = await createNewDocument(AssetCash, portfolio._id, exItem._id);
+            await pushToListAndSave(portfolio, portfolio.cash_assets, asset._id);
+        
         }
-
-        // save portfolio
-        portfolio.save(err => {
-            if (err) {
-                const errors = handleErrors(err);
-                res.status(400).json({ errors });
-            } else {
-                res.status(201).json({ asset });
-            }
-        });
+        res.status(201).json({ asset });
     }
     catch (err) {
         const errors = handleErrors(err);

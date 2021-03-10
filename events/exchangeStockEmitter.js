@@ -70,8 +70,8 @@ const emitter = new ExchangeStockEmitter();
 /**
  * Register for event 'create'
  */
-emitter.on('create', async (exchange_id) => {
-    await Promise.all([
+emitter.on('create', (exchange_id) => {
+    Promise.all([
         emitter.updateXYDaily(exchange_id),
         emitter.updateCalculatedItems(exchange_id),
     ]);
@@ -80,8 +80,8 @@ emitter.on('create', async (exchange_id) => {
 /**
  * Register for event 'refresh'
  */
-emitter.on('refresh', async (exchange_id) => {
-    await Promise.all([
+emitter.on('refresh', (exchange_id) => {
+    Promise.all([
         emitter.updateXYDaily(exchange_id),
         emitter.updateCalculatedItems(exchange_id),
     ]);
@@ -90,7 +90,7 @@ emitter.on('refresh', async (exchange_id) => {
 /**
  * Register for event 'delete'
  */
-emitter.on('delete', async (exchange_id) => {
+emitter.on('delete', (exchange_id) => {
     // do nothing
 });
 

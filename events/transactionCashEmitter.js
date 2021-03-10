@@ -8,15 +8,15 @@ const emitter = new TransactionCashEmitter();
 /**
  * Register for event 'create'
  */
-emitter.on('create', async (transaction) => {
-    await calculateAssetCashFieldsFromTransactions(transaction.asset_id);
+emitter.on('create', (transaction) => {
+    calculateAssetCashFieldsFromTransactions(transaction.asset_id);
 });
 
 /**
  * Register for event 'delete'
  */
-emitter.on('delete', async (transaction) => {
-    await calculateAssetCashFieldsFromTransactions(transaction.asset_id);
+emitter.on('delete', (transaction) => {
+    calculateAssetCashFieldsFromTransactions(transaction.asset_id);
 });
 
 /**

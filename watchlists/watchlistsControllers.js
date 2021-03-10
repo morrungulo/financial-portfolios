@@ -131,116 +131,51 @@ module.exports.watchlists_export = async (req, res) => {
     }
 }
 
+const pushToListAndSave = async (wdoc, wlist, exchange_id) => {
+    wlist.push(exchange_id);
+    await wdoc.save();
+}
+
 module.exports.watchlists_entries_create_post = async (req, res) => {
     const { kind, ticker, fromCrypto, toCrypto, fromCurrency, toCurrency } = req.body;
     const wid = req.params.wid;
 
     try {
         // get the watchlist
-        let watchlist = await Watchlist.findById(wid);
-
-        // create entry
-        let entry = null;
+        const watchlist = await Watchlist.findById(wid);
+        let exItem = null;
         if (kind === 'Stock') {
             
-            // get the stock service
-            const SS = new StockService();
-            const isValid = await SS.isTickerValid(ticker);
-            if (!isValid) {
-                throw Error('controller:ticker:That ticker could not be found');
-            }
-            const hasStock = await SS.hasStock(ticker);
-            if (hasStock) {
-                entry = await SS.getStock(ticker);
-            } else {
-                entry = await SS.createStock(ticker);
-                if (!entry) {
-                    throw Error('controller:kind:Could not satisfy request - please try later');
-                }
-            }
-
-            // is it already in watchlist?
-            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'stock_entries': { $in: [entry._id] }});
+            const service = new StockService();
+            exItem = await service.retrieveOrUpsert(ticker);
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'stock_entries': { $in: [exItem._id] }});
             if (alreadyInWatchlist) {
-                throw Error('controller:ticker:That ticker is already in the watchlist');
+                throw Error('controller:kind:That ticker is already in the watchlist');
             }
-
-            // add to watchlist
-            watchlist.stock_entries.push(entry._id);
+            await pushToListAndSave(watchlist, watchlist.stock_entries, exItem._id);
 
         } else if (kind === 'Crypto') {
 
-            // get the crypto and forex services
-            const CS = new CryptoService();
-            const FS = new ForexService();
-            const isValid = await Promise.all([CS.isCryptoValid(fromCrypto), FS.isCurrencyValid(toCrypto)]);
-            if (!isValid[0]) {
-                throw Error('controller:fromCrypto:Crypto is not supported');
-            }
-            if (!isValid[1]) {
-                throw Error('controller:toCrypto:Currency is not supported');
-            }
-
-            const hasCrypto = await CS.hasCrypto(fromCrypto, toCrypto);
-            if (hasCrypto) {
-                entry = await CS.getCrypto(fromCrypto, toCrypto);
-            } else {
-                entry = await CS.createCrypto(fromCrypto, toCrypto);
-                if (!entry) {
-                    throw Error('controller:kind:Could not satisfy request - please try later');
-                }
-            }
-
-            // is it already in watchlist?
-            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'crypto_entries': { $in: [entry._id] }});
+            const service = new CryptoService();
+            exItem = await service.retrieveOrUpsert(fromCrypto, toCrypto);
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'crypto_entries': { $in: [exItem._id] }});
             if (alreadyInWatchlist) {
                 throw Error(`controller:kind:The crypto combination ${fromCrypto}-${toCrypto} is already in the watchlist!`);
             }
-
-            // add to watchlist
-            watchlist.crypto_entries.push(entry._id);
+            await pushToListAndSave(watchlist, watchlist.crypto_entries, exItem._id);
 
         } else if (kind === 'Cash') {
 
-            // get the forex services
-            const FS = new ForexService();
-            const isValid = await Promise.all([FS.isCurrencyValid(fromCurrency), FS.isCurrencyValid(toCurrency)]);
-            if (!isValid[0]) {
-                throw Error('controller:fromCurrency:Currency is not supported');
-            }
-            if (!isValid[1]) {
-                throw Error('controller:toCurrency:Currency is not supported');
-            }
-
-            const hasForex = await FS.hasForex(fromCurrency, toCurrency);
-            if (hasForex) {
-                entry = await FS.getForex(fromCurrency, toCurrency);
-            } else {
-                entry = await FS.createForex(fromCurrency, toCurrency);
-                if (!entry) {
-                    throw Error('controller:kind:Could not satisfy request - please try later');
-                }
-            }
-
-            // is it already in watchlist?
-            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'cash_entries': { $in: [entry._id] }});
+            const service = new ForexService();
+            exItem = await service.retrieveOrUpsert(fromCurrency, toCurrency);
+            const alreadyInWatchlist = await Watchlist.findOne({'_id': watchlist._id, 'cash_entries': { $in: [exItem._id] }});
             if (alreadyInWatchlist) {
                 throw Error(`controller:kind:The currency combination ${fromCurrency}-${toCurrency} is already in the watchlist!`);
             }
-
-            // add to watchlist
-            watchlist.cash_entries.push(entry._id);
+            await pushToListAndSave(watchlist, watchlist.cash_entries, exItem._id);
+            
         }
-
-        // save portfolio
-        watchlist.save(err => {
-            if (err) {
-                const errors = handleErrors(err);
-                res.status(400).json({ errors });
-            } else {
-                res.status(201).json({ entry });
-            }
-        });
+        res.status(201).json({entry: exItem });
     }
     catch (err) {
         const errors = handleErrors(err);

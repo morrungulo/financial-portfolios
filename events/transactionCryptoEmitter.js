@@ -8,15 +8,15 @@ const emitter = new TransactionCryptoEmitter();
 /**
  * Register for event 'create'
  */
-emitter.on('create', async (transaction) => {
-    await calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
+emitter.on('create', (transaction) => {
+    calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
 });
 
 /**
  * Register for event 'delete'
  */
-emitter.on('delete', async (transaction) => {
-    await calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
+emitter.on('delete', (transaction) => {
+    calculateAssetCryptoFieldsFromTransactions(transaction.asset_id);
 });
 
 /**

@@ -6,15 +6,6 @@ const ExchangeCashEmitter = require('../events/exchangeCashEmitter');
 class ForexService {
 
     /**
-     * Return true if 'currency' is a valid 3-letter code.
-     * @param {String} currency
-     * @returns {Boolean}
-     */
-    async isCurrencyValid(currency) {
-        return await ValidForex.exists({ code: currency });
-    }
-
-    /**
      * Update the valid forex listing.
      */
     async updateValidForexListing() {
@@ -31,6 +22,15 @@ class ForexService {
     }
 
     /**
+     * Return true if 'currency' is a valid 3-letter code.
+     * @param {String} currency
+     * @returns {Boolean}
+     */
+    async isCurrencyValid(currency) {
+        return await ValidForex.exists({ code: currency });
+    }
+
+    /**
      * Return true if forex exchange from/to is in db.
      * @param {String} from 
      * @param {String} to 
@@ -44,67 +44,45 @@ class ForexService {
       * Return the ExchangeForex object for the forex exchange from/to.
       * @param {String} from 
       * @param {String} to
-      * @returns {ExchangeCash}
+      * @returns {Document}
       */
     async getForex(from, to) {
         return await ExchangeForex.findOne({ from, to });
     }
 
     /**
-     * Return the ExchangeForex object for the forex exchange from/to after being updated with the most recent data.
-     * @param {String} from
-     * @param {String} to 
-     * @returns {ExchangeForex}
+     * Create an existing or a newly created exchange forex document.
+     * @param {String} from 
+     * @param {String} to
+     * @returns {Document}
      */
-    async refreshForex(from, to, updateRateOnly = true) {
-        if (! await this.hasForex(from, to)) {
-            throw Error(`Forex exchange ${from}-${to} is not available`);
+    async retrieveOrUpsert(from, to) {
+        if (! await this.isCurrencyValid(from)) {
+            throw Error("controller:fromCurrency:That currency is invalid!");
         }
-        const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
-            forexProvider.fetchExchangeRate(from, to),
-            forexProvider.fetchExchangeDaily(from, to)
-        ]);
-        const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
-            $set: {
+        else if (! await this.isCurrencyValid(to)) {
+            throw Error("controller:toCurrency:That currency is invalid!");
+        }
+        else if (await this.hasForex(from, to)) {
+            return await this.getForex(from, to);
+        }
+        else {
+            const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await forexProvider.fetchAll(from, to);
+            const exForex = await ExchangeForex.create({
+                from,
+                to,
+                name: [from, to].join(' - '),
+                longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
                 exchangeRate: exchangeRateInst,
                 exchangeQuote: exchangeDailyInst[0],
                 exchangeDaily: exchangeDailyInst,
-            }
-        });
-        ExchangeCashEmitter.emit('refresh', exForex._id);
-        return exForex;
-    }
-
-    /**
-     * Create a new ExchangeCash object for the forex exchange from/to.
-     * @param {String} from 
-     * @param {String} to 
-     */
-    async createForex(from, to) {
-        if (await this.hasForex(from, to)) {
-            console.warn(`Forex exchange '${from}-${to}' already exists - no need to create!`);
-            return this.getForex(from, to);
-        } else {
-            try {
-                const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await forexProvider.fetchAll(from, to);
-                const exForex = ExchangeForex.create({
-                    from,
-                    to,
-                    name: [from, to].join(' - '),
-                    longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
-                    exchangeRate: exchangeRateInst,
-                    exchangeQuote: exchangeDailyInst[0],
-                    exchangeDaily: exchangeDailyInst,
-                    exchangeCalculated: exchangeCalculatedInst,
-                });
-                ExchangeCashEmitter.emit('create', exForex._id);
-                return exForex;
-            } catch (err) {
-                console.error(err);
-                return null;
-            }
+                exchangeCalculated: exchangeCalculatedInst,
+            });
+            ExchangeCashEmitter.emit('create', exForex._id);
+            return exForex;
         }
     }
+
 }
 
 module.exports = ForexService

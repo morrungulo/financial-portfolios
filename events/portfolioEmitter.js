@@ -7,7 +7,7 @@ const emitter = new PortfolioEmitter();
 /**
  * Register for event 'update'
  */
-emitter.on('update', async (portfolio_id) => {
+emitter.on('update', (portfolio_id) => {
     // do nothing
 });
 
