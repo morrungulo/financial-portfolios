@@ -49,24 +49,6 @@ class StockService {
     }
 
     /**
-     * @param {exchangeOverviewInst} overview
-     * @param {exchangeQuoteInst} quote
-     */
-    exchangeCalculated(overview, quote) {
-        const result = {
-            DividendYieldPercent: 0,        // 100*(overview.dividend/quote.price)
-            DividendPayoutRatioPercent: 0,  // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
-            Week52RangePercent: 0,          // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
-        };
-        // result.DividendYieldPercent = 100 * (overview.Dividend / quote.Price);
-        // if (overview.EPS != 0) {
-        //     result.DividendPayoutRatioPercent = 100 * (1 - (overview.EPS - overview.Dividend) / overview.EPS);
-        // }
-        // result.Week52RangePercent = 100 * ((quote.Price - overview.Week52Low) / (overview.Week52High - overview.Week52Low));
-        return result;
-    }
-
-    /**
      * Return the ExchangeStock object for the 'ticker' after being updated with the most recent data.
      * @param {String} ticker 
      * @returns {ExchangeStock}
@@ -75,16 +57,19 @@ class StockService {
         if (! await this.hasStock(ticker)) {
             throw Error(`Ticker '${ticker}' is not available`);
         }
-        const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst] = await stockProvider.fetchAll(ticker);
+        const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst] = await Promise.all([
+            stockProvider.fetchExchangeOverview(ticker),
+            stockProvider.fetchExchangeQuote(ticker),
+            stockProvider.fetchExchangeDaily(ticker),
+        ]);
         const exStock = await ExchangeStock.findOneAndUpdate({ name: ticker }, {
             $set: {
                 exchangeOverview: exchangeOverviewInst,
                 exchangeQuote: exchangeQuoteInst,
-                exchangeCalculated: this.exchangeCalculated(exchangeOverviewInst, exchangeQuoteInst),
                 exchangeDaily: exchangeDailyInst
             }
         });
-        ExchangeStockEmitter.emit('update_daily', exStock._id);
+        ExchangeStockEmitter.emit('refresh', exStock._id);
         return exStock;
     }
 
@@ -100,13 +85,13 @@ class StockService {
         } else {
             try {
                 // for now
-                const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst] = await stockProvider.fetchAll(ticker);
+                const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
                 const exStock = await ExchangeStock.create({
                     name: ticker,
                     exchangeOverview: exchangeOverviewInst,
                     exchangeQuote: exchangeQuoteInst,
-                    exchangeCalculated: this.exchangeCalculated(exchangeOverviewInst, exchangeQuoteInst),
                     exchangeDaily: exchangeDailyInst,
+                    exchangeCalculated: exchangeCalculatedInst,
                 });
                 ExchangeStockEmitter.emit('create', exStock._id);
                 return exStock;

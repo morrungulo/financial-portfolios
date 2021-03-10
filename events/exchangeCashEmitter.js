@@ -41,10 +41,24 @@ class ExchangeCashEmitter extends EventEmitter {
         try {
             const data = await this.getXYfromDaily(exchange_id);
             const decimatedData = decimation.applyDecimation(data, false);
-            await ExchangeForex.findByIdAndUpdate(exchange_id, { $set: {'exchangeGraphData': decimatedData} });
+            await ExchangeForex.findByIdAndUpdate(exchange_id, { $set: { 'exchangeGraphData': decimatedData } });
         } catch (err) {
             console.error(err);
-        }    
+        }
+    }
+
+    // update calculated items
+    async updateCalculatedItems(exchange_id) {
+        try {
+            const exItem = await ExchangeForex.findById(exchange_id);
+            if (exItem.exchangeDaily.length >= 2) {
+                exItem.exchangeCalculated.Change = exItem.exchangeDaily[0].Close - exItem.exchangeDaily[1].Close;
+                exItem.exchangeCalculated.ChangePercent = 100 * (exItem.exchangeCalculated.Change / exItem.exchangeDaily[1].Close);
+            }
+            await exItem.save();
+        } catch (err) {
+            console.error(err);
+        }
     }
 
 }
@@ -54,14 +68,27 @@ const emitter = new ExchangeCashEmitter();
  * Register for event 'create'
  */
 emitter.on('create', async (exchange_id) => {
-    await emitter.updateXYDaily(exchange_id);
+    await Promise.all([
+        emitter.updateXYDaily(exchange_id),
+        emitter.updateCalculatedItems(exchange_id),
+    ]);
 });
 
 /**
- * Register for event 'update_daily'
+ * Register for event 'refresh'
  */
-emitter.on('update_daily', async (exchange_id) => {
-    await emitter.updateXYDaily(exchange_id);
+emitter.on('refresh', async (exchange_id) => {
+    await Promise.all([
+        emitter.updateXYDaily(exchange_id),
+        emitter.updateCalculatedItems(exchange_id),
+    ]);
+});
+
+/**
+ * Register for event 'delete'
+ */
+emitter.on('delete', async (exchange_id) => {
+    // do nothing
 });
 
 /**

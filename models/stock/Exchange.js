@@ -54,9 +54,9 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
 
 // calculated items
 const exchangeCalculatedSchema = new mongoose.Schema({
-    DividendYieldPercent: Number,    // 100*(overview.dividend/quote.price)
-    DividendPayoutRatioPercent: Number,    // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
-    Week52RangePercent: Number,     // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
+    DividendYieldPercent: {type: Number, default: 0},           // 100*(overview.dividend/quote.price)
+    DividendPayoutRatioPercent: {type: Number, default: 0},     // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
+    Week52RangePercent: {type: Number, default: 0},             // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
 });
 
 // x,y coords for charts

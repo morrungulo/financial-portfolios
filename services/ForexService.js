@@ -51,38 +51,27 @@ class ForexService {
     }
 
     /**
-     * Calculate the change and change percentage from daily
-     * @param {exchangeDailyInst} daily 
-     */
-    exchangeCalculated(daily) {
-        const result = { Change: 0, ChangePercent: 0 };
-        if (daily.length >= 2) {
-            result.Change = daily[0].Close - daily[1].Close;
-            result.ChangePercent = (result.Change / daily[1].Close) * 100;
-        }
-        return result;
-    }
-
-    /**
      * Return the ExchangeForex object for the forex exchange from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
      * @returns {ExchangeForex}
      */
-    async refreshForex(from, to, updateRateOnly=true) {
+    async refreshForex(from, to, updateRateOnly = true) {
         if (! await this.hasForex(from, to)) {
             throw Error(`Forex exchange ${from}-${to} is not available`);
         }
-        const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
+        const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
+            forexProvider.fetchExchangeRate(from, to),
+            forexProvider.fetchExchangeDaily(from, to)
+        ]);
         const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
             $set: {
                 exchangeRate: exchangeRateInst,
                 exchangeQuote: exchangeDailyInst[0],
-                exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
                 exchangeDaily: exchangeDailyInst,
             }
         });
-        ExchangeCashEmitter.emit('update_daily', exForex._id);
+        ExchangeCashEmitter.emit('refresh', exForex._id);
         return exForex;
     }
 
@@ -97,7 +86,7 @@ class ForexService {
             return this.getForex(from, to);
         } else {
             try {
-                const [exchangeRateInst, exchangeDailyInst] = await forexProvider.fetchAll(from, to);
+                const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await forexProvider.fetchAll(from, to);
                 const exForex = ExchangeForex.create({
                     from,
                     to,
@@ -105,8 +94,8 @@ class ForexService {
                     longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
                     exchangeRate: exchangeRateInst,
                     exchangeQuote: exchangeDailyInst[0],
-                    exchangeCalculated: this.exchangeCalculated(exchangeDailyInst),
                     exchangeDaily: exchangeDailyInst,
+                    exchangeCalculated: exchangeCalculatedInst,
                 });
                 ExchangeCashEmitter.emit('create', exForex._id);
                 return exForex;

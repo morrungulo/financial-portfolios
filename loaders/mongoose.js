@@ -41,7 +41,7 @@ module.exports = {
         
         // mongodb standalone docker (docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0)
         // run mongo inside the container (docker exec -it mongodb /bin/bash)
-        const dbURI = 'mongodb://172.17.0.2:27017/test';
+        const dbURI = 'mongodb://172.17.0.1:27017/test';
         
         // database connection
         try {

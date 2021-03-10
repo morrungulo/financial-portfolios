@@ -1,7 +1,7 @@
 <% if (typeof asset !== 'undefined') { %>
     <% const kind = asset.kind; %>
     <% const kind2lc = kind.toLowerCase(); %>
-    <% const kindurl = `${kind2lc}s`; %>
+    <% const kindurl = kind2lc; %>
     <% const isError = (asset.common.status === 'error'); %>
     <% const isClose = (asset.common.status === 'close'); %>
     <% const isOpen = (asset.common.status === 'open'); %>

@@ -1,7 +1,7 @@
 <% if (typeof asset !== 'undefined') { %>
     <% const kind = asset.kind; %>
     <% const kind2lc = kind.toLowerCase(); %>
-    <% const kindurl = `${kind2lc}s`; %>
+    <% const kindurl = kind2lc; %>
     <% const isError = (asset.common.status === 'error'); %>
     <% const isClose = (asset.common.status === 'close'); %>
     <% const isOpen = (asset.common.status === 'open'); %>
@@ -24,7 +24,7 @@
                         <ul>
                             <li><button data-modal-target="#transactions-add-modal">Add Transaction</button></li>
                             <li><a href="/portfolios/<%- asset.portfolio_id._id %>" title="Go back" class="icon"><img src="/img/iconmonstr-arrow-76.svg" alt="Go back" class="button-svg"></a></li>
-                            <li><a href="/assets/stocks/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
+                            <li><a href="/assets/<%- kindurl %>/<%- asset._id %>/recalculate" title="Recalculate" class="icon"><img src="/img/iconmonstr-synchronization-18.svg" alt="Recalculate" class="button-svg"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
     <%- include("../partials/footer"); %>
     <%- include("../partials/formatters"); %>
     <%- include("../modal/transactions-add-modal"); %>
-    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsStocks', 'post': '/assets/stocks/' + asset._id }); %>
+    <%- include("../modal/remove-confirm-modal", { 'prefix': 'transactionsStocks', 'post': '/assets/' + kindurl + '/' + asset._id }); %>
     <%- include("../modal/modal"); %>
 
 <% } %>

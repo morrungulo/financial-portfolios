@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const ExchangeStock = require('../models/stock/Exchange');
 const decimation = require('../util/decimation');
 
-
 // create emitter object
 class ExchangeStockEmitter extends EventEmitter {
 
@@ -42,10 +41,27 @@ class ExchangeStockEmitter extends EventEmitter {
         try {
             const data = await this.getXYfromDaily(exchange_id);
             const decimatedData = decimation.applyDecimation(data);
-            await ExchangeStock.findByIdAndUpdate(exchange_id, { $set: {'exchangeGraphData': decimatedData} });
+            await ExchangeStock.findByIdAndUpdate(exchange_id, { $set: { 'exchangeGraphData': decimatedData } });
         } catch (err) {
             console.error(err);
-        }    
+        }
+    }
+
+    // update calculated items
+    async updateCalculatedItems(exchange_id) {
+        try {
+            const exItem = await ExchangeStock.findById(exchange_id);
+            exItem.exchangeCalculated.DividendYieldPercent = 100 * (exItem.exchangeOverview.Dividend / exItem.exchangeQuote.Price);
+            if (exItem.exchangeOverview.EPS != 0) {
+                exItem.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (exItem.exchangeOverview.EPS - exItem.exchangeOverview.Dividend) / exItem.exchangeOverview.EPS);
+            } else {
+                exItem.exchangeCalculated.DividendPayoutRatioPercent = 0;
+            }
+            exItem.exchangeCalculated.Week52RangePercent = 100 * ((exItem.exchangeQuote.Price - exItem.exchangeOverview.Week52Low) / (exItem.exchangeOverview.Week52High - exItem.exchangeOverview.Week52Low));
+            await exItem.save();
+        } catch (err) {
+            console.error(err);
+        }
     }
 
 }
@@ -55,21 +71,27 @@ const emitter = new ExchangeStockEmitter();
  * Register for event 'create'
  */
 emitter.on('create', async (exchange_id) => {
-    await emitter.updateXYDaily(exchange_id);
+    await Promise.all([
+        emitter.updateXYDaily(exchange_id),
+        emitter.updateCalculatedItems(exchange_id),
+    ]);
 });
 
 /**
- * Register for event 'update_quote'
+ * Register for event 'refresh'
  */
-emitter.on('update_quote', async (exchange_id) => {
+emitter.on('refresh', async (exchange_id) => {
+    await Promise.all([
+        emitter.updateXYDaily(exchange_id),
+        emitter.updateCalculatedItems(exchange_id),
+    ]);
+});
+
+/**
+ * Register for event 'delete'
+ */
+emitter.on('delete', async (exchange_id) => {
     // do nothing
-});
-
-/**
- * Register for event 'update_daily'
- */
-emitter.on('update_daily', async (exchange_id) => {
-    await emitter.updateXYDaily(exchange_id);
 });
 
 /**
