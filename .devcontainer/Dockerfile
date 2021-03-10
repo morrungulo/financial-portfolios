@@ -4,8 +4,8 @@ LABEL maintainer="Alexandre Lopes (morrungulo@gmail.com)"
 
 # environment variables
 ENV \
-  SUMMARY="Web based financial analysis in node.js" \
-  DESCRIPTION="A financial analysis program developed in node.js"
+  SUMMARY="Web based financial portfolios in node.js" \
+  DESCRIPTION="A financial portfolios program developed in node.js"
 
 
 # install node.js modules
@@ -18,8 +18,8 @@ LABEL name="home-projects/node" \
   version="1" \
   summary="${SUMMARY}" \
   description="${DESCRIPTION}" \
-  build="docker build morrungulo/finance-analysis-dev" \
-  usage="docker run -ti --rm -v path/to/your/dir:/repo morrungulo/finance-analysis-dev bash"
+  build="docker build morrungulo/financial-portfolios" \
+  usage="docker run -ti --rm -v path/to/your/dir:/repo morrungulo/financial-portfolios bash"
 
 
 # setup workdir
