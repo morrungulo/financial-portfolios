@@ -79,10 +79,14 @@ class StockService {
      * @returns {Document}
      */
     async retrieveOrUpsert(ticker) {
-        if (! await this.isTickerValid(ticker)) {
+        const [isTickerValid, hasStock] = await Promise.all([
+            this.isTickerValid(ticker),
+            this.hasStock(ticker)
+        ]);
+        if (!isTickerValid) {
             throw Error("controller:ticker:That ticker is invalid!");
         }
-        else if (await this.hasStock(ticker)) {
+        else if (hasStock) {
             return await this.getStock(ticker);
         }
         else {

@@ -51,19 +51,49 @@ class ForexService {
     }
 
     /**
+     * Return the ExchangeForex object for the forex from/to after being updated with the most recent data.
+     * @param {String} from
+     * @param {String} to 
+     * @returns {Document}
+     */
+    async refreshForex(from, to) {
+        if (! await this.hasForex(from, to)) {
+            throw Error(`Forex ${from}-${to} is not available`);
+        }
+        const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
+            forexProvider.fetchExchangeRate(from, to),
+            forexProvider.fetchExchangeDaily(from, to)
+        ]);
+        const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
+            $set: {
+                exchangeRate: exchangeRateInst,
+                exchangeQuote: exchangeDailyInst[0],
+                exchangeDaily: exchangeDailyInst,
+            }
+        });
+        ExchangeCashEmitter.emit('refresh', exForex._id);
+        return exForex;
+    }
+    
+    /**
      * Create an existing or a newly created exchange forex document.
      * @param {String} from 
      * @param {String} to
      * @returns {Document}
      */
     async retrieveOrUpsert(from, to) {
-        if (! await this.isCurrencyValid(from)) {
+        const [isFromValid, isToValid, hasForex] = await Promise.all([
+            this.isCurrencyValid(from),
+            this.isCurrencyValid(to),
+            this.hasForex(from, to)
+        ]);
+        if (!isFromValid) {
             throw Error("controller:fromCurrency:That currency is invalid!");
         }
-        else if (! await this.isCurrencyValid(to)) {
+        else if (!isToValid) {
             throw Error("controller:toCurrency:That currency is invalid!");
         }
-        else if (await this.hasForex(from, to)) {
+        else if (hasForex) {
             return await this.getForex(from, to);
         }
         else {

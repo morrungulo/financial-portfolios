@@ -77,37 +77,6 @@ class CryptoService {
     }
 
     /**
-     * Create a new ExchangeCrypto object for the digital exchange from/to.
-     * @param {String} from 
-     * @param {String} to 
-     */
-    async createCrypto(from, to) {
-        if (await this.hasCrypto(from, to)) {
-            console.warn(`Digital exchange '${from}-${to}' already exists - no need to create!`);
-            return this.getCrypto(from, to);
-        } else {
-            try {
-                const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(from, to);
-                const exCrypto = await ExchangeCrypto.create({
-                    from,
-                    to,
-                    name: [from, to].join(' - '),
-                    longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
-                    exchangeRate: exchangeRateInst,
-                    exchangeQuote: exchangeDailyInst[0],
-                    exchangeDaily: exchangeDailyInst,
-                    exchangeCalculated: exchangeCalculatedInst,
-                });
-                ExchangeCryptoEmitter.emit('create', exCrypto._id);
-                return exCrypto;
-            } catch (err) {
-                console.error(err);
-                return null;
-            }
-        }
-    }
-
-    /**
      * Create an existing or a newly created exchange crypto document.
      * @param {String} from 
      * @param {String} to
@@ -115,13 +84,18 @@ class CryptoService {
      */
     async retrieveOrUpsert(from, to) {
         const forexService = new ForexService();
-        if (! await this.isCryptoValid(from)) {
+        const [isFromValid, isToValid, hasCrypto] = await Promise.all([
+            this.isCryptoValid(from),
+            forexService.isCurrencyValid(to),
+            this.hasCrypto(from, to)
+        ]);
+        if (!isFromValid) {
             throw Error("controller:fromCrypto:That crypto is invalid!");
         }
-        else if (! await forexService.isCurrencyValid(to)) {
+        else if (!isToValid) {
             throw Error("controller:toCrypto:That currency is invalid!");
         }
-        else if (await this.hasCrypto(from, to)) {
+        else if (hasCrypto) {
             return await this.getCrypto(from, to);
         }
         else {
