@@ -122,7 +122,7 @@ const pushToListAndSave = async (pdoc, plist, asset_id) => {
 }
 
 module.exports.portfolios_assets_create_post = async (req, res) => {
-    const { kind, ticker, crypto, currency } = req.body;
+    const { kind, ticker, fromCrypto, fromCurrency } = req.body;
     const pid = req.params.pid;
 
     try {
@@ -141,7 +141,7 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
         } else if (kind == 'Crypto') {
 
             const service = new CryptoService();
-            const exItem = await service.retrieveOrUpsert(crypto, toCurrency);
+            const exItem = await service.retrieveOrUpsert(fromCrypto, toCurrency);
             await throwIfInPortfolio(AssetCrypto, portfolio._id, exItem._id);
             asset = await createNewDocument(AssetCrypto, portfolio._id, exItem._id);
             await pushToListAndSave(portfolio, portfolio.crypto_assets, asset._id);
@@ -149,7 +149,7 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
         } else if (kind == 'Cash') {
 
             const service = new ForexService();
-            const exItem = await service.retrieveOrUpsert(currency, toCurrency);
+            const exItem = await service.retrieveOrUpsert(fromCurrency, toCurrency);
             await throwIfInPortfolio(AssetCash, portfolio._id, exItem._id);
             asset = await createNewDocument(AssetCash, portfolio._id, exItem._id);
             await pushToListAndSave(portfolio, portfolio.cash_assets, asset._id);

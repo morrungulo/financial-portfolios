@@ -20,18 +20,18 @@
                 <div class="ticker error"></div>
             </div>
             <div id="entry-crypto-div">
-                <label for="crypto">Crypto</label>
-                <input type="text" id="crypto" placeholder="Crypto symbol (eg. ETH)"/>
-                <div class="crypto error"></div>
+                <label for="fromCrypto">Crypto</label>
+                <input type="text" id="fromCrypto" placeholder="Crypto symbol (eg. ETH)"/>
+                <div class="fromCrypto error"></div>
             </div>
             <div id="entry-cash-div">
-                <label for="currency">Currency</label>
-                <select id="currency">
+                <label for="fromCurrency">Currency</label>
+                <select id="fromCurrency">
                 <% currencies.forEach(currency => { %>
                     <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
                 <% }); %>
                 </select>
-                <div class="currency error"></div>
+                <div class="fromCurrency error"></div>
             </div>
             <div class="mini-nav">
                 <ul>
@@ -54,19 +54,19 @@
         }
         if ($(this).val() == "Crypto") {
             $('#entry-crypto-div').show();
-            $('#crypto').attr('required', '');
+            $('#fromCrypto').attr('required', '');
         } else {
             $('#entry-crypto-div').hide();
-            $('#crypto').removeAttr('required');
-            $('#crypto').val('');
+            $('#fromCrypto').removeAttr('required');
+            $('#fromCrypto').val('');
         }
         if ($(this).val() == "Cash") {
             $('#entry-cash-div').show();
-            $('#currency').attr('required', '');
+            $('#fromCurrency').attr('required', '');
         } else {
             $('#entry-cash-div').hide();
-            $('#currency').removeAttr('required');
-            $('#currency').val('');
+            $('#fromCurrency').removeAttr('required');
+            $('#fromCurrency').val('');
         }
     });
     $("#kind").trigger("change");
@@ -81,25 +81,25 @@
         // get elements
         const kindError = document.querySelector('#assets-add-form .kind.error');
         const tickerError = document.querySelector('#assets-add-form .ticker.error');
-        const cryptoError = document.querySelector('#assets-add-form .crypto.error');
-        const currencyError = document.querySelector('#assets-add-form .currency.error');
+        const fromCryptoError = document.querySelector('#assets-add-form .fromCrypto.error');
+        const fromCurrencyError = document.querySelector('#assets-add-form .fromCurrency.error');
         
         // reset errors
         kindError.textContent = '';
         tickerError.textContent = '';
-        cryptoError.textContent = '';
-        currencyError.textContent = '';
+        fromCryptoError.textContent = '';
+        fromCurrencyError.textContent = '';
         
         // get values
         const kind = assetsAddForm.kind.value;
         const ticker = assetsAddForm.ticker.value;
-        const crypto = assetsAddForm.crypto.value;
-        const currency = assetsAddForm.currency.value;
+        const fromCrypto = assetsAddForm.fromCrypto.value;
+        const fromCurrency = assetsAddForm.fromCurrency.value;
         
         try {
             const res = await fetch('/portfolios/<%- portfolio._id %>/create', {
                 method: 'POST',
-                body: JSON.stringify({ kind, ticker, crypto, currency }),
+                body: JSON.stringify({ kind, ticker, fromCrypto, fromCurrency }),
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await res.json();
@@ -107,8 +107,8 @@
             if (data.errors) {
                 kindError.textContent = data.errors.kind;
                 tickerError.textContent = data.errors.ticker;
-                cryptoError.textContent = data.errors.crypto;
-                currencyError.textContent = data.errors.currency;
+                fromCryptoError.textContent = data.errors.fromCrypto;
+                fromCurrencyError.textContent = data.errors.fromCurrency;
             }
             if (data.asset) {
                 closeModal(assetsAddModal);

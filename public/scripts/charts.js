@@ -1,7 +1,7 @@
 const allCharts = {};
 
-const getFormatter = (formatType, locale=undefined) => {
-    switch(formatType) {
+const getFormatter = (formatType, locale = undefined) => {
+    switch (formatType) {
         case 'currency':
             return new Intl.NumberFormat(locale, {
                 minimumFractionDigits: 2,
@@ -73,7 +73,7 @@ sparklinePercentageCharts.forEach(element => {
 const sparklineLineCharts = document.querySelectorAll('[data-chart-line-single]');
 sparklineLineCharts.forEach(element => {
     const rawdata = JSON.parse(element.getAttribute('data-chart-line-single'));
-    if (rawdata.length === 0) {return;}
+    if (rawdata.length === 0) { return; }
     const firstValue = rawdata[0];
     const lastValue = rawdata[rawdata.length - 1];
     const color = (firstValue.y > lastValue.y) ? 'rgba(0,128,0,0.5)' : 'rgba(255,0,0,0.5)';
@@ -118,12 +118,12 @@ function changeChartData(buttonElement, chartId, timeSpan) {
     changeButton(buttonElement);
     const element = document.getElementById(chartId);
     const data = JSON.parse(element.getAttribute('data-' + timeSpan));
-    const change = (data[0].y - data[data.length-1].y) / (data[data.length-1].y);
+    const change = (data[0].y - data[data.length - 1].y) / (data[data.length - 1].y);
     const changeFormatted = getFormatter('percentage').format(change);
     const color = (change > 0) ? 'green' : 'red';
     var chart = allCharts[chartId];
     chart.updateSeries([{ data }]);
-    chart.updateOptions({ title: { text: changeFormatted, style: { color } }});
+    chart.updateOptions({ title: { text: changeFormatted, style: { color } } });
 }
 
 const lineCharts = document.querySelectorAll('[data-chart-line]');
@@ -196,11 +196,11 @@ lineCharts.forEach(element => {
             show: false,
         },
         tooltip: {
-            custom: function({series, seriesIndex, dataPointIndex, w}) {
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
                 const y = currencyFormatter.format(w.globals.series[seriesIndex][dataPointIndex]);
                 const x = dateFormatter.format(w.globals.seriesX[seriesIndex][dataPointIndex]);
                 return '<div class="chart-tooltip"><span>' + x + ': ' + y + '</span></div>'
-            },            
+            },
         },
     };
     const chart = new ApexCharts(element, options);
@@ -305,9 +305,9 @@ doughnutCharts.forEach(element => {
             show: false,
         },
         tooltip: {
-            custom: function({series, seriesIndex, dataPointIndex, w}) {
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
                 return '<div class="chart-tooltip"><span>' + w.config.labels[seriesIndex] + ': ' + dataFormatter.format(series[seriesIndex]) + '</span></div>'
-            },            
+            },
         },
     };
     const chart = new ApexCharts(element, options);
