@@ -11,12 +11,17 @@ const AssetCash = require('../models/cash/Asset');
 
 const splitOnce = (s, on) => {
     [first, second, ...rest] = s.split(on)
-    return [first, second, rest.length > 0? rest.join(on) : null]
+    return [first, second, rest.length > 0 ? rest.join(on) : null]
 }
 
 const handleErrors = (err) => {
     console.log(chalk.red(err.message, err.code));
     let errors = { portfolio: '', exchangestock: '', exchangecrypto: '', exchangeforex: '' };
+
+    if (!err.message) {
+        errors.portfolio = 'Unknown error';
+        return errors;
+    }
 
     if (err.message.startsWith("controller")) {
         const [ctrl, code, message] = splitOnce(err.message, ':');
@@ -29,21 +34,21 @@ const handleErrors = (err) => {
             errors.exchangestock = properties.message;
         });
     }
-            
+
     // validation errors
     if (err.message.includes('exchangecrypto validation failed')) {
         Object.values(err.errors).map(properties => {
             errors.exchangecrypto = properties.message;
         });
     }
-            
+
     // validation errors
     if (err.message.includes('exchangeforex validation failed')) {
         Object.values(err.errors).map(properties => {
             errors.exchangeforex = properties.message;
         });
     }
-            
+
     // validation errors
     if (err.message.includes('portfolio validation failed')) {
         Object.values(err.errors).map(properties => {
@@ -83,9 +88,9 @@ module.exports.portfolios_detail = async (req, res) => {
     const pid = req.params.pid;
     try {
         const portfolio = await Portfolio.findById(pid)
-            .populate({path: 'stock_assets', populate: {path: 'exchange_id'}})
-            .populate({path: 'crypto_assets', populate: {path: 'exchange_id'}})
-            .populate({path: 'cash_assets', populate: {path: 'exchange_id'}})
+            .populate({ path: 'stock_assets', populate: { path: 'exchange_id' } })
+            .populate({ path: 'crypto_assets', populate: { path: 'exchange_id' } })
+            .populate({ path: 'cash_assets', populate: { path: 'exchange_id' } })
         res.render('portfolios/portfolios-detail', { title: portfolio.name, portfolio, currencies: config.get('currencies') });
     }
     catch (err) {
@@ -153,7 +158,7 @@ module.exports.portfolios_assets_create_post = async (req, res) => {
             await throwIfInPortfolio(AssetCash, portfolio._id, exItem._id);
             asset = await createNewDocument(AssetCash, portfolio._id, exItem._id);
             await pushToListAndSave(portfolio, portfolio.cash_assets, asset._id);
-        
+
         }
         res.status(201).json({ asset });
     }
@@ -192,11 +197,11 @@ module.exports.portfolios_assets_remove_post = async (req, res) => {
 
         // execute
         const [dummy, assetRemoved] = await Promise.all([
-            Portfolio.findByIdAndUpdate(pid, {$pull : pullEntry}),
-            assetMap[kind].findOneAndDelete({_id: id, portfolio_id: pid})
+            Portfolio.findByIdAndUpdate(pid, { $pull: pullEntry }),
+            assetMap[kind].findOneAndDelete({ _id: id, portfolio_id: pid })
         ]);
         res.status(201).json({ assetRemoved });
-        
+
     }
     catch (err) {
         const errors = handleErrors(err);
