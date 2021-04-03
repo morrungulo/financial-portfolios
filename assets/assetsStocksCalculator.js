@@ -9,8 +9,7 @@ const { prepareCommonDataForUpdate, calculateNewStateFromTransactionData } = req
 const updateUnrealizedValueAndPercentage = (asset) => {
     if (asset.isOpen) {
         asset.common.unrealized_value = asset.common.total_quantity * asset.exchange_id.exchangeQuote.Price;
-        const hasCost = (asset.common.total_cost != 0);
-        asset.common.unrealized_value_percentage = hasCost ? 100 * (asset.common.unrealized_value + asset.common.realized_value - asset.common.total_cost) / asset.common.total_cost : 0;
+        asset.common.unrealized_value_percentage = (asset.common.total_cost != 0) ? ((asset.common.unrealized_value + asset.common.realized_value) / asset.common.total_cost) * 100 : 0;
     } else {
         asset.common.unrealized_value = 0;
         asset.common.unrealized_value_percentage = 0;
