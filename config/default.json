@@ -1,28 +1,14 @@
 {
-    "deployment": "development",
-
-    "logger": {
-        "enabled": true,
-        "level": "info"
-    },
-
     "auth": {
         "secret": "MasterBlasterIsTheMan!"
     },
-
     "server": {
         "host": "0.0.0.0",
         "port": 3000
     },
-
     "mongodb": {
-        "dbname" : "financial-portfolios"
+        "dbname": "test"
     },
-
-    "alphavantage" : {
-        "apikey": "WM1YB28P0XDGDZE9"
-    },
-
     "currencies": [
         {
             "long": "US Dollars",
