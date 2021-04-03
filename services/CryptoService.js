@@ -89,32 +89,26 @@ class CryptoService {
             forexService.isCurrencyValid(to),
             this.hasCrypto(from, to)
         ]);
-        if (!isFromValid) {
-            throw Error("controller:fromCrypto:That crypto is invalid!");
-        }
-        else if (!isToValid) {
-            throw Error("controller:toCrypto:That currency is invalid!");
-        }
-        else if (hasCrypto) {
-            return await this.getCrypto(from, to);
-        }
-        else {
-            const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(from, to);
-            const exCrypto = await ExchangeCrypto.create({
-                from,
-                to,
-                name: [from, to].join(' - '),
-                longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
-                exchangeRate: exchangeRateInst,
-                exchangeQuote: exchangeDailyInst[0],
-                exchangeDaily: exchangeDailyInst,
-                exchangeCalculated: exchangeCalculatedInst,
-            });
-            ExchangeCryptoEmitter.emit('create', exCrypto._id);
-            return exCrypto;
-        }
+        if (!isFromValid) throw Error("controller:fromCrypto:That crypto is invalid!");
+        if (!isToValid) throw Error("controller:toCrypto:That currency is invalid!");
+        if (hasCrypto) return await this.getCrypto(from, to);
+
+        // create new
+        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(from, to);
+        const exCrypto = await ExchangeCrypto.create({
+            from,
+            to,
+            name: [from, to].join(' - '),
+            longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+            exchangeRate: exchangeRateInst,
+            exchangeQuote: exchangeDailyInst[0],
+            exchangeDaily: exchangeDailyInst,
+            exchangeCalculated: exchangeCalculatedInst,
+        });
+        ExchangeCryptoEmitter.emit('create', exCrypto._id);
+        return exCrypto;
     }
-    
+
 }
 
 module.exports = CryptoService

@@ -74,7 +74,7 @@ class ForexService {
         ExchangeCashEmitter.emit('refresh', exForex._id);
         return exForex;
     }
-    
+
     /**
      * Create an existing or a newly created exchange forex document.
      * @param {String} from 
@@ -87,30 +87,24 @@ class ForexService {
             this.isCurrencyValid(to),
             this.hasForex(from, to)
         ]);
-        if (!isFromValid) {
-            throw Error("controller:fromCurrency:That currency is invalid!");
-        }
-        else if (!isToValid) {
-            throw Error("controller:toCurrency:That currency is invalid!");
-        }
-        else if (hasForex) {
-            return await this.getForex(from, to);
-        }
-        else {
-            const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await forexProvider.fetchAll(from, to);
-            const exForex = await ExchangeForex.create({
-                from,
-                to,
-                name: [from, to].join(' - '),
-                longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
-                exchangeRate: exchangeRateInst,
-                exchangeQuote: exchangeDailyInst[0],
-                exchangeDaily: exchangeDailyInst,
-                exchangeCalculated: exchangeCalculatedInst,
-            });
-            ExchangeCashEmitter.emit('create', exForex._id);
-            return exForex;
-        }
+        if (!isFromValid) throw Error("controller:fromCurrency:That currency is invalid!");
+        if (!isToValid) throw Error("controller:toCurrency:That currency is invalid!");
+        if (hasForex) return await this.getForex(from, to);
+
+        // create new
+        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await forexProvider.fetchAll(from, to);
+        const exForex = await ExchangeForex.create({
+            from,
+            to,
+            name: [from, to].join(' - '),
+            longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+            exchangeRate: exchangeRateInst,
+            exchangeQuote: exchangeDailyInst[0],
+            exchangeDaily: exchangeDailyInst,
+            exchangeCalculated: exchangeCalculatedInst,
+        });
+        ExchangeCashEmitter.emit('create', exForex._id);
+        return exForex;
     }
 
 }

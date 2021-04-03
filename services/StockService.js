@@ -83,24 +83,20 @@ class StockService {
             this.isTickerValid(ticker),
             this.hasStock(ticker)
         ]);
-        if (!isTickerValid) {
-            throw Error("controller:ticker:That ticker is invalid!");
-        }
-        else if (hasStock) {
-            return await this.getStock(ticker);
-        }
-        else {
-            const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
-            const exStock = await ExchangeStock.create({
-                name: ticker,
-                exchangeOverview: exchangeOverviewInst,
-                exchangeQuote: exchangeQuoteInst,
-                exchangeDaily: exchangeDailyInst,
-                exchangeCalculated: exchangeCalculatedInst,
-            });
-            ExchangeStockEmitter.emit('create', exStock._id);
-            return exStock;
-        }
+        if (!isTickerValid) throw Error("controller:ticker:That ticker is invalid!");
+        if (hasStock) return await this.getStock(ticker);
+
+        // create new
+        const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst, exchangeCalculatedInst] = await stockProvider.fetchAll(ticker);
+        const exStock = await ExchangeStock.create({
+            name: ticker,
+            exchangeOverview: exchangeOverviewInst,
+            exchangeQuote: exchangeQuoteInst,
+            exchangeDaily: exchangeDailyInst,
+            exchangeCalculated: exchangeCalculatedInst,
+        });
+        ExchangeStockEmitter.emit('create', exStock._id);
+        return exStock;
     }
 
 }
