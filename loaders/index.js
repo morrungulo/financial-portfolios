@@ -1,7 +1,8 @@
 const expressLoader = require('./express');
-// const migrate = require('./migrate');
+const migrationLoader = require('./migrate');
 const mongooseLoader = require('./mongoose');
-const schedulerLoader = require('./scheduler')
+const schedulerLoader = require('./scheduler');
+
 module.exports = {
     initialize: async ({ expressApp }) => {
         await Promise.all([
@@ -9,6 +10,7 @@ module.exports = {
             expressLoader.initialize(expressApp),
         ]);
         await Promise.all([
+            migrationLoader.initialize(),
             schedulerLoader.initialize(),
         ]);
         console.log('Initialization complete!');
