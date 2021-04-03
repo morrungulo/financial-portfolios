@@ -69,7 +69,6 @@ const transactionAggregator = async (transactionModel, asset_id) => {
                 // - on sell, we add the commission to the costs
                 // - on split, we multiply the ratio to the lot and to the total
                 // - on dividends, we do nothing (quantity=0, unrealized=0, commission=0, ratio=1)
-                // - on units, we add the commission to the costs and the quantity to the lot and to the total
                 unrealized: {
                     $accumulator: {
                         lang: 'js',
@@ -163,7 +162,7 @@ const calculateAssetCurrencyFromExchangeData = async (assetModel, asset_id) => {
  */
 const calculateAssetCurrencyFieldsFromTransactions = async (assetModel, transactionModel, asset_id) => {
     const tdata = await transactionAggregator(transactionModel, asset_id);
-    await assetModel.findByIdAndUpdate(asset_id, {$set: prepareCommonDataForUpdate(tdata)});
+    await assetModel.findByIdAndUpdate(asset_id, { $set: prepareCommonDataForUpdate(tdata) });
 }
 
 /**

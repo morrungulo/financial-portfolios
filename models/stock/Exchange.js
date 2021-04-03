@@ -26,7 +26,7 @@ const exchangeOverviewSchema = new mongoose.Schema({
     PriceToBookRatio: { type: Number, set: convertNoneToZero },
     MarketCapitalization: { type: Number, set: convertNoneToZero },
     EBITDA: { type: Number, set: convertNoneToZero },
-});  
+});
 
 // quote
 const exchangeQuoteSchema = new mongoose.Schema({
@@ -54,9 +54,9 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
 
 // calculated items
 const exchangeCalculatedSchema = new mongoose.Schema({
-    DividendYieldPercent: {type: Number, default: 0},           // 100*(overview.dividend/quote.price)
-    DividendPayoutRatioPercent: {type: Number, default: 0},     // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
-    Week52RangePercent: {type: Number, default: 0},             // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
+    DividendYieldPercent: { type: Number, default: 0 },           // 100*(overview.dividend/quote.price)
+    DividendPayoutRatioPercent: { type: Number, default: 0 },     // 100*(1-(overview.EPS-overview.dividend)/overview.EPS)
+    Week52RangePercent: { type: Number, default: 0 },             // 100*((quote.price - overview.week52low) / (overview.week52high - overview.week52low))
 });
 
 // x,y coords for charts
@@ -91,15 +91,15 @@ const exchangeStockSchema = new mongoose.Schema({
         required: [true, 'Please enter a ticker'],
         index: true,
     },
-    
+
     exchangeOverview: exchangeOverviewSchema,
     exchangeQuote: exchangeQuoteSchema,
     exchangeCalculated: exchangeCalculatedSchema,
-    
+
     exchangeDaily: [exchangeTimeSeriesSchema],
     exchangeGraphData: exchangeXYDailySchema,
 
-}, { timestamps: true});
+}, { timestamps: true });
 
 // the model
 const ExchangeStock = mongoose.model('exchangestock', exchangeStockSchema);

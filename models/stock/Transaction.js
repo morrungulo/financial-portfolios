@@ -83,7 +83,7 @@ const transactionStockSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // calculate some fields
-transactionStockSchema.pre('save', function(next) {
+transactionStockSchema.pre('save', function (next) {
     if (this.kind == 'buy') {
         this.cost = (this.price * this.quantity) + this.commission;
     }

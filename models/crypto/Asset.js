@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
-const ExchangeCrypto= require('./Exchange');
+const ExchangeCrypto = require('./Exchange');
 const Portfolio = require('../../models/Portfolio');
 const commonAssetSchema = require('../common/assetSchema');
 
 // the schema
-const assetCryptoSchema = new mongoose.Schema({  
+const assetCryptoSchema = new mongoose.Schema({
 
     kind: {
         type: String,
         default: 'Crypto',
         immutable: true
     },
-    
+
     common: {
         type: commonAssetSchema.commonSchema,
         default: {},
@@ -41,15 +41,15 @@ assetCryptoSchema.virtual('transactions', {
     localField: '_id',
 });
 
-assetCryptoSchema.virtual('isOpen').get(function() {
+assetCryptoSchema.virtual('isOpen').get(function () {
     return commonAssetSchema.isOpen(this.common);
 });
 
-assetCryptoSchema.virtual('isError').get(function() {
+assetCryptoSchema.virtual('isError').get(function () {
     return commonAssetSchema.isError(this.common);
 });
 
-assetCryptoSchema.virtual('displayName').get(function() {
+assetCryptoSchema.virtual('displayName').get(function () {
     return this.exchange_id.shortName;
 });
 

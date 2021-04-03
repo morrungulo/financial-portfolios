@@ -8,7 +8,7 @@ const transactionCryptoSchema = new mongoose.Schema({
         lowercase: true,
         enum: ['buy', 'sell', 'split', 'units']
     },
-    
+
     date: {
         type: Date,
         required: [true, "A date is required"],
@@ -45,7 +45,7 @@ const transactionCryptoSchema = new mongoose.Schema({
         min: 0,
         default: 0,
     },
-    
+
     // split only
     split_before: {
         type: Number,
@@ -63,7 +63,7 @@ const transactionCryptoSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
-    
+
     // all
     notes: {
         type: Buffer
@@ -76,11 +76,11 @@ const transactionCryptoSchema = new mongoose.Schema({
         required: [true, 'An asset is required'],
         index: true,
     }
-    
+
 }, { timestamps: true });
 
 // calculate some fields
-transactionCryptoSchema.pre('save', function(next) {
+transactionCryptoSchema.pre('save', function (next) {
     if (this.kind === 'buy') {
         this.cost = (this.price * this.quantity) + this.commission;
     }

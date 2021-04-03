@@ -64,7 +64,7 @@ const portfolioSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    
+
     // calculated value
     unrealized_value: {
         type: Number,
@@ -103,12 +103,12 @@ const portfolioSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    
+
     // annualized_value: {
     //     type: Number,
     //     default: 0
     // },
-    
+
     daily_value: {
         type: Number,
         default: 0

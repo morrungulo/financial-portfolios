@@ -8,7 +8,7 @@ const transactionCashSchema = new mongoose.Schema({
         lowercase: true,
         enum: ['buy', 'sell', 'units']
     },
-    
+
     date: {
         type: Date,
         required: [true, "A date is required"],
@@ -51,7 +51,7 @@ const transactionCashSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
-    
+
     // all
     notes: {
         type: Buffer
@@ -64,11 +64,11 @@ const transactionCashSchema = new mongoose.Schema({
         required: [true, 'An asset is required'],
         index: true,
     }
-    
+
 }, { timestamps: true });
 
 // calculate some fields
-transactionCashSchema.pre('save', function(next) {
+transactionCashSchema.pre('save', function (next) {
     if (this.kind === 'buy') {
         this.cost = (this.price * this.quantity) + this.commission;
     }

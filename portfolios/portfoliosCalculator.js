@@ -65,7 +65,7 @@ const updateFieldsDependentOnExchangeData = async (portfolio) => {
     // add to portfolio data
     const pdata = {};
     Object.keys(stockData).forEach(key => {
-        pdata[key] = [stockData, cryptoData, cashData].map(data => data[key]).reduce((acc, cur) => { return acc+cur; }, 0);
+        pdata[key] = [stockData, cryptoData, cashData].map(data => data[key]).reduce((acc, cur) => { return acc + cur; }, 0);
     });
     Object.assign(portfolio, pdata);
 

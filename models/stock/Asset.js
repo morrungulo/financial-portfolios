@@ -41,15 +41,15 @@ assetStockSchema.virtual('transactions', {
     localField: '_id',
 });
 
-assetStockSchema.virtual('isOpen').get(function() {
+assetStockSchema.virtual('isOpen').get(function () {
     return commonAssetSchema.isOpen(this.common);
 });
 
-assetStockSchema.virtual('isError').get(function() {
+assetStockSchema.virtual('isError').get(function () {
     return commonAssetSchema.isError(this.common);
 });
 
-assetStockSchema.virtual('displayName').get(function() {
+assetStockSchema.virtual('displayName').get(function () {
     return this.exchange_id.name;
 });
 

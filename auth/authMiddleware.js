@@ -2,7 +2,6 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-
 /**
  * Middleware which checks if a json web token exists, and if yes, verifies it.
  * 
@@ -26,7 +25,6 @@ const requireAuth = (req, res, next) => {
         res.redirect('/');
     }
 };
-
 
 /**
  * Middleware which extracts the user from the jwt token and verify its existance.
@@ -54,6 +52,5 @@ const checkUser = (req, res, next) => {
         next();
     }
 };
-
 
 module.exports = { requireAuth, checkUser };

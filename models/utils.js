@@ -3,7 +3,7 @@
  * @param {String} v 
  */
 function convertNoneToZero(v) {
-    return (typeof(v) === 'string' && v == 'None') ? 0 : v;
+    return (typeof (v) === 'string' && v == 'None') ? 0 : v;
 }
 
 /**
@@ -11,14 +11,11 @@ function convertNoneToZero(v) {
  * @param {String} v 
  */
 function convertStringWithPercentSignToNumber(v) {
-    if (typeof(v) === 'string') {
-        if (v == 'None') {
-            return 0;
-        } else if (v.endsWith('%')) {
-            return v.replace(/%$/g, '');
-        } else {
-            return v;
-        }
+    if (typeof (v) === 'string') {
+        if (v == 'None') return 0;
+        if (v.endsWith('%')) return v.replace(/%$/g, '');
+        return v;
+
     }
 }
 

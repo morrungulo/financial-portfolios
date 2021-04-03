@@ -18,7 +18,7 @@ async function startServer() {
                 }
                 console.log('Your server is ready on port ' + config.get('server.port') + '!');
             });
-            
+
             process.on('SIGTERM', () => {
                 server.close(() => {
                     console.log("Shutdown the server!");

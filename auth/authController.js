@@ -2,7 +2,6 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-
 /**
  * Handle errors on login / register.
  * 
@@ -40,12 +39,10 @@ const handleErrors = (err) => {
     return errors;
 }
 
-
 /**
  * 3 days in seconds
  */
 const maxAge = 3 * 24 * 60 * 60;
-
 
 /**
  * Create a jwt token.
@@ -58,7 +55,6 @@ const createToken = (id) => {
     });
 };
 
-
 /**
  * GET register.
  * 
@@ -68,7 +64,6 @@ const createToken = (id) => {
 module.exports.register_get = (req, res) => {
     res.render('register-login', { title: 'Register', buttonTitle: 'Sign Up', postPage: 'register' });
 }
-
 
 /**
  * POST register.
@@ -90,7 +85,6 @@ module.exports.register_post = async (req, res) => {
     }
 }
 
-
 /**
  * GET login.
  * 
@@ -100,7 +94,6 @@ module.exports.register_post = async (req, res) => {
 module.exports.login_get = (req, res) => {
     res.render('register-login', { title: 'Login', buttonTitle: 'Login', postPage: 'login' });
 }
-
 
 /**
  * POST login.
@@ -121,7 +114,6 @@ module.exports.login_post = async (req, res) => {
         res.status(400).json({ errors });
     }
 }
-
 
 /**
  * GET logout.

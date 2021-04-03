@@ -40,7 +40,7 @@ module.exports.index = async (req, res) => {
         ]);
         res.locals.portfolios = portfolios;
         res.locals.watchlists = watchlists;
-        res.render('show', {title: "Portfolios and Watchlists", currencies: config.get('currencies')});
+        res.render('show', { title: "Portfolios and Watchlists", currencies: config.get('currencies') });
     }
     catch (err) {
         const errors = handleErrors(err);

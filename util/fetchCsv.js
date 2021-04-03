@@ -9,7 +9,7 @@ var csv = require('csv-parse');
 const fetchAndParseCsvFile = (url) => {
     return new Promise((resolve, reject) => {
         https.request(url, response => {
-            const contents=[];
+            const contents = [];
             const pipe = response.pipe(
                 csv({
                     trim: true,

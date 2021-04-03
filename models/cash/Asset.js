@@ -4,14 +4,14 @@ const Portfolio = require('../../models/Portfolio');
 const commonAssetSchema = require('../common/assetSchema');
 
 // the schema
-const assetCashSchema = new mongoose.Schema({  
+const assetCashSchema = new mongoose.Schema({
 
     kind: {
         type: String,
         default: 'Cash',
         immutable: true
     },
-    
+
     common: {
         type: commonAssetSchema.commonSchema,
         default: {},
@@ -41,15 +41,15 @@ assetCashSchema.virtual('transactions', {
     localField: '_id',
 });
 
-assetCashSchema.virtual('isOpen').get(function() {
+assetCashSchema.virtual('isOpen').get(function () {
     return commonAssetSchema.isOpen(this.common);
 });
 
-assetCashSchema.virtual('isError').get(function() {
+assetCashSchema.virtual('isError').get(function () {
     return commonAssetSchema.isError(this.common);
 });
 
-assetCashSchema.virtual('displayName').get(function() {
+assetCashSchema.virtual('displayName').get(function () {
     return this.exchange_id.shortName;
 });
 

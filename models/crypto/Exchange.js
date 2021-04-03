@@ -51,13 +51,13 @@ const exchangeXYDailySchema = new mongoose.Schema({
 
 // calculated items
 const exchangeCalculatedSchema = new mongoose.Schema({
-    Change: {type: Number, default: 0},         // exchangeDaily[0].Rate - exchangeDaily[1].Rate
-    ChangePercent: {type: Number, default: 0},  // Change/exchangeDaily[0].Rate
+    Change: { type: Number, default: 0 },         // exchangeDaily[0].Rate - exchangeDaily[1].Rate
+    ChangePercent: { type: Number, default: 0 },  // Change/exchangeDaily[0].Rate
 });
 
 // the schema
 const exchangeCryptoSchema = new mongoose.Schema({
-    
+
     // digital code (e.g. BTC)
     from: {
         type: String,
@@ -106,7 +106,7 @@ const exchangeCryptoSchema = new mongoose.Schema({
     exchangeDaily: [exchangeTimeSeriesSchema],
     exchangeGraphData: exchangeXYDailySchema,
 
-}, { timestamps: true});
+}, { timestamps: true });
 
 // the model
 const ExchangeCrypto = mongoose.model('exchangecrypto', exchangeCryptoSchema);
