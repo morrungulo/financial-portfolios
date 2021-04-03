@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  nodejs_financial_portfolios:
-    image: nodejs_financial_portfolios
+  financial_portfolios:
+    image: financial_portfolios
     build: .
     environment:
       NODE_ENV: production
