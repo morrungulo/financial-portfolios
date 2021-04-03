@@ -66,7 +66,9 @@ CONTAINER ID    IMAGE                   COMMAND                   CREATED       
 94114c5e8095    mongo:latest            "docker-entrypoint.s…"    45 seconds ago    Up 44 seconds    0.0.0.0:27017->27017/tcp    financial-portfolios_mongodb_1
 ```
 
-#### Goto any browser and check the URL `localhost:9999`. Success! You are now ready to use the **Financial Portfolios** application.
+#### Goto any browser and check the URL `localhost:9999`
+
+Success! You are now ready to use the **Financial Portfolios** application.
 
 ## Customize the URL port
 
@@ -113,6 +115,8 @@ To add entries to any watchlist, click on the watchlist name and then on the `AD
 * Stock - select the ticker (e.g. MSFT) for the stock you wish to add (no autocomplete - sorry).
 * Crypto - select the `from` crypto code (e.g. BTC) and the `to` 3-letter currency code (e.g. EUR) for the crypto you wish to add (no autocomplete - sorry).
 * Cash - select the `from` 3-letter code (e.g. USD) and the `to` 3-letter currency code (e.g. EUR) for the currency you wish to add (no autocomplete - sorry).
+
+A new entry will be added to the watchlist table. You may sort the table entries by clicking on the respective header (sorting order will not be saved - sorry). If you want to know more details about the entry, you may click on the name to be taken to another page where it will be displayed 3 panels with the price history, the entry profile and the entry summary.
 
 # Additional Features
 
