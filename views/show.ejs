@@ -49,7 +49,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                    <% portfolios.forEach((portfolio) => { %>
+                        <% portfolios.forEach((portfolio) => { %>
                             <tr class="item">
                                 <td sorttable_customkey="<%- portfolio.name %>">
                                     <div class="truncated">
@@ -60,7 +60,7 @@
                                     <span class="format-currency-<%- portfolio.currency %>"><%- portfolio.unrealized_value %></span><br>
                                     <span class="format-percentage"><%- portfolio.unrealized_value_percentage %></span>
                                 </td>
-                                <td sorttable_customkey="<%- portfolio.daily_value %>">
+                                <td sorttable_customkey="<%- portfolio.daily_value_percentage %>">
                                     <span class="format-currency-<%- portfolio.currency %> format-pos-neg-color"><%- portfolio.daily_value %></span><br>
                                     <span class="format-percentage format-pos-neg-color"><%- portfolio.daily_value_percentage %></span>
                                 </td>
@@ -75,7 +75,7 @@
                                 </td>
                                 <td class="delete-row"><button onclick="portfoliosRemoveConfirmButton('<%- portfolio.name %>', { 'id': '<%- portfolio._id %>' })" class="icon"><img src="/img/iconmonstr-x-mark-4.svg" alt="Remove row" class="button-svg shrink"></button></td>
                             </tr>
-                    <% }); %>
+                        <% }); %>
                         </tbody>
                     </table>
                 <% } %>
@@ -109,7 +109,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                    <% watchlists.forEach((watchlist) => { %>
+                        <% watchlists.forEach((watchlist) => { %>
                             <tr class="item">
                                 <td sorttable_customkey="<%- watchlist.name %>">
                                     <div class="truncated">
@@ -125,7 +125,7 @@
                                     </button>
                                 </td>     
                             </tr>
-                    <% }); %>
+                        <% }); %>
                         </tbody>
                     </table>
                 <% } %>
