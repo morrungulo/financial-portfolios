@@ -15,7 +15,7 @@ mongoose.connection.on('connected', async function () {
     }
 });
 
-mongoose.connection.on('connected', async function () { 
+mongoose.connection.on('connected', async function () {
     const count = await ValidCrypto.estimatedDocumentCount();
     if (count === 0) {
         const service = new CryptoService();
@@ -33,19 +33,26 @@ mongoose.connection.on('connected', async function () {
 
 module.exports = {
     initialize: async () => {
-        // mongodb atlas
-        // const dbURI = 'mongodb+srv://morrungulo:EvnrCV76.MB@cluster0.yasie.mongodb.net/financial-portfolios';
-        
+        // mongodb standalone docker
+        // -- docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0
+        const dbURI = 'mongodb://172.17.0.1:27017/' + config.get('mongodb.dbname');
+
+        // run mongo inside the container
+        // -- docker exec -it mongodb /bin/bash
+
         // mongodb docker-compose
+        // -- docker-compose up
         // const dbURI = 'mongodb://mongodb:27017/' + config.get('mongodb.dbname');
-        
-        // mongodb standalone docker (docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0)
-        // run mongo inside the container (docker exec -it mongodb /bin/bash)
-        const dbURI = 'mongodb://172.17.0.1:27017/test';
-        
+
         // database connection
         try {
-            await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex:true, socketTimeoutMS:15000 })
+            await mongoose.connect(dbURI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useFindAndModify: false,
+                useCreateIndex: true,
+                socketTimeoutMS: 15000
+            })
             console.log('Mongoose loaded!')
         } catch (err) {
             console.log(err);
