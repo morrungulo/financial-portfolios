@@ -98,8 +98,6 @@ const refreshExchangeCash = async () => {
 module.exports = {
     initialize: async () => {
 
-        return; //VERY TEMPORARY
-
         // initialize cron jobs for when the NYSE opens
         const timezone = {
             timezone: "America/New_York"

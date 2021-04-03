@@ -1,19 +1,22 @@
 version: '3.4'
 
 services:
-  financial_portfolios:
+  application:
+    restart: unless-stopped
     image: financial_portfolios
     build: .
     environment:
-      NODE_ENV: production
+      - NODE_ENV=production
+      - AVAK
     ports:
-      - 3000:3000
+      - 9999:3000
     volumes:
       - .:/usr/src/app
     links:
       - mongodb
       
   mongodb:
+    restart: unless-stopped
     image: mongo:latest
     ports:
       - 27017:27017

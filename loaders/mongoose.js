@@ -33,16 +33,12 @@ mongoose.connection.on('connected', async function () {
 
 module.exports = {
     initialize: async () => {
-        // mongodb standalone docker
-        // -- docker run -p 27017:27017 --name mongodb -v data:/data/db --rm -d mongo --bind_ip 0.0.0.0
-        const dbURI = 'mongodb://172.17.0.1:27017/' + config.get('mongodb.dbname');
 
-        // run mongo inside the container
-        // -- docker exec -it mongodb /bin/bash
+        // with mongodb docker image
+        // const dbURI = 'mongodb://172.17.0.1:27017/' + config.get('mongodb.dbname');
 
-        // mongodb docker-compose
-        // -- docker-compose up
-        // const dbURI = 'mongodb://mongodb:27017/' + config.get('mongodb.dbname');
+        // with docker-compose
+        const dbURI = 'mongodb://mongodb:27017/' + config.get('mongodb.dbname');
 
         // database connection
         try {
