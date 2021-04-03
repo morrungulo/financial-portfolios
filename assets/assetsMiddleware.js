@@ -1,6 +1,7 @@
 const AssetStock = require('../models/stock/Asset');
 const AssetCrypto = require('../models/crypto/Asset');
 const AssetCash = require('../models/cash/Asset');
+const constants = require('../constants');
 
 /**
  * Create common definitions.
@@ -18,18 +19,18 @@ const defineCommonLocals = (dbmodel, name) => {
 }
 
 const provideAssetStock = (req, res, next) => {
-    res.locals.asset = defineCommonLocals(AssetStock, 'stock');
+    res.locals.asset = defineCommonLocals(AssetStock, constants.ASSET_TYPE.STOCK);
     next();
 };
 
 const provideAssetCrypto = (req, res, next) => {
-    res.locals.asset = defineCommonLocals(AssetCrypto, 'crypto');
+    res.locals.asset = defineCommonLocals(AssetCrypto, constants.ASSET_TYPE.CRYPTO);
     next();
 };
 
 const provideAssetCash = (req, res, next) => {
-    res.locals.asset = defineCommonLocals(AssetCash, 'cash');
-    res.locals.asset.url = 'cash';
+    res.locals.asset = defineCommonLocals(AssetCash, constants.ASSET_TYPE.CASH);
+    res.locals.asset.url = constants.ASSET_TYPE.CASH;
     next();
 };
 

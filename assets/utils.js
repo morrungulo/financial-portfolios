@@ -1,3 +1,5 @@
+const constants = require('../constants');
+
 module.exports.prepareCommonDataForUpdate = (data) => {
     const result = {};
     Object.keys(data).forEach(k => result['common.' + k] = data[k]);
@@ -11,16 +13,14 @@ module.exports.prepareCommonDataForUpdate = (data) => {
  */
 module.exports.calculateNewStateFromTransactionData = (tdata) => {
     const hasErrors = (tdata.total_quantity < 0);
-    if (hasErrors) {
-        tdata.status = 'error';
-    } else {
-        const hasZeroTransactions = (tdata.total_transactions === 0);
-        if (hasZeroTransactions) {
-            tdata.status = 'new';
-        } else {
-            const hasUnits = (tdata.total_quantity > 0);
-            tdata.status = (hasUnits) ? 'open' : 'close';
-        }
-    }
-    return tdata;
+    if (hasErrors) return { ...tdata, status: constants.ASSET_STATUS.ERR };
+
+    const hasZeroTransactions = (tdata.total_transactions === 0);
+    if (hasZeroTransactions) return { ...tdata, status: constants.ASSET_STATUS.NEW };
+
+    const hasQuantity = (tdata.total_quantity > 0);
+    if (hasQuantity) return { ...tdata, status: constants.ASSET_STATUS.OPEN };
+
+    // last case
+    return { ...tdata, status: constants.ASSET_STATUS.CLOSE };
 }

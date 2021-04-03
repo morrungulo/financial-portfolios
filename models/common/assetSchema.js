@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const constants = require('../../constants');
 
 /**
  * The error messages.
@@ -11,14 +12,14 @@ const errorMessages = {
  * returns true if asset is in status 'open'
  */
 const isOpen = (instance) => {
-    return instance.status === 'open';
+    return instance.status === constants.ASSET_STATUS.OPEN;
 }
 
 /**
  * returns true if asset is in status 'error'
  */
 const isError = (instance) => {
-    return instance.status === 'error';
+    return instance.status === constants.ASSET_STATUS.ERR;
 }
 
 /**
@@ -26,7 +27,7 @@ const isError = (instance) => {
  */
 const commonSchema = new mongoose.Schema({
 
-    // what is the current status of this asset (calculated on preSaveTrigger)
+    // what is the current status of this asset
     // - new - newly created
     // - open - has open position, namely positive stocks
     // - close - does not have open position, zero stocks
@@ -34,10 +35,10 @@ const commonSchema = new mongoose.Schema({
     status: {
         type: String,
         lowercase: true,
-        default: 'new',
-        enum: ['new', 'open', 'close', 'error'],
+        default: constants.ASSET_STATUS.NEW,
+        enum: constants.ASSET_STATUS_LIST,
     },
-    
+
     // total quantity of units
     total_quantity: {
         type: Number,
