@@ -22,21 +22,21 @@ The Stock, Crypto and Forex data are provided by the [Alpha Vantage API](https:/
 
 **You must have your Alpha Vantage API key ready.**
 
-1. Clone the repository
+#### Clone the repository
 
 ```
 $ git clone https://github.com/morrungulo/financial-portfolios.git
 ```
 
-2. `cd` to its directory
+#### `cd` to its directory
 
 ```
 $ cd financial-portfolios
 ```
 
-3. `export` your Alpha Vantage API key (AVAK). You can do this in 2 different ways:
+#### `export` your Alpha Vantage API key (AVAK)
 
-- Set the environment variable in a `.env` file (recommended):
+##### Either set the environment variable in a `.env` file (recommended):
 
 ```
 $ echo AVAK=XYZ0123456789 > .env
@@ -44,20 +44,20 @@ $ cat .env
 AVAK=XYZ0123456789
 ```
 
-- Set the environment variable in your shell:
+##### Or set the environment variable in your shell:
 
 ```
 $ export AVAK=XYZ0123456789
 ```
 
 
-4. Launch the docker containers
+#### Launch the docker containers
 
 ```
 $ docker-compose up --build -d
 ```
 
-5. Check that the containers are running ok
+#### Check that the containers are running ok
 
 ```
 $ docker container ls
@@ -66,7 +66,7 @@ CONTAINER ID    IMAGE                   COMMAND                   CREATED       
 94114c5e8095    mongo:latest            "docker-entrypoint.s…"    45 seconds ago    Up 44 seconds    0.0.0.0:27017->27017/tcp    financial-portfolios_mongodb_1
 ```
 
-6. Goto any browser and check the URL `localhost:9999`. Success! You are now ready to use the **Financial Portfolios** application.
+#### Goto any browser and check the URL `localhost:9999`. Success! You are now ready to use the **Financial Portfolios** application.
 
 ## Customize the URL port
 
