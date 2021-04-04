@@ -12,7 +12,7 @@ One of the major goals for this project was to learn Node.js and Javascript. The
 1. improve my CSS *skillset* and employ my own CSS implementation and,
 2. connect and interact with a database engine
 
-To fulfill (1), I would not use any CSS library such as bootstrap or materialize, I would write my own CSS. In the end, I can honestly state that this was a mistake as I spent a lot of effor on it, and the end result is a bit poor. I will improve on it!
+To fulfill (1), I would not use any CSS library such as bootstrap or materialize, I would write my own CSS. In the end, I can honestly state that this was a mistake as I spent a lot of effort on it, and the end result is a bit poor. I will improve on it!
 
 For the database, it was very much straightforward, but it had its challenges as well. I started off using CouchDB but after discussions with a friend, I changed to MongoDB. I believe it was a good decision.
 
@@ -78,7 +78,23 @@ Success! You are now ready to use the **Financial Portfolios** application.
 
 ## Customize the URL port
 
-You may modify the port number from the default value `9999` to any other number you wish. Just edit the file `docker-compose.yml`, search for `9999` and change to the port number you wish. Save the file before exiting and execute the `docker-compose` command again.
+You may modify the port number from the default value `9999` to any other number you wish. Just edit the file `docker-compose.yml`, search for `9999` and change to the port number you wish. Save the file before exiting and execute the `docker-compose` command again. For example, to change the port to `1234` (using `sed`):
+
+```
+$ cd financial-portfolios
+$ docker-compose down
+$ sed -i 's/9999/1234/' docker-compose.yml
+$ docker-compose up -d
+```
+
+## Stop the application
+
+To stop the application, use the command `docker-compose`.
+
+```
+$ cd financial-portfolios
+$ docker-compose down
+```
 
 # How to use the application
 
@@ -124,6 +140,8 @@ To add entries to any watchlist, click on the watchlist name and then on the `AD
 
 A new entry will be added to the watchlist table. You may sort the table entries by clicking on the respective header (sorting order will not be saved - sorry). If you want to know more details about the entry, you may click on the name to be taken to another page where it will be displayed 3 panels with the price history, the entry profile and the entry summary.
 
-# Additional Features
+# Roadmap
 
-If you would like me to implement additional features (or correct any nasty bug), feel free to contact me with the request.
+I am not planning on developing this much further but I can fix a few bugs which I know they exist. However, if there are suggestions for new features, I am more than willing to consider them.
+
+I am planning on building another Financial Portfolios program, but using React and Firebase. I am building up the requirements list and it is getting pretty long! This endeavour will be starting soon! The ultimate goal is to have it run on my mobile phone. Fingers crossed!
