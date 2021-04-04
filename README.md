@@ -1,16 +1,22 @@
 # Financial Portfolios
 
-As I started learning Javascript and Node.js, I needed a small project to apply what I had learned. It was a tough beginner project, but very satisfying to finally see it come alive. It only took 3 months!
-However as I was developing the project, the feature set just kept growing and growing, until I decided to finish it with the existing feature set. Many more features could be added, but I leave that up to you!
+As I started learning Javascript and Node.js, I needed a small project to apply what I had learned. It was a tough beginner project, but very satisfying to finally see it come alive. It only took 3 months! Yes, quite a long time, but hey, I was just starting with Javascript and Node.js.
+
+When I started the project I had a clear idea on what I wanted. However as development continued, the feature set just kept growing and growing, until I decided to finish it with the existing feature set. Many more features could be added, but I leave that up to you!
+
 Now I am ready to move to the next one.
 
 ## Design decisions
 
-One of the major goals for this project was to learn Node.js and Javascript. This goal was achieved. There were also secondary goals, namely (1) improve and employ my own CSS implementation and (2) connect and interact with a database engine. This led to two important design decisions:
-- I would not use any CSS library such as bootstrap or materialize, I would write my own CSS (gosh).
-- In the beginning I was using CouchDB but after discussions with a friend, I changed to MongoDB.
+One of the major goals for this project was to learn Node.js and Javascript. These goals were achieved. There were also secondary goals, namely:
+1. improve my CSS *skillset* and employ my own CSS implementation and,
+2. connect and interact with a database engine
 
-The deployment of the application on the local machine is via `Docker`. The Node.js backend and MongoDB run in two independent `Docker` containers and launched with `docker-compose`. More info [here](#launch-with-docker-compose).
+To fulfill (1), I would not use any CSS library such as bootstrap or materialize, I would write my own CSS. In the end, I can honestly state that this was a mistake as I spent a lot of effor on it, and the end result is a bit poor. I will improve on it!
+
+For the database, it was very much straightforward, but it had its challenges as well. I started off using CouchDB but after discussions with a friend, I changed to MongoDB. I believe it was a good decision.
+
+The deployment of the application on the local machine is via `Docker`. The Node.js backend and MongoDB run in two independent `Docker` containers and launched with `docker-compose`. More info [here](#launch-with-docker-compose). The database storage is within a local *volume* and it is very important to **not delete the containers**, otherwise your *volume* is deleted.
 
 ## AlphaVantage API
 
