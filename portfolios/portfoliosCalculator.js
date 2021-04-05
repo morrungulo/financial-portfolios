@@ -88,12 +88,10 @@ const calculatePortfolioFromExchangeData = async (portfolio_id) => {
     const allActions = [...stockActions, ...cryptoActions, ...cashActions];
     await Promise.all(allActions);
 
-    // update portfolio
-    if (allActions.length > 0) {
-        await updateFieldsDependentOnExchangeData(portfolio);
-        await portfolio.save();
-        PortfolioEmitter.emit('update_due_to_exchange', portfolio_id);
-    }
+    // update portfolio (regardless whether there are any actions)
+    await updateFieldsDependentOnExchangeData(portfolio);
+    await portfolio.save();
+    PortfolioEmitter.emit('update_due_to_exchange', portfolio_id);
 }
 
 module.exports = {
