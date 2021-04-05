@@ -1,6 +1,6 @@
 {
   "mongodb": {
     "dbname": "financial-portfolios",
-    "port": 27000
+    "port": 27018
   }
 }

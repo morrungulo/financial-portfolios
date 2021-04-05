@@ -18,8 +18,9 @@ services:
   mongodb:
     restart: unless-stopped
     image: mongo:latest
+    command: mongod --port 27018
     ports:
-      - 27000:27017
+      - 27018:27018
     volumes:
       - data:/data/db
 
