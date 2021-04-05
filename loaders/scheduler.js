@@ -33,7 +33,7 @@ const refreshExchangeStock = async () => {
 /**
  * Purge exchange stocks which are unused
  */
-const removeUnusedExchangeItems = async () => {    
+const removeUnusedExchangeItems = async () => {
     console.log('(cron) remove unused items');
 
     // get distinct 'used' assets and watchlist entries
@@ -103,21 +103,21 @@ module.exports = {
     initialize: async () => {
 
         // initialize cron jobs for when the NYSE opens
-        const timezone = {
+        const options = {
             timezone: "America/New_York"
-        }
+        };
 
         // 9:30 until 10:00 (NYT)
         const marketFirstHalfHour = '30-59/5 9 * * Mon-Fri';
-        ncron.schedule(marketFirstHalfHour, refreshExchangeStock, timezone);
+        ncron.schedule(marketFirstHalfHour, refreshExchangeStock, options);
 
         // 10:00 until 16:00 (NYT)
         const marketRegularHours = '*/5 10-16 * * Mon-Fri';
-        ncron.schedule(marketRegularHours, refreshExchangeStock, timezone);
+        ncron.schedule(marketRegularHours, refreshExchangeStock, options);
 
         // 17:00 until 19:00 (NYT)
         const marketAfterMarket = '*/5 17,19 * * Mon-Fri';
-        ncron.schedule(marketAfterMarket, refreshExchangeStock, timezone);
+        ncron.schedule(marketAfterMarket, refreshExchangeStock, options);
 
         // midnight until 1:00 (localtime)
         const startOfDay = '*/5 0 * * Mon-Sat';
@@ -128,8 +128,8 @@ module.exports = {
         ncron.schedule(startOfDayPlusOne, refreshExchangeCash);
 
         // 5:00 until 10:00 weekend (localtime)
-        const fromFiveToTenOclock = '*/5 5-12 * * Sat,Sun';
-        ncron.schedule(fromFiveToTenOclock, refreshExchangeStock);
+        const fromFiveToTwelveOclock = '*/5 5-12 * * Sat,Sun';
+        ncron.schedule(fromFiveToTwelveOclock, refreshExchangeStock);
 
         // purge unused exchange items
         // everyday at 1:00 (localtime)
