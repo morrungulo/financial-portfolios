@@ -67,9 +67,9 @@ $ docker-compose up --build -d
 
 ```
 $ docker container ls
-CONTAINER ID    IMAGE                   COMMAND                   CREATED           STATUS           PORTS                       NAMES
-11bb68b1eda0    financial_portfolios    "docker-entrypoint.s…"    44 seconds ago    Up 44 seconds    0.0.0.0:9999->3000/tcp      financial-portfolios_application_1
-94114c5e8095    mongo:latest            "docker-entrypoint.s…"    45 seconds ago    Up 44 seconds    0.0.0.0:27018->27018/tcp    financial-portfolios_mongodb_1
+CONTAINER ID    IMAGE                   COMMAND                   CREATED           STATUS           PORTS                                 NAMES
+11bb68b1eda0    financial_portfolios    "docker-entrypoint.s…"    44 seconds ago    Up 44 seconds    0.0.0.0:9999->3000/tcp                financial-portfolios_application_1
+94114c5e8095    mongo:latest            "docker-entrypoint.s…"    45 seconds ago    Up 44 seconds    27017/tcp, 0.0.0.0:27018->27018/tcp   financial-portfolios_mongodb_1
 ```
 
 #### Goto any browser and check the URL `localhost:9999`
