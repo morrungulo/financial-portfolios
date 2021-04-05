@@ -33,7 +33,9 @@ const refreshExchangeStock = async () => {
 /**
  * Purge exchange stocks which are unused
  */
-const removeUnusedExchangeItems = async () => {
+const removeUnusedExchangeItems = async () => {    
+    console.log('(cron) remove unused items');
+
     // get distinct 'used' assets and watchlist entries
     const [assetStocks, watchlistStocks, assetCryptos, watchlistCryptos, assetCash, watchlistCash] = await Promise.all([
         AssetStock.find({}).distinct('exchange_id'),
@@ -61,6 +63,8 @@ const removeUnusedExchangeItems = async () => {
  * Update valid listings (stock, crypto, forex).
  */
 const updateValidListings = async () => {
+    console.log('(cron) updating listings');
+
     const ss = new StockService();
     const cs = new CryptoService();
     const fs = new ForexService();
