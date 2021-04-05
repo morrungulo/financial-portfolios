@@ -26,11 +26,7 @@
             </div>
             <div id="entry-cash-div">
                 <label for="fromCurrency">Currency</label>
-                <select id="fromCurrency">
-                <% currencies.forEach(currency => { %>
-                    <option value="<%- currency.short %>"><%- currency.long %> (<%- currency.symbol %>)</option>
-                <% }); %>
-                </select>
+                <input type="text" id="fromCurrency" placeholder="3-letter symbol (eg. USD)">
                 <div class="fromCurrency error"></div>
             </div>
             <div class="mini-nav">
