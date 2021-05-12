@@ -107,39 +107,51 @@ module.exports = {
             timezone: "America/New_York"
         };
 
-        // 9:30 until 10:00 (NYT)
-        const marketFirstHalfHour = '30-59/5 9 * * Mon-Fri';
-        ncron.schedule(marketFirstHalfHour, refreshExchangeStock, options);
+        // stock market timezone
+        {
+            // 9:30 until 10:00 (NYT)
+            const marketFirstHalfHour = '30-59/5 9 * * Mon-Fri';
+            ncron.schedule(marketFirstHalfHour, refreshExchangeStock, options);
 
-        // 10:00 until 16:00 (NYT)
-        const marketRegularHours = '*/5 10-16 * * Mon-Fri';
-        ncron.schedule(marketRegularHours, refreshExchangeStock, options);
+            // 10:00 until 16:00 (NYT)
+            const marketRegularHours = '*/5 10-16 * * Mon-Fri';
+            ncron.schedule(marketRegularHours, refreshExchangeStock, options);
 
-        // 17:00 until 19:00 (NYT)
-        const marketAfterMarket = '*/5 17,19 * * Mon-Fri';
-        ncron.schedule(marketAfterMarket, refreshExchangeStock, options);
+            // 17:00 until 19:00 (NYT)
+            const marketAfterMarket = '*/5 17,19 * * Mon-Fri';
+            ncron.schedule(marketAfterMarket, refreshExchangeStock, options);
+        }
 
-        // midnight until 1:00 (localtime)
-        const startOfDay = '*/5 0 * * Mon-Sat';
-        ncron.schedule(startOfDay, refreshExchangeCrypto);
+        // local timezone
+        {
+            // daily
+            {
+                // @13:00 (localtime)
+                const atNoon = '*/5 12 * * *';
+                ncron.schedule(atNoon, refreshExchangeCrypto);
 
-        // 1:00 until 2:00 (localtime)
-        const startOfDayPlusOne = '*/5 1 * * Mon-Sat';
-        ncron.schedule(startOfDayPlusOne, refreshExchangeCash);
+                // @14:00 (localtime)
+                const at1pm = '*/5 13 * * *';
+                ncron.schedule(at1pm, refreshExchangeCash);
 
-        // 5:00 until 10:00 weekend (localtime)
-        const fromFiveToTwelveOclock = '*/5 5-12 * * Sat,Sun';
-        ncron.schedule(fromFiveToTwelveOclock, refreshExchangeStock);
+                // purge unused exchange items
+                // everyday at 10am (localtime)
+                const at10am = '0 10 * * *';
+                ncron.schedule(at10am, removeUnusedExchangeItems);
+            }
 
-        // purge unused exchange items
-        // everyday at 1:00 (localtime)
-        const atOneOclock = '0 1 * * *';
-        ncron.schedule(atOneOclock, removeUnusedExchangeItems);
+            // weekend
+            {
+                // 10:00 until 15:00 weekend (localtime)
+                const from10to16weekends = '*/5 10-16 * * Sat,Sun';
+                ncron.schedule(from10to16weekends, refreshExchangeStock);
 
-        // update valid listings
-        // once a week on Monday at 1:00 (localtime)
-        const atOneOclockMonday = '0 1 * * Mon';
-        ncron.schedule(atOneOclockMonday, updateValidListings);
+                // update valid listings
+                // once a week on Sunday at 22:00 (localtime)
+                const onSundayEvening = '0 22 * * Sun';
+                ncron.schedule(onSundayEvening, updateValidListings);
+            }
+        }
 
         // complete
         console.log('Scheduler loaded!')

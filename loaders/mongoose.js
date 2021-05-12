@@ -36,7 +36,7 @@ module.exports = {
 
         // with mongodb docker image
         // const dbURI = `mongodb://172.17.0.1:${config.get('mongodb.port')}/${config.get('mongodb.dbname')}`;
-        
+
         // with docker-compose
         const dbURI = `mongodb://mongodb:${config.get('mongodb.port')}/${config.get('mongodb.dbname')}`;
 
