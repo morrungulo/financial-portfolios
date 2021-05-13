@@ -131,7 +131,7 @@ module.exports = {
                 ncron.schedule(atNoon, refreshExchangeCrypto);
 
                 // @14:00 (localtime)
-                const at1pm = '*/5 13 * * *';
+                const at1pm = '0-30/5 13 * * Mon-Fri';
                 ncron.schedule(at1pm, refreshExchangeCash);
 
                 // purge unused exchange items
