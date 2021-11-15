@@ -1,22 +1,34 @@
 /**
- * Return 0 iff 'v' is equal to 'None'.
- * @param {String} v 
+ * @param {String} str 
+ * @returns true if str is invalid string number (eg: None, -)
  */
-function convertNoneToZero(v) {
-    return (typeof (v) === 'string' && v == 'None') ? 0 : v;
+function isInvalidFormat(str) {
+    if (typeof (str) === 'string') {
+        const invalidNumbers = ['None', '-']
+        return undefined !== invalidNumbers.find(v => (str == v))
+    }
+    return true
 }
 
 /**
- * Remove the percent sign of the number (from '0.1234%' to '0.1234').
+ * Return '0' iff 'v' is invalid.
  * @param {String} v 
+ * @returns {String}
+ */
+function convertNoneToZero(v) {
+    return isInvalidFormat(v) ? '0' : v;
+}
+
+/**
+ * Remove the percent sign of the number (from '0.1234%' to '0.1234'). If invalid, return '0'.
+ * @param {String} v 
+ * @returns {String}
  */
 function convertStringWithPercentSignToNumber(v) {
-    if (typeof (v) === 'string') {
-        if (v == 'None') return 0;
+    if (!isInvalidFormat(v)) {
         if (v.endsWith('%')) return v.replace(/%$/g, '');
-        return v;
-
     }
+    return '0';
 }
 
 module.exports = {
