@@ -28,6 +28,31 @@ const fetchAndParseCsvFile = (url) => {
     });
 }
 
+const parseCsvData = (data) => {
+    return new Promise((resolve, reject) => {
+        const records = [];
+        const parser = csv({
+            trim: true,
+            columns: true,
+            delimiter: ',',
+            skip_empty_lines: true
+        });
+        parser.on('error', err => {
+            console.error(err.message);
+            reject(err);
+        });
+        parser.on('data', row => {
+            records.push(row);
+        });
+        parser.on('end', () => {
+            resolve(records);
+        });
+        parser.write(data);
+        parser.end();
+    });
+}
+
 module.exports = {
-    fetchAndParseCsvFile
+    fetchAndParseCsvFile,
+    parseCsvData
 }

@@ -1,7 +1,7 @@
 const { default: chalk } = require('chalk');
 const config = require('config');
-const { fetchAndParseCsvFile } = require('../../util/fetchCsv');
-const alpha = require('alphavantage')({ key: config.get('alphavantage.apikey') });
+const { fetchAndParseCsvFile, parseCsvData } = require('../../util/fetchCsv');
+const rapidapi = require('../api/rapidapi');
 
 /**
  * Convert alpha data into mongodb schema data
@@ -85,8 +85,8 @@ const buildFromAlphaTimeSeries = (alpha) => {
 }
 
 async function fetchExchangeOverview(ticker) {
-    const data = await alpha.fundamental.company_overview(ticker);
-    const result = buildFromAlphaOverview(data);
+    const response = await rapidapi.stockOverview(ticker);
+    const result = buildFromAlphaOverview(response.data);
     return result;
 }
 
@@ -97,14 +97,14 @@ async function fetchExchangeOverview(ticker) {
 // }
 
 async function fetchExchangeQuote(ticker) {
-    const data = await alpha.data.quote(ticker);
-    const result = buildFromAlphaQuote(data);
+    const response = await rapidapi.stockQuote(ticker);
+    const result = buildFromAlphaQuote(response.data);
     return result;
 }
 
 async function fetchExchangeDaily(ticker) {
-    const data = await alpha.data.daily_adjusted(ticker, 'full');
-    const result = buildFromAlphaTimeSeries(data);
+    const response = await rapidapi.stockDailyAdjusted(ticker);
+    const result = buildFromAlphaTimeSeries(response.data);
     return result;
 }
 
@@ -130,10 +130,8 @@ async function fetchAll(ticker) {
 }
 
 async function fetchValidListing() {
-    const url = new URL('https://www.alphavantage.co/query/');
-    url.searchParams.append('function', 'LISTING_STATUS');
-    url.searchParams.append('apikey', config.get('alphavantage.apikey'));
-    const result = await fetchAndParseCsvFile(url.href);
+    const response = await rapidapi.stockListingStatus();
+    const result = await parseCsvData(response.data);
     return result;
 }
 

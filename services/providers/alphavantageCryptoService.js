@@ -1,6 +1,6 @@
 const config = require('config');
 const { fetchAndParseCsvFile } = require('../../util/fetchCsv');
-const alpha = require('alphavantage')({ key: config.get('alphavantage.apikey') });
+const rapidapi = require('../api/rapidapi');
 
 /**
  * Convert alpha data into mongodb schema data
@@ -62,14 +62,14 @@ const buildFromAlphaTimeSeries = (alpha) => {
 }
 
 async function fetchExchangeRate(from, to) {
-    const data = await alpha.forex.rate(from, to);
-    const result = buildFromAlphaRate(data);
+    const response = await rapidapi.currencyExchangeRate(from, to);
+    const result = buildFromAlphaRate(response.data);
     return result;
 }
 
 async function fetchExchangeDaily(from, to) {
-    const data = await alpha.crypto.daily(from, to);
-    const result = buildFromAlphaTimeSeries(data);
+    const response = await rapidapi.cryptoDaily(from, to);
+    const result = buildFromAlphaTimeSeries(response.data);
     return result;
 }
 

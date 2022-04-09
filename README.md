@@ -20,13 +20,13 @@ The deployment of the application on the local machine is via `Docker`. The Node
 
 ## AlphaVantage API
 
-The Stock, Crypto and Forex data are provided by the [Alpha Vantage API](https://www.alphavantage.co/) -- Since I did not purchase any of their plans, this project is optimized to only use their free service, restricted to 5 API requests per minute and 500 API requests per day. In order to use this application you must get your own free Alpha Vantage API key, but be aware of its limitations. The implementation has `schedulers` to fetch data in order not to violate the restrictions of the free service but it may happen (if for example you add many new stocks at once) that the service is not able to accomodate your requests. You'll just have to try again on the next minute or so!
+The Stock, Crypto and Forex data are provided by the [RapidAPI Alpha Vantage API](https://rapidapi.com/alphavantage/api/alpha-vantage/) -- Since I did not purchase any of their plans, this project is optimized to only use their free service, restricted to 5 API requests per minute and 500 API requests per day. In order to use this application you must get your own free RapidAPI Alpha Vantage API key (`X-RapidAPI-Key`), but be aware of its limitations. The implementation has `schedulers` to fetch data in order not to violate the restrictions of the free service but it may happen (if for example you add many new stocks at once) that the service is not able to accomodate your requests. You'll just have to try again on the next minute or so!
 
-[Get your free Alpha Vantage API key](https://www.alphavantage.co/support/#api-key).
+[Get your free Alpha Vantage API key](https://rapidapi.com/alphavantage/api/alpha-vantage/).
 
 # Launch with Docker Compose
 
-**You must have your Alpha Vantage API key ready.**
+**You must have your RapidAPI Alpha Vantage API key ready.**
 
 #### Clone the repository
 
@@ -45,15 +45,15 @@ $ cd financial-portfolios
 ##### Either set the environment variable in a `.env` file (recommended):
 
 ```
-$ echo AVAK=XYZ0123456789 > .env
+$ echo AVAK=XYZ0123456789ABC012345678901234567890 > .env
 $ cat .env
-AVAK=XYZ0123456789
+AVAK=XYZ0123456789ABC012345678901234567890
 ```
 
 ##### Or set the environment variable in your shell:
 
 ```
-$ export AVAK=XYZ0123456789
+$ export AVAK=XYZ0123456789ABC012345678901234567890
 ```
 
 
