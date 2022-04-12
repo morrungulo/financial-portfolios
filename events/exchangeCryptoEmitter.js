@@ -50,12 +50,6 @@ class ExchangeCryptoEmitter extends EventEmitter {
             if (exItem.exchangeDaily.length >= 2) {
                 exItem.exchangeCalculated.Change = exItem.exchangeDaily[0].Close - exItem.exchangeDaily[1].Close;
                 exItem.exchangeCalculated.ChangePercent = 100 * (exItem.exchangeCalculated.Change / exItem.exchangeDaily[1].Close);
-
-                console.log('aaa: ' + JSON.stringify(exItem.exchangeDaily[0]))
-                console.log('aaa: ' + JSON.stringify(exItem.exchangeDaily[1]))
-                console.log('aaa: ' + exItem.exchangeCalculated.Change)
-                console.log('aaa: ' + exItem.exchangeCalculated.ChangePercent)
-
                 await exItem.save();
             }
         } catch (err) {

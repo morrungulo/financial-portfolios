@@ -105,18 +105,11 @@ class CryptoService {
         // create new
         const valid = await this.getFromValidCrypto(from);
         const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(valid.name, to);
-
-        console.log(JSON.stringify(exchangeRateInst))
-        console.log(JSON.stringify(exchangeDailyInst[0]))
-        console.log(JSON.stringify(exchangeDailyInst[1]))
-        console.log(JSON.stringify(exchangeDailyInst[exchangeDailyInst.length - 1]))
-        console.log(JSON.stringify(exchangeCalculatedInst))
-
         const exCrypto = await ExchangeCrypto.create({
             from,
             to,
-            name: [from, to].join(' - '),
-            longName: [from, to].join(' - '),
+            name: [from.toUpperCase(), to.toUpperCase()].join(' - '),
+            longName: [valid.name.toUpperCase(), to.toUpperCase()].join(' - '),
             exchangeRate: exchangeRateInst,
             exchangeQuote: exchangeDailyInst[0],
             exchangeDaily: exchangeDailyInst,
