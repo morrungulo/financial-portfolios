@@ -4,6 +4,8 @@ const cryptoProvider = require('./providers/alphavantageCryptoService');
 const ExchangeCryptoEmitter = require('../events/exchangeCryptoEmitter');
 const ForexService = require('./ForexService');
 
+const chalk = require('chalk')
+
 class CryptoService {
 
     /**
@@ -11,24 +13,30 @@ class CryptoService {
      */
     async updateValidCryptoListing() {
         try {
-            const result = await cryptoProvider.fetchValidListing();
-            const mapped = result.map(entry => {
-                return { code: entry['currency code'], name: entry['currency name'] };
-            });
+            const data = await cryptoProvider.fetchValidListing();
             await ValidCrypto.deleteMany({});
-            await ValidCrypto.insertMany(mapped);
+            await ValidCrypto.insertMany(data);
         } catch (err) {
-            console.error('Unable to update valid crypto listing');
+            console.error('Unable to update valid crypto listing: ' + err);
         }
     }
 
     /**
      * Return true if 'currency' is a valid digital currency code.
-     * @param {String} currency
+     * @param {String} code
      * @returns {Boolean}
      */
-    async isCryptoValid(currency) {
-        return await ValidCrypto.exists({ code: currency });
+    async isCryptoValid(code) {
+        return await ValidCrypto.exists({ code });
+    }
+
+    /**
+     * Return 
+     * @param {String} currency 
+     * @returns ValidCrypto entry or null
+     */
+    async getFromValidCrypto(code) {
+        return await ValidCrypto.findOne({ code })
     }
 
     /**
@@ -61,9 +69,10 @@ class CryptoService {
         if (! await this.hasCrypto(from, to)) {
             throw Error(`Digital exchange ${from}-${to} is not available`);
         }
+        const valid = await this.getFromValidCrypto(from);
         const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
-            cryptoProvider.fetchExchangeRate(from, to),
-            cryptoProvider.fetchExchangeDaily(from, to)
+            cryptoProvider.fetchExchangeRate(valid.name, to),
+            cryptoProvider.fetchExchangeDaily(valid.name, to)
         ]);
         const exCrypto = await ExchangeCrypto.findOneAndUpdate({ from, to }, {
             $set: {
@@ -94,12 +103,20 @@ class CryptoService {
         if (hasCrypto) return await this.getCrypto(from, to);
 
         // create new
-        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(from, to);
+        const valid = await this.getFromValidCrypto(from);
+        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(valid.name, to);
+
+        console.log(JSON.stringify(exchangeRateInst))
+        console.log(JSON.stringify(exchangeDailyInst[0]))
+        console.log(JSON.stringify(exchangeDailyInst[1]))
+        console.log(JSON.stringify(exchangeDailyInst[exchangeDailyInst.length - 1]))
+        console.log(JSON.stringify(exchangeCalculatedInst))
+
         const exCrypto = await ExchangeCrypto.create({
             from,
             to,
             name: [from, to].join(' - '),
-            longName: [exchangeRateInst.FromName, exchangeRateInst.ToName].join(' - '),
+            longName: [from, to].join(' - '),
             exchangeRate: exchangeRateInst,
             exchangeQuote: exchangeDailyInst[0],
             exchangeDaily: exchangeDailyInst,

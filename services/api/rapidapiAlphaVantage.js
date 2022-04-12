@@ -80,17 +80,4 @@ module.exports = {
       },
     }),
 
-  cryptoDaily: (from_crypto_currency, to_currency) =>
-    instance({
-      'method': 'GET',
-      'url': '/query',
-      'params': {
-        'datatype': 'json',
-        'outputsize': 'full',
-        'function': 'DIGITAL_CURRENCY_DAILY',
-        'symbol': from_crypto_currency.toUpperCase(),
-        'market': to_currency.toUpperCase()
-      },
-    }),
-
 }

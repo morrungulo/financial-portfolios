@@ -22,10 +22,6 @@ class ExchangeCashEmitter extends EventEmitter {
                     _id: false,
                     x: '$exchangeDaily.LastRefreshed',
                     y: '$exchangeDaily.Close',
-                    o: '$exchangeDaily.Open',
-                    h: '$exchangeDaily.High',
-                    l: '$exchangeDaily.Low',
-                    c: '$exchangeDaily.Close',
                 }
             },
             { $sort: { 'x': -1 } },

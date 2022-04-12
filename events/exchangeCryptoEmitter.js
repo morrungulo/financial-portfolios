@@ -22,11 +22,6 @@ class ExchangeCryptoEmitter extends EventEmitter {
                     _id: false,
                     x: '$exchangeDaily.LastRefreshed',
                     y: '$exchangeDaily.Close',
-                    o: '$exchangeDaily.Open',
-                    h: '$exchangeDaily.High',
-                    l: '$exchangeDaily.Low',
-                    c: '$exchangeDaily.Close',
-                    v: '$exchangeDaily.Volume',
                 }
             },
             { $sort: { 'x': -1 } },
@@ -55,6 +50,12 @@ class ExchangeCryptoEmitter extends EventEmitter {
             if (exItem.exchangeDaily.length >= 2) {
                 exItem.exchangeCalculated.Change = exItem.exchangeDaily[0].Close - exItem.exchangeDaily[1].Close;
                 exItem.exchangeCalculated.ChangePercent = 100 * (exItem.exchangeCalculated.Change / exItem.exchangeDaily[1].Close);
+
+                console.log('aaa: ' + JSON.stringify(exItem.exchangeDaily[0]))
+                console.log('aaa: ' + JSON.stringify(exItem.exchangeDaily[1]))
+                console.log('aaa: ' + exItem.exchangeCalculated.Change)
+                console.log('aaa: ' + exItem.exchangeCalculated.ChangePercent)
+
                 await exItem.save();
             }
         } catch (err) {

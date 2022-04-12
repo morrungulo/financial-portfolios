@@ -21,11 +21,6 @@ class ExchangeStockEmitter extends EventEmitter {
                     _id: false,
                     x: '$exchangeDaily.LastRefreshed',
                     y: '$exchangeDaily.AdjustedClose',
-                    o: '$exchangeDaily.Open',
-                    h: '$exchangeDaily.High',
-                    l: '$exchangeDaily.low',
-                    c: '$exchangeDaily.Close',
-                    v: '$exchangeDaily.Volume',
                 }
             },
             { $sort: { 'x': -1 } },

@@ -1,13 +1,12 @@
 /**
  * @param {String} str 
- * @returns true if str is invalid string number (eg: None, -)
+ * @returns false if str is invalid string number (eg: None, -)
  */
-function isInvalidFormat(str) {
+function isValidFormat(str) {
     if (typeof (str) === 'string') {
-        const invalidNumbers = ['None', '-']
-        return undefined !== invalidNumbers.find(v => (str == v))
+        return undefined === ['None', '-'].find(v => (str === v))
     }
-    return true
+    return typeof (str) === 'number';
 }
 
 /**
@@ -16,7 +15,7 @@ function isInvalidFormat(str) {
  * @returns {String}
  */
 function convertNoneToZero(v) {
-    return isInvalidFormat(v) ? '0' : v;
+    return isValidFormat(v) ? v : '0';
 }
 
 /**
@@ -25,8 +24,8 @@ function convertNoneToZero(v) {
  * @returns {String}
  */
 function convertStringWithPercentSignToNumber(v) {
-    if (!isInvalidFormat(v)) {
-        if (v.endsWith('%')) return v.replace(/%$/g, '');
+    if (isValidFormat(v) && v.endsWith('%')) {
+        return v.replace(/%$/g, '');
     }
     return '0';
 }

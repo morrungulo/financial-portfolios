@@ -1,7 +1,7 @@
 const { default: chalk } = require('chalk');
 const config = require('config');
 const { fetchAndParseCsvFile, parseCsvData } = require('../../util/fetchCsv');
-const rapidapi = require('../api/rapidapi');
+const rapidapi = require('../api/rapidapiAlphaVantage');
 
 /**
  * Convert alpha data into mongodb schema data

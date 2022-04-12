@@ -32,11 +32,6 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
 const exchangeXYcoordSchema = new mongoose.Schema({
     x: Date,
     y: Number,
-    o: Number,
-    h: Number,
-    l: Number,
-    c: Number,
-    v: Number,
 });
 
 // aggregator of all x,y coords for charts

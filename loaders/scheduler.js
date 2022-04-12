@@ -101,59 +101,62 @@ const refreshExchangeCash = async () => {
 
 module.exports = {
     initialize: async () => {
+        return new Promise((resolve, reject) => {
 
-        // initialize cron jobs for when the NYSE opens
-        const options = {
-            timezone: "America/New_York"
-        };
+            // initialize cron jobs for when the NYSE opens
+            const options = {
+                timezone: "America/New_York"
+            };
 
-        // stock market timezone
-        {
-            // 9:30 until 10:00 (NYT)
-            const marketFirstHalfHour = '30-59/5 9 * * Mon-Fri';
-            ncron.schedule(marketFirstHalfHour, refreshExchangeStock, options);
-
-            // 10:00 until 16:00 (NYT)
-            const marketRegularHours = '*/5 10-16 * * Mon-Fri';
-            ncron.schedule(marketRegularHours, refreshExchangeStock, options);
-
-            // 17:00 until 19:00 (NYT)
-            const marketAfterMarket = '*/5 17,19 * * Mon-Fri';
-            ncron.schedule(marketAfterMarket, refreshExchangeStock, options);
-        }
-
-        // local timezone
-        {
-            // daily
+            // stock market timezone
             {
-                // @13:00 (localtime)
-                const atNoon = '*/5 12 * * *';
-                ncron.schedule(atNoon, refreshExchangeCrypto);
+                // 9:30 until 10:00 (NYT)
+                const marketFirstHalfHour = '30-59/5 9 * * Mon-Fri';
+                ncron.schedule(marketFirstHalfHour, refreshExchangeStock, options);
 
-                // @14:00 (localtime)
-                const at1pm = '0-30/5 13 * * Mon-Fri';
-                ncron.schedule(at1pm, refreshExchangeCash);
+                // 10:00 until 16:00 (NYT)
+                const marketRegularHours = '*/5 10-16 * * Mon-Fri';
+                ncron.schedule(marketRegularHours, refreshExchangeStock, options);
 
-                // purge unused exchange items
-                // everyday at 10am (localtime)
-                const at10am = '0 10 * * *';
-                ncron.schedule(at10am, removeUnusedExchangeItems);
+                // 17:00 until 19:00 (NYT)
+                const marketAfterMarket = '*/5 17,19 * * Mon-Fri';
+                ncron.schedule(marketAfterMarket, refreshExchangeStock, options);
             }
 
-            // weekend
+            // local timezone
             {
-                // 10:00 until 15:00 weekend (localtime)
-                const from10to16weekends = '*/5 10-16 * * Sat,Sun';
-                ncron.schedule(from10to16weekends, refreshExchangeStock);
+                // daily
+                {
+                    // every 20min from 10h until 23h everyday
+                    const every20mFrom10hTo23h = '*/20 10-23 * * *';
+                    ncron.schedule(every20mFrom10hTo23h, refreshExchangeCrypto);
 
-                // update valid listings
-                // once a week on Sunday at 22:00 (localtime)
-                const onSundayEvening = '0 22 * * Sun';
-                ncron.schedule(onSundayEvening, updateValidListings);
+                    // @14:00 (localtime)
+                    const at1pm = '0-30/5 13 * * Mon-Fri';
+                    ncron.schedule(at1pm, refreshExchangeCash);
+
+                    // purge unused exchange items
+                    // everyday at 10am (localtime)
+                    const at10am = '0 10 * * *';
+                    ncron.schedule(at10am, removeUnusedExchangeItems);
+                }
+
+                // weekend
+                {
+                    // 10:00 until 15:00 weekend (localtime)
+                    const from10to16weekends = '*/5 10-16 * * Sat,Sun';
+                    ncron.schedule(from10to16weekends, refreshExchangeStock);
+
+                    // update valid listings
+                    // once a week on Sunday at 22:00 (localtime)
+                    const onSundayEvening = '0 22 * * Sun';
+                    ncron.schedule(onSundayEvening, updateValidListings);
+                }
             }
-        }
 
-        // complete
-        console.log('Scheduler loaded!')
+            // complete
+            console.log('Scheduler loaded!')
+            resolve();
+        });
     }
 };
