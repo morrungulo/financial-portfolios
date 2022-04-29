@@ -137,8 +137,8 @@
                     <th>Volume</th>
                     <th>Change</th>
                     <th>Change%</th>
-                    <th>Bid Price</th>
-                    <th>Ask Price</th>
+                    <th>24h High</th>
+                    <th>24h Low</th>
                     <th>Last 3 Months</th>
                     <th>&nbsp;</th>
                 </thead>
@@ -176,10 +176,10 @@
                             <span class="format-percentage format-pos-neg-color"><%- entry.exchangeCalculated.ChangePercent %></span>
                         </td>
                         <td sortable_customkey="<%- entry.exchangeRate.BidPrice %>">
-                            <span class="format-currency"><%- entry.exchangeRate.BidPrice %></span>
+                            <span class="format-currency"><%- entry.exchangeRate.High24h %></span>
                         </td>
                         <td sortable_customkey="<%- entry.exchangeRate.AskPrice %>">
-                            <span class="format-currency"><%- entry.exchangeRate.AskPrice %></span>
+                            <span class="format-currency"><%- entry.exchangeRate.Low24h %></span>
                         </td>
                         <td>                                
                             <div class="chart-sparkline" data-chart-line-single='<%- JSON.stringify(entry.exchangeGraphData.M3.map(ts=>{ return {x:ts.x,y:ts.y}; }) ) %>'></div>
