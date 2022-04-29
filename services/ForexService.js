@@ -54,25 +54,27 @@ class ForexService {
      * Return the ExchangeForex object for the forex from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
-     * @returns {Document}
      */
     async refreshForex(from, to) {
         if (! await this.hasForex(from, to)) {
             throw Error(`Forex ${from}-${to} is not available`);
         }
-        const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
-            forexProvider.fetchExchangeRate(from, to),
-            forexProvider.fetchExchangeDaily(from, to)
-        ]);
-        const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
-            $set: {
-                exchangeRate: exchangeRateInst,
-                exchangeQuote: exchangeDailyInst[0],
-                exchangeDaily: exchangeDailyInst,
-            }
-        });
-        ExchangeCashEmitter.emit('refresh', exForex._id);
-        return exForex;
+        try {
+            const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
+                forexProvider.fetchExchangeRate(from, to),
+                forexProvider.fetchExchangeDaily(from, to)
+            ]);
+            const exForex = await ExchangeForex.findOneAndUpdate({ from, to }, {
+                $set: {
+                    exchangeRate: exchangeRateInst,
+                    exchangeQuote: exchangeDailyInst[0],
+                    exchangeDaily: exchangeDailyInst,
+                }
+            });
+            ExchangeCashEmitter.emit('refresh', exForex._id);
+        } catch (error) {
+            console.error('Error occurred fetching forex data', error.message)
+        }
     }
 
     /**

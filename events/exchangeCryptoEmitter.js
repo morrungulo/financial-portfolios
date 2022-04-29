@@ -47,7 +47,7 @@ class ExchangeCryptoEmitter extends EventEmitter {
     async updateCalculatedItems(exchange_id) {
         try {
             const exItem = await ExchangeCrypto.findById(exchange_id);
-            if (exItem.exchangeDaily.length >= 2) {
+            if (exItem) {
                 // update calculated
                 exItem.exchangeCalculated.Change = exItem.exchangeOverview.PriceChange24h;
                 exItem.exchangeCalculated.ChangePercent = exItem.exchangeOverview.PriceChange24hPercentage;

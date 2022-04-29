@@ -51,26 +51,28 @@ class StockService {
     /**
      * Return the ExchangeStock object for the 'ticker' after being updated with the most recent data.
      * @param {String} ticker 
-     * @returns {ExchangeStock}
      */
     async refreshStock(ticker) {
         if (! await this.hasStock(ticker)) {
             throw Error(`Ticker '${ticker}' is not available`);
         }
-        const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst] = await Promise.all([
-            stockProvider.fetchExchangeOverview(ticker),
-            stockProvider.fetchExchangeQuote(ticker),
-            stockProvider.fetchExchangeDaily(ticker),
-        ]);
-        const exStock = await ExchangeStock.findOneAndUpdate({ name: ticker }, {
-            $set: {
-                exchangeOverview: exchangeOverviewInst,
-                exchangeQuote: exchangeQuoteInst,
-                exchangeDaily: exchangeDailyInst
-            }
-        });
-        ExchangeStockEmitter.emit('refresh', exStock._id);
-        return exStock;
+        try {
+            const [exchangeOverviewInst, exchangeQuoteInst, exchangeDailyInst] = await Promise.all([
+                stockProvider.fetchExchangeOverview(ticker),
+                stockProvider.fetchExchangeQuote(ticker),
+                stockProvider.fetchExchangeDaily(ticker),
+            ]);
+            const exStock = await ExchangeStock.findOneAndUpdate({ name: ticker }, {
+                $set: {
+                    exchangeOverview: exchangeOverviewInst,
+                    exchangeQuote: exchangeQuoteInst,
+                    exchangeDaily: exchangeDailyInst
+                }
+            });
+            ExchangeStockEmitter.emit('refresh', exStock._id);
+        } catch (error) {
+            console.error('Error occurred fetching stock data', error.message)
+        }
     }
 
     /**

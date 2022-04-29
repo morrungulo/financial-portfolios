@@ -63,26 +63,28 @@ class CryptoService {
      * Return the ExchangeCrypto object for the digital exchange from/to after being updated with the most recent data.
      * @param {String} from
      * @param {String} to 
-     * @returns {ExchangeCrypto}
      */
     async refreshCrypto(from, to) {
         if (! await this.hasCrypto(from, to)) {
             throw Error(`Digital exchange ${from}-${to} is not available`);
         }
-        const valid = await this.getFromValidCrypto(from);
-        const [exchangeDailyInst, exchangeOverviewInst] = await Promise.all([
-            cryptoProvider.fetchExchangeDaily(valid.name, to),
-            crpytoProvider.fetchExchangeOverview(valid.name, to)
-        ]);
-        const exCrypto = await ExchangeCrypto.findOneAndUpdate({ from, to }, {
-            $set: {
-                exchangeOverview: exchangeOverviewInst,
-                exchangeQuote: exchangeDailyInst[0],
-                exchangeDaily: exchangeDailyInst,
-            }
-        });
-        ExchangeCryptoEmitter.emit('refresh', exCrypto._id);
-        return exCrypto;
+        try {
+            const valid = await this.getFromValidCrypto(from);
+            const [exchangeDailyInst, exchangeOverviewInst] = await Promise.all([
+                cryptoProvider.fetchExchangeDaily(valid.name, to),
+                cryptoProvider.fetchExchangeOverview(valid.name, to)
+            ]);
+            const exCrypto = await ExchangeCrypto.findOneAndUpdate({ from, to }, {
+                $set: {
+                    exchangeOverview: exchangeOverviewInst,
+                    exchangeQuote: exchangeDailyInst[0],
+                    exchangeDaily: exchangeDailyInst,
+                }
+            });
+            ExchangeCryptoEmitter.emit('refresh', exCrypto._id);
+        } catch (error) {
+            console.error('Error occurred fetching crypto data', error.message)
+        }
     }
 
     /**
