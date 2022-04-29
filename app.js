@@ -11,12 +11,13 @@ async function startServer() {
 
     loaders.initialize({ expressApp: app })
         .then(() => {
-            const server = app.listen(config.get('server.port'), err => {
+            const port = config.get('server.port');
+            const server = app.listen(port, err => {
                 if (err) {
                     console.log(err);
                     return;
                 }
-                console.log('Your server is ready on port ' + config.get('server.port') + '!');
+                console.log(`Your server@${process.env.npm_package_version} is ready on port ${port}!`);
             });
 
             process.on('SIGTERM', () => {

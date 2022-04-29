@@ -35,23 +35,19 @@ module.exports = {
     initialize: async () => {
 
         // with mongodb docker image
-        // const dbURI = `mongodb://172.17.0.1:${config.get('mongodb.port')}/${config.get('mongodb.dbname')}`;
+        // const dbURI = `mongodb://172.17.0.2:${config.get('mongodb.port')}/${config.get('mongodb.dbname')}`;
 
         // with docker-compose
         const dbURI = `mongodb://mongodb:${config.get('mongodb.port')}/${config.get('mongodb.dbname')}`;
 
         // database connection
-        try {
-            await mongoose.connect(dbURI, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                useFindAndModify: false,
-                useCreateIndex: true,
-                socketTimeoutMS: 15000
-            })
-            console.log('Mongoose loaded!')
-        } catch (err) {
-            console.log(err);
-        }
+        await mongoose.connect(dbURI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+            useCreateIndex: true,
+            socketTimeoutMS: 15000
+        })
+        console.log('Mongoose loaded!')
     }
 }

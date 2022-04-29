@@ -6,21 +6,6 @@ const chalk = require('chalk')
  * @param {json} alpha 
  * @returns mongodb schema data
  */
-const buildFromAlphaRate = (from, to, data) => {
-    const rate = data[from][to.toLowerCase()]
-    const result = {
-        Rate: rate,
-        BidPrice: rate,
-        AskPrice: rate
-    }
-    return result;
-}
-
-/**
- * Convert alpha data into mongodb schema data
- * @param {json} alpha 
- * @returns mongodb schema data
- */
 const buildFromAlphaTimeSeries = (alpha) => {
     return alpha
         .sort((a, b) => b[0] - a[0])
