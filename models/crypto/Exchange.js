@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { convertNoneToZero } = require('../utils');
+const { convertNoneToZero, convertPercentNumberToPercentValue } = require('../utils');
 
 // error messages
 const errorMessages = {
@@ -9,13 +9,14 @@ const errorMessages = {
     missingLongname: "Please enter a long name",
     missingQuote: "Please enter the quote",
     missingRate: "Please enter the rate",
+    missingOverview: "Please enter the overview",
 }
 
 // exchange rate
 const exchangeRateSchema = new mongoose.Schema({
-    Rate: { type: Number, set: convertNoneToZero },
-    BidPrice: { type: Number, set: convertNoneToZero },
-    AskPrice: { type: Number, set: convertNoneToZero },
+    Rate: { type: Number, default: 0 },
+    High24h: { type: Number, default: 0 },
+    Low24h: { type: Number, default: 0 },
 });
 
 // time series
@@ -26,6 +27,29 @@ const exchangeTimeSeriesSchema = new mongoose.Schema({
     Low: { type: Number, set: convertNoneToZero },
     Close: { type: Number, set: convertNoneToZero },
     Volume: { type: Number, set: convertNoneToZero },
+});
+
+// exchange overview
+const exchangeOverviewSchema = new mongoose.Schema({
+    Symbol: String,
+    Name: String,
+    Image: String,
+    Price: Number,
+    MarketCap: Number,
+    MarketCapRank: Number,
+    High24h: Number,
+    Low24h: Number,
+    PriceChange24h: Number,
+    PriceChange24hPercentage: { type: String, set: convertPercentNumberToPercentValue },
+    MarketCapChange24h: Number,
+    MarketCapChange24hPercentage: { type: String, set: convertPercentNumberToPercentValue },
+    CirculatingSupply: Number,
+    TotalSupply: Number,
+    HighAllTime: Number,
+    HighAllTimeDate: Date,
+    LowAllTime: Number,
+    LowAllTimeDate: Date,
+    ROI: { type: String, set: convertPercentNumberToPercentValue },
 });
 
 // x,y coords for charts
@@ -46,8 +70,8 @@ const exchangeXYDailySchema = new mongoose.Schema({
 
 // calculated items
 const exchangeCalculatedSchema = new mongoose.Schema({
-    Change: { type: Number, default: 0 },         // exchangeDaily[0].Rate - exchangeDaily[1].Rate
-    ChangePercent: { type: Number, default: 0 },  // Change/exchangeDaily[0].Rate
+    Change: { type: Number, default: 0 },
+    ChangePercent: { type: Number, default: 0 },
 });
 
 // the schema
@@ -86,6 +110,11 @@ const exchangeCryptoSchema = new mongoose.Schema({
         required: [true, errorMessages.missingLongname],
     },
 
+    exchangeOverview: {
+        type: exchangeOverviewSchema,
+        required: [true, errorMessages.missingOverview],
+    },
+
     exchangeQuote: {
         type: exchangeTimeSeriesSchema,
         required: [true, errorMessages.missingQuote],
@@ -93,10 +122,7 @@ const exchangeCryptoSchema = new mongoose.Schema({
 
     exchangeCalculated: exchangeCalculatedSchema,
 
-    exchangeRate: {
-        type: exchangeRateSchema,
-        required: [true, errorMessages.missingRate]
-    },
+    exchangeRate: exchangeRateSchema,
 
     exchangeDaily: [exchangeTimeSeriesSchema],
     exchangeGraphData: exchangeXYDailySchema,

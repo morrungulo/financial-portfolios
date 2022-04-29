@@ -3,7 +3,10 @@
  * @returns false if str is invalid string number (eg: None, -)
  */
 function isValidFormat(str) {
-    if (typeof (str) === 'string') {
+    if (str === undefined) {
+        return false;
+    }
+    else if (typeof (str) === 'string') {
         return undefined === ['None', '-'].find(v => (str === v))
     }
     return typeof (str) === 'number';
@@ -30,7 +33,20 @@ function convertStringWithPercentSignToNumber(v) {
     return '0';
 }
 
+/**
+ * Convert a percentage number (e.g. 6.7) to a percentage string (e.g. '6.7')
+ * @param {Number} v 
+ * @returns {String}
+ */
+function convertPercentNumberToPercentValue(v) {
+    if (isValidFormat(v)) {
+        return v.toString();
+    }
+    return '0';
+}
+
 module.exports = {
     convertNoneToZero,
-    convertStringWithPercentSignToNumber
+    convertStringWithPercentSignToNumber,
+    convertPercentNumberToPercentValue
 }

@@ -48,8 +48,13 @@ class ExchangeCryptoEmitter extends EventEmitter {
         try {
             const exItem = await ExchangeCrypto.findById(exchange_id);
             if (exItem.exchangeDaily.length >= 2) {
-                exItem.exchangeCalculated.Change = exItem.exchangeDaily[0].Close - exItem.exchangeDaily[1].Close;
-                exItem.exchangeCalculated.ChangePercent = 100 * (exItem.exchangeCalculated.Change / exItem.exchangeDaily[1].Close);
+                // update calculated
+                exItem.exchangeCalculated.Change = exItem.exchangeOverview.PriceChange24h;
+                exItem.exchangeCalculated.ChangePercent = exItem.exchangeOverview.PriceChange24hPercentage;
+                // update rate
+                exItem.exchangeRate.Rate = exItem.exchangeOverview.Price;
+                exItem.exchangeRate.High24h = exItem.exchangeOverview.High24h;
+                exItem.exchangeRate.Low24h = exItem.exchangeOverview.Low24h;
                 await exItem.save();
             }
         } catch (err) {

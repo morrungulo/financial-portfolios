@@ -102,12 +102,12 @@
             } else {
                 let intValue = parseInt($(this).text());
                 let intSuffix = 'K';
-                if (intValue < 1000000) {
+                if (Math.abs(intValue) < 1000000) {
                     intValue /= 1000;
                 } else {
                     intValue /= 1000000;
                     intSuffix = 'M';
-                    if (intValue >= 1000) {
+                    if (Math.abs(intValue) >= 1000) {
                         intValue /= 1000;
                         intSuffix = 'B';
                     }

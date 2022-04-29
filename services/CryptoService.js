@@ -70,13 +70,13 @@ class CryptoService {
             throw Error(`Digital exchange ${from}-${to} is not available`);
         }
         const valid = await this.getFromValidCrypto(from);
-        const [exchangeRateInst, exchangeDailyInst] = await Promise.all([
-            cryptoProvider.fetchExchangeRate(valid.name, to),
-            cryptoProvider.fetchExchangeDaily(valid.name, to)
+        const [exchangeDailyInst, exchangeOverviewInst] = await Promise.all([
+            cryptoProvider.fetchExchangeDaily(valid.name, to),
+            crpytoProvider.fetchExchangeOverview(valid.name, to)
         ]);
         const exCrypto = await ExchangeCrypto.findOneAndUpdate({ from, to }, {
             $set: {
-                exchangeRate: exchangeRateInst,
+                exchangeOverview: exchangeOverviewInst,
                 exchangeQuote: exchangeDailyInst[0],
                 exchangeDaily: exchangeDailyInst,
             }
@@ -104,12 +104,13 @@ class CryptoService {
 
         // create new
         const valid = await this.getFromValidCrypto(from);
-        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst] = await cryptoProvider.fetchAll(valid.name, to);
+        const [exchangeRateInst, exchangeDailyInst, exchangeCalculatedInst, exchangeOverviewInst] = await cryptoProvider.fetchAll(valid.name, to);
         const exCrypto = await ExchangeCrypto.create({
             from,
             to,
             name: [from.toUpperCase(), to.toUpperCase()].join(' - '),
-            longName: [valid.name.toUpperCase(), to.toUpperCase()].join(' - '),
+            longName: [exchangeOverviewInst.Name, to.toUpperCase()].join(' - '),
+            exchangeOverview: exchangeOverviewInst,
             exchangeRate: exchangeRateInst,
             exchangeQuote: exchangeDailyInst[0],
             exchangeDaily: exchangeDailyInst,

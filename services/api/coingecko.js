@@ -37,4 +37,15 @@ module.exports = {
             },
         }),
 
+    cryptoOverview: (from, to) =>
+        instance({
+            'method': 'GET',
+            'url': '/coins/markets',
+            'params': {
+                'ids': from.toLowerCase(),
+                'vs_currency': to.toLowerCase(),
+                'order': 'market_cap_desc',
+            },
+        })
+
 }
