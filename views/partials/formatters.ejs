@@ -5,12 +5,12 @@
         if (elem.text() == '0') {
             elem.html('-');
         } else {
-            elem.html(parseFloat(elem.text()).toLocaleString(locale, {minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            elem.html(parseFloat(elem.text()).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
         }
     }
 
-    $(document).ready( function() {
-        $(".format-currency").each(function() {
+    $(document).ready(function () {
+        $(".format-currency").each(function () {
             const value = parseFloat($(this).text());
             if (value == 0) {
                 $(this).html('-');
@@ -22,7 +22,7 @@
                 $(this).html(formatter.format(value));
             }
         });
-        $(".format-currency-long").each(function() {
+        $(".format-currency-long").each(function () {
             const value = parseFloat($(this).text());
             if (value == 0) {
                 $(this).html('-');
@@ -34,7 +34,7 @@
                 $(this).html(formatter.format(value));
             }
         });
-        $(".format-1-fraction-digit").each(function() {
+        $(".format-1-fraction-digit").each(function () {
             const value = parseFloat($(this).text());
             if (value == 0) {
                 $(this).html('-');
@@ -46,7 +46,7 @@
                 $(this).html(formatter.format(value));
             }
         });
-        $(".format-pos-neg-color").each(function() {
+        $(".format-pos-neg-color").each(function () {
             const value = parseFloat($(this).text());
             if (value < 0) {
                 $(this).addClass('red');
@@ -55,26 +55,26 @@
                 $(this).addClass('green');
             }
         });
-        $(".format-currency-USD").each(function() {
-            format_currency($(this), 'en-US');            
+        $(".format-currency-USD").each(function () {
+            format_currency($(this), 'en-US');
         });
-        $(".format-currency-EUR").each(function() {
-            format_currency($(this), 'pt-PT');            
+        $(".format-currency-EUR").each(function () {
+            format_currency($(this), 'pt-PT');
         });
-        $(".format-currency-JPY").each(function() {
-            format_currency($(this), 'ja-JP');            
+        $(".format-currency-JPY").each(function () {
+            format_currency($(this), 'ja-JP');
         });
-        $(".format-currency-CNY").each(function() {
+        $(".format-currency-CNY").each(function () {
             format_currency($(this), 'zh-CN');
         });
-        $(".format-percentage").each(function() {
+        $(".format-percentage").each(function () {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
             }
         });
-        $(".format-percentage-raw").each(function() {
+        $(".format-percentage-raw").each(function () {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
@@ -82,59 +82,59 @@
                 $(this).html(floatValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%');
             }
         });
-        $(".format-3-fraction-digits").each(function() {
+        $(".format-3-fraction-digits").each(function () {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseFloat($(this).text()).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
             }
         });
-        $(".format-integer").each(function() {
+        $(".format-integer").each(function () {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
                 $(this).html(parseInt($(this).text()).toLocaleString('en-US'));
             }
         });
-        $(".format-integer-short").each(function() {
+        $(".format-integer-short").each(function () {
             if ($(this).text() == '0') {
                 $(this).html('-');
             } else {
-                let intValue = parseInt($(this).text());
-                let intSuffix = 'K';
-                if (Math.abs(intValue) < 1000000) {
-                    intValue /= 1000;
-                } else {
-                    intValue /= 1000000;
-                    intSuffix = 'M';
-                    if (Math.abs(intValue) >= 1000) {
-                        intValue /= 1000;
-                        intSuffix = 'B';
+                var intValue = parseInt($(this).text());
+                var intSuffix = '';
+                const decPlaces = 2;
+                const abr = ['K', 'M', 'B', 'T', 'P'];
+                for (var i = 0; i < abr.length; ++i) {
+                    const size = Math.pow(10, (i + 1) * 3);
+                    if (Math.abs(intValue) < size) {
+                        intValue = Math.round(intValue * decPlaces / size) / decPlaces;
+                        intSuffix = abr[i];
+                        break;
                     }
                 }
                 $(this).html(intValue.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + intSuffix);
             }
         });
-        $(".format-time").each(function() {
+        $(".format-time").each(function () {
             const mdate = new Date($(this).text());
-            if (mdate.getFullYear()==1970) {
+            if (mdate.getFullYear() == 1970) {
                 $(this).html('-');
             } else {
                 $(this).html(mdate.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }));
             }
         });
-        $(".format-date").each(function() {
+        $(".format-date").each(function () {
             const mdate = new Date($(this).text());
-            if (mdate.getFullYear()==1970) {
+            if (mdate.getFullYear() == 1970) {
                 $(this).html('-');
             } else {
                 const options = { month: 'short', day: 'numeric' };
                 $(this).html(mdate.toLocaleDateString([], options));
             }
         });
-        $(".format-date-long").each(function() {
+        $(".format-date-long").each(function () {
             const mdate = new Date($(this).text());
-            if (mdate.getFullYear()==1970) {
+            if (mdate.getFullYear() == 1970) {
                 $(this).html('-');
             } else {
                 const options = { year: 'numeric', month: 'short', day: 'numeric' };
