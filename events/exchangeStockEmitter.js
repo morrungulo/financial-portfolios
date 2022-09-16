@@ -46,13 +46,19 @@ class ExchangeStockEmitter extends EventEmitter {
     async updateCalculatedItems(exchange_id) {
         try {
             const exItem = await ExchangeStock.findById(exchange_id);
-            exItem.exchangeCalculated.DividendYieldPercent = 100 * (exItem.exchangeOverview.Dividend / exItem.exchangeQuote.Price);
-            if (exItem.exchangeOverview.EPS != 0) {
-                exItem.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (exItem.exchangeOverview.EPS - exItem.exchangeOverview.Dividend) / exItem.exchangeOverview.EPS);
-            } else {
-                exItem.exchangeCalculated.DividendPayoutRatioPercent = 0;
+            try {
+                exItem.exchangeCalculated.DividendYieldPercent = 100 * (exItem.exchangeOverview.Dividend / exItem.exchangeQuote.Price);
+                if (exItem.exchangeOverview.EPS != 0) {
+                    exItem.exchangeCalculated.DividendPayoutRatioPercent = 100 * (1 - (exItem.exchangeOverview.EPS - exItem.exchangeOverview.Dividend) / exItem.exchangeOverview.EPS);
+                } else {
+                    exItem.exchangeCalculated.DividendPayoutRatioPercent = 0;
+                }
+                exItem.exchangeCalculated.Week52RangePercent = 100 * ((exItem.exchangeQuote.Price - exItem.exchangeOverview.Week52Low) / (exItem.exchangeOverview.Week52High - exItem.exchangeOverview.Week52Low));
+            } catch (err) {
+                exItem.exchangeCalculated.DividendYieldPercent = 0
+                exItem.exchangeCalculated.DividendPayoutRatioPercent = 0
+                exItem.exchangeCalculated.Week52RangePercent = 0
             }
-            exItem.exchangeCalculated.Week52RangePercent = 100 * ((exItem.exchangeQuote.Price - exItem.exchangeOverview.Week52Low) / (exItem.exchangeOverview.Week52High - exItem.exchangeOverview.Week52Low));
             await exItem.save();
         } catch (err) {
             console.error(err);
